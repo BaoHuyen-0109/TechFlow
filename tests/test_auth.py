@@ -43,7 +43,7 @@ def auth_client(mysql_app):
 
 
 def csrf(client, path="/login"):
-    response = client.get(path)
+    response = client.get(path, follow_redirects=True)
     assert response.status_code == 200
     return re.search(r'name="csrf_token"[^>]*value="([^"]+)"', response.text).group(1)
 
@@ -57,12 +57,12 @@ def login(client, account, **overrides):
 @pytest.mark.parametrize("identity", ["username", "email"])
 def test_login_success_and_dashboard(auth_client, account, identity):
     response = login(auth_client, account, identity=account[identity].upper())
-    assert response.status_code == 302 and response.location == "/dashboard"
+    assert response.status_code == 302 and response.location == "/admin/dashboard"
     page = auth_client.get(response.location)
     assert page.status_code == 200
     assert "Quản trị kiểm thử" in page.text
-    assert "Không có số liệu giả lập" in page.text
-    assert 'href="/admin"' in page.text
+    assert "Tổng quan quản trị" in page.text
+    assert 'href="/admin/dashboard"' in page.text
     assert account["password"] not in page.text
     assert "password_hash" not in page.text
     user = db.session.get(User, account["id"])
@@ -97,7 +97,7 @@ def test_staff_backend_denies_admin(auth_client, account):
     user.role = "staff"
     db.session.commit()
     assert login(auth_client, account).status_code == 302
-    page = auth_client.get("/dashboard")
+    page = auth_client.get("/dashboard", follow_redirects=True)
     assert page.status_code == 200 and "Tổng quan dành cho nhân viên" in page.text
     assert 'href="/admin"' not in page.text
     denied = auth_client.get("/admin")
@@ -106,12 +106,14 @@ def test_staff_backend_denies_admin(auth_client, account):
 
 def test_admin_can_access_admin_space(auth_client, account):
     login(auth_client, account)
-    response = auth_client.get("/admin")
+    legacy = auth_client.get("/admin")
+    assert legacy.status_code == 302 and legacy.location == "/admin/dashboard"
+    response = auth_client.get(legacy.location)
     assert response.status_code == 200
-    assert "Quyền truy cập đã được xác minh" in response.text
+    assert "Vai trò và phân quyền" in response.text
 
 
-@pytest.mark.parametrize("path", ["/dashboard", "/admin"])
+@pytest.mark.parametrize("path", ["/dashboard", "/admin", "/admin/dashboard", "/staff/dashboard"])
 def test_anonymous_protected_routes(auth_client, path):
     response = auth_client.get(path)
     assert response.status_code == 302 and response.location.startswith("/login?")
@@ -138,11 +140,11 @@ def test_login_csrf_required(auth_client, account):
 @pytest.mark.parametrize("destination", ["https://evil.example", "//evil.example", "/\\evil.example", "javascript:alert(1)", "/%2f%2fevil.example"])
 def test_external_redirect_rejected(auth_client, account, destination):
     response = login(auth_client, account, next=destination)
-    assert response.location == "/dashboard"
+    assert response.location == "/admin/dashboard"
 
 
 def test_allowed_internal_redirect(auth_client, account):
-    assert login(auth_client, account, next="/admin").location == "/admin"
+    assert login(auth_client, account, next="/admin").location == "/admin/dashboard"
 
 
 def test_session_replaced_and_cookie_flags(auth_client, account):
@@ -207,7 +209,77 @@ def test_login_form_errors_and_no_password_echo(auth_client):
 
 def test_authenticated_login_redirects(auth_client, account):
     login(auth_client, account)
-    assert auth_client.get("/login").location == "/dashboard"
+    assert auth_client.get("/login").location == "/admin/dashboard"
+
+
+@pytest.mark.parametrize("role, home, other", [
+    ("admin", "/admin/dashboard", "/staff/dashboard"),
+    ("staff", "/staff/dashboard", "/admin/dashboard"),
+])
+def test_separate_workspaces_and_legacy_redirects(auth_client, account, role, home, other):
+    user = db.session.get(User, account["id"])
+    user.role = role
+    db.session.commit()
+    response = login(auth_client, account, next=other)
+    assert response.status_code == 302 and response.location == home
+    assert auth_client.get("/dashboard").location == home
+    assert auth_client.get("/login").location == home
+    page = auth_client.get(home)
+    assert page.status_code == 200 and f'{role}-workspace' in page.text
+    assert auth_client.get(other).status_code == (200 if role == "admin" else 403)
+    missing = auth_client.get("/missing-workspace")
+    assert missing.status_code == 404 and f'{role}-workspace' in missing.text
+    if role == "staff":
+        assert "/admin/dashboard" not in page.text
+        assert "Không có số liệu giả lập" in page.text
+        assert 'aria-disabled="true"' in page.text
+    else:
+        assert "business-shortcuts" not in page.text
+        assert "Kết nối thành công" in page.text
+        assert 'href="/staff/dashboard"' in page.text
+    token = csrf(auth_client, home)
+    assert auth_client.post("/logout", data={"csrf_token": token}).location == "/login"
+    assert auth_client.get(home).location.startswith("/login?")
+
+
+def test_admin_switches_workspaces_without_session_or_role_change(auth_client, account):
+    login(auth_client, account)
+    token = csrf(auth_client, "/admin/dashboard")
+    with auth_client.session_transaction() as session:
+        original_user = session["_user_id"]
+        original_csrf = session["csrf_token"]
+        original_identifier = session["_id"]
+    audit_before = db.session.scalar(select(func.count()).select_from(AuditLog))
+    business = auth_client.get("/staff/dashboard")
+    assert business.status_code == 200 and 'staff-workspace' in business.text
+    assert "Quay về quản trị" in business.text
+    assert "Quản trị viên" in business.text
+    assert 'href="/staff/dashboard"' in business.text
+    assert "business-shortcuts" in business.text
+    assert auth_client.get("/admin/dashboard").status_code == 200
+    assert db.session.get(User, account["id"]).role == "admin"
+    assert db.session.scalar(select(func.count()).select_from(AuditLog)) == audit_before
+    with auth_client.session_transaction() as session:
+        assert session["_user_id"] == original_user
+        assert session["csrf_token"] == original_csrf
+        assert session["_id"] == original_identifier and session["_fresh"]
+    assert auth_client.post("/logout", data={"csrf_token": token}).location == "/login"
+
+
+def test_admin_dashboard_database_error_state(auth_client, account):
+    from unittest.mock import patch
+    login(auth_client, account)
+    with patch("app.users.routes.database_available", return_value=False):
+        page = auth_client.get("/admin/dashboard")
+    assert page.status_code == 200 and "Chưa kết nối được" in page.text
+
+
+def test_database_check_handles_connection_failure(mysql_app):
+    from unittest.mock import patch
+    from sqlalchemy.exc import OperationalError
+    from app.services.workspace_service import database_available
+    with patch("app.services.workspace_service.db.engine.connect", side_effect=OperationalError("SELECT 1", {}, Exception("private-error"))):
+        assert database_available() is False
 
 
 def test_missing_or_corrupt_user_session_rejected(auth_client):

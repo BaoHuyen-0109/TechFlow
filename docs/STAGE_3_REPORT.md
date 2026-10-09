@@ -1,5 +1,8 @@
 # Báo cáo Giai đoạn 3 — Authentication, Authorization & Admin Layout
 
+Đây là báo cáo nghiệm thu ban đầu. Routing, layout và số bài test hiện tại được
+cập nhật trong [báo cáo refactor Admin/Staff](STAGE_3_REFACTOR_REPORT.md).
+
 Ngày kiểm tra: 09/10/2026. Phạm vi: chỉ giai đoạn 3 tại E:\AWS, tiếp tục Flask,
 Flask-Login, Jinja2, Bootstrap 5, MySQL, Docker và kiến trúc theo đặc tả.
 

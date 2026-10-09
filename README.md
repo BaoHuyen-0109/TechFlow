@@ -4,12 +4,14 @@ Hệ thống quản lý kinh doanh thiết bị công nghệ — đồ án Flask
 **Trạng thái: hoàn thành giai đoạn 3 — Authentication, Authorization & Admin Layout.**
 Có đăng nhập username/email, phân quyền Admin/Staff và Dashboard responsive.
 CRUD và các KPI kinh doanh chưa triển khai.
+Dashboard đã được refactor thành hai không gian: Admin quản trị và Staff kinh doanh.
 Không triển khai AWS trong giai đoạn này.
 
 Đặc tả chính thức: [tech_business_manager_aws_spec.md](tech_business_manager_aws_spec.md).
 Kết quả đã kiểm tra và giới hạn: [docs/STAGE_1_REPORT.md](docs/STAGE_1_REPORT.md).
 Kết quả database: [docs/STAGE_2_REPORT.md](docs/STAGE_2_REPORT.md).
 Kết quả đăng nhập và giao diện: [docs/STAGE_3_REPORT.md](docs/STAGE_3_REPORT.md).
+Refactor hai Dashboard: [docs/STAGE_3_REFACTOR_REPORT.md](docs/STAGE_3_REFACTOR_REPORT.md).
 
 ## Yêu cầu
 
@@ -81,21 +83,29 @@ docker compose exec web flask --app wsgi create-admin --username admin --full-na
 Email tùy chọn bằng `--email`. Không có mật khẩu mặc định; seed không tạo user.
 Trùng username/email bị từ chối, không reset password. Dùng username `admin`
 (hoặc email đã cung cấp) và mật khẩu vừa nhập tại trang Login. Không gửi mật khẩu
-qua chat hoặc ghi vào command. Trên máy này chưa có Admin tại lần kiểm tra bàn giao;
-bạn cần chạy CLI trên trước khi demo đăng nhập.
+qua chat hoặc ghi vào command. Nếu đã tạo Admin, tiếp tục dùng tài khoản hiện có;
+CLI không ghi đè mật khẩu hoặc role.
 
 ## Đăng nhập, phân quyền và giao diện
 
 - Login bằng username/email không phân biệt hoa thường; mật khẩu được kiểm tra với
   hash scrypt trong MySQL. Tài khoản inactive bị chặn, kể cả phiên đã đăng nhập.
-- Admin truy cập `/dashboard` và `/admin`; Staff chỉ truy cập Dashboard giới hạn.
-  `/admin` hiện là trang xác nhận phạm vi quyền, chưa có CRUD tài khoản/cấu hình.
+- Admin vào `/admin/dashboard`, Staff vào `/staff/dashboard` ngay sau login.
+  `/dashboard` chuyển tới trang chủ theo vai trò; `/admin` chỉ Admin mới được
+  chuyển tới Dashboard quản trị. Admin được vào cả hai Dashboard, Staff bị chặn
+  tại các route Admin. Hai layout/menu giữ riêng; chưa có CRUD tài khoản/cấu hình.
+  Sidebar Admin có **Không gian kinh doanh**; topbar Business của Admin có
+  **Quay về quản trị** (mobile hiện icon có nhãn hỗ trợ). Chuyển qua lại không
+  đăng nhập lại hoặc đổi role.
 - Đăng xuất qua nút trên topbar bằng POST + CSRF. CSRF được bật toàn cục.
 - Sai 5 lần trong 15 phút sẽ tạm chặn đăng nhập tài khoản, dùng chung giới hạn giữa
   username/email và giữa các Gunicorn workers. Nginx còn giới hạn POST Login theo IP.
 - Session ký bằng SECRET_KEY, thời gian sống 8 giờ có gia hạn khi hoạt động;
   HttpOnly, SameSite=Lax, Secure bắt buộc ở production HTTPS. Local HTTP để Secure=false.
 - Sidebar navy, nội dung sáng, Bootstrap Icons và assets Bootstrap lưu nội bộ.
+  Sidebar 244px, thu gọn desktop 80px, offcanvas tablet/mobile và scrollbar tinh tế.
+  Admin có tài khoản, ma trận quyền chỉ đọc và SELECT 1 kiểm tra MySQL tại thời điểm
+  tải trang. Staff có tổng quan hoạt động, shortcut khóa và empty state nghiệp vụ.
   Module chưa triển khai hiển thị trạng thái; không có nút CRUD giả hay số liệu KPI giả.
 
 Chi tiết bảo mật và tích hợp module sau: [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md).
@@ -153,7 +163,8 @@ docker compose -f docker-compose.db-test.yml --profile ui stop ui-nginx ui db-te
 
 Script chỉ tạo tài khoản có mật khẩu ngẫu nhiên trong DB test và lưu ảnh vào
 `docs/screenshots`; không in credentials, không thay đổi demo. Kiểm tra ba viewport
-desktop/tablet/mobile, menu, login/logout, 403/404 và tràn ngang. Khi image UI thay
+desktop/tablet/mobile cho cả hai vai trò, menu, collapse, hover/focus bàn phím,
+login/logout, 403/404, link/anchor thực và tràn ngang. Khi image UI thay
 đổi địa chỉ container, restart riêng `ui-nginx` nếu gặp 502.
 
 Chạy app local tùy chọn: load `.env` qua wsgi rồi dùng

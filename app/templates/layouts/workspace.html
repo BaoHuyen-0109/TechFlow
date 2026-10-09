@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% import 'components/navigation.html' as nav %}
+{% set home_url = workspace_home|default(url_for('admin.dashboard') if current_user.role == 'admin' else url_for('dashboard.staff')) %}
+{% set role_label = 'Quản trị viên' if current_user.role == 'admin' else 'Nhân viên' %}
+{% block extra_css %}<link rel="stylesheet" href="{{ url_for('static', filename='css/workspace.css') }}">{% endblock %}
+{% block body_class %}workspace-page {% block workspace_kind %}{% endblock %}-workspace{% endblock %}
+{% block body %}
+<aside class="ws-sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="workspace-sidebar" aria-labelledby="workspace-brand">
+  <div class="ws-brand-row"><a class="tf-brand" href="{{ home_url }}" aria-label="TechFlow — Trang chủ"><span class="brand-icon"><i class="bi bi-stack" aria-hidden="true"></i></span><span id="workspace-brand">TechFlow<small>{% block brand_caption %}{% endblock %}</small></span></a><button class="ws-icon-button ws-close d-lg-none" type="button" data-bs-dismiss="offcanvas" data-bs-target="#workspace-sidebar" aria-label="Đóng menu"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>
+  <nav class="ws-navigation" aria-label="Điều hướng {{ role_label }}">{% block workspace_navigation %}{% endblock %}</nav>
+  <div class="ws-sidebar-footer"><div class="ws-context">{% block sidebar_context %}{% endblock %}</div><button type="button" class="ws-collapse d-none d-lg-flex" data-sidebar-collapse aria-controls="workspace-sidebar" aria-expanded="true" aria-label="Thu gọn thanh điều hướng"><i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i><span>Thu gọn điều hướng</span></button></div>
+</aside>
+<div class="ws-shell">
+  <header class="ws-topbar"><div class="ws-topbar-leading"><button class="ws-icon-button d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#workspace-sidebar" aria-controls="workspace-sidebar" aria-label="Mở menu điều hướng"><i class="bi bi-list" aria-hidden="true"></i></button><span class="ws-workspace-name">{% block workspace_label %}{% endblock %}</span>{% block workspace_switch %}{% endblock %}</div><div class="ws-topbar-actions"><div class="ws-identity"><span class="ws-avatar" aria-hidden="true">{{ current_user.full_name[:1]|upper }}</span><div><strong>{{ current_user.full_name }}</strong><small>{{ role_label }}</small></div></div><form action="{{ url_for('auth.logout') }}" method="post" data-loading-form><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="ws-logout" type="submit" aria-label="Đăng xuất"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span>Đăng xuất</span></button></form></div></header>
+  <main id="main-content" class="ws-content">
+    <nav aria-label="Breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ home_url }}">TechFlow</a></li><li class="breadcrumb-item active" aria-current="page">{% block breadcrumb %}{{ 'Quản trị' if current_user.role == 'admin' else 'Kinh doanh' }}{% endblock %}</li></ol></nav>
+    {% include 'components/flash.html' %}
+    {% block workspace_content %}{% endblock %}
+    <footer class="ws-footer"><span>TechFlow · Quản lý thông minh – Vận hành hiệu quả.</span><span>Phiên bản giữa kỳ</span></footer>
+  </main>
+</div>
+{% endblock %}

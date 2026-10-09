@@ -15,8 +15,12 @@
 - Không tạo tài nguyên hoặc cấu hình credentials AWS ở giai đoạn 1.
 
 Giai đoạn 3: Flask-Login strong session protection, xác minh is_active/role mỗi
-request, backend admin_required, session.clear khi login/logout, redirect chỉ cho
-phép `/dashboard` hoặc `/admin`. HTML trả Cache-Control=no-store. CSP chỉ dùng
+request, backend admin_required/business_required, session.clear khi login/logout.
+Admin được cả hai Dashboard; Staff bị chặn ở route Admin. Chuyển workspace là GET
+đã xác thực, không tạo phiên mới hoặc đổi role.
+Allowlist redirect gồm `/dashboard`, `/admin`, `/admin/dashboard`, `/staff/dashboard`;
+sau login luôn chọn Dashboard chính xác theo role, kể cả next trỏ role khác.
+HTML trả Cache-Control=no-store. CSP chỉ dùng
 assets nội bộ, không cho inline script/eval. Password không xuất hiện trong form
 render lại hoặc log; lỗi tài khoản không tồn tại/sai mật khẩu/inactive dùng chung
 thông báo. Không có tài khoản mặc định.

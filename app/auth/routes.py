@@ -15,15 +15,19 @@ def rate_limit():
     abort(429)
 
 
-def safe_destination(value: str | None) -> str:
-    # Only implemented local pages are valid login destinations in stage 3.
-    return value if value in {"/dashboard", "/admin"} else url_for("dashboard.index")
+def safe_destination(value: str | None, role: str | None = None) -> str:
+    # Keep the strict allowlist. Login sends each role only to its own workspace.
+    allowed = {"/dashboard", "/admin", "/admin/dashboard", "/staff/dashboard"}
+    if role is None:
+        return value if value in allowed else url_for("dashboard.index")
+    default = url_for("admin.dashboard" if role == "admin" else "dashboard.staff")
+    return default
 
 
 @blueprint.route("/login", methods=["GET", "POST"])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("dashboard.index"))
+        return redirect(safe_destination(None, current_user.role))
     form = LoginForm()
     destination = safe_destination(form.next.data if request.method == "POST" else request.args.get("next"))
     form.next.data = destination
@@ -47,7 +51,7 @@ def login():
                 login_user(user, remember=False, fresh=True)
                 session.permanent = True
                 flash("Đăng nhập thành công. Chào mừng bạn trở lại TechFlow!", "success")
-                return redirect(destination)
+                return redirect(safe_destination(destination, user.role))
     response = current_app.make_response((render_template("auth/login.html", form=form), status))
     if status == 429:
         response.headers["Retry-After"] = "900"

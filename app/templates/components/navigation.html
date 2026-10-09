@@ -1,0 +1,9 @@
+{% macro section(label, note='') -%}
+<div class="ws-nav-heading"><span>{{ label }}</span>{% if note %}<small>{{ note }}</small>{% endif %}</div>
+{%- endmacro %}
+{% macro link(href, icon, label, active=false) -%}
+<a class="ws-nav-link {{ 'active' if active }}" href="{{ href }}" aria-label="{{ label }}" title="{{ label }}" {% if active %}aria-current="page"{% endif %}><i class="bi {{ icon }}" aria-hidden="true"></i><span>{{ label }}</span></a>
+{%- endmacro %}
+{% macro pending(icon, label) -%}
+<span class="ws-nav-link ws-pending" aria-disabled="true" title="{{ label }} — Chưa triển khai"><i class="bi {{ icon }}" aria-hidden="true"></i><span>{{ label }}</span><i class="bi bi-lock ws-nav-lock" aria-hidden="true"></i></span>
+{%- endmacro %}

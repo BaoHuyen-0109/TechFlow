@@ -6,8 +6,10 @@
 | --- | --- | --- |
 | GET /, /health | Công khai | Thông tin nền tảng/liveness |
 | GET, POST /login | Công khai | Form CSRF, username hoặc email, password |
-| GET /dashboard | Admin, Staff active | Layout và thông tin phiên thật |
-| GET /admin | Admin active | Thông tin phạm vi quản trị; chưa có CRUD |
+| GET /dashboard | Admin, Staff active | Redirect theo vai trò |
+| GET /admin | Admin active | Redirect /admin/dashboard |
+| GET /admin/dashboard | Admin active | Tài khoản, ma trận quyền, kết nối MySQL chỉ đọc |
+| GET /staff/dashboard | Admin, Staff active | Không gian kinh doanh riêng, empty state |
 | POST /logout | Đã đăng nhập + CSRF | Audit, xóa phiên, về Login |
 | GET /auth/rate-limit | Công khai | Trang 429 dùng cho Nginx limiter |
 
@@ -24,9 +26,12 @@ tài khoản trả cùng thông báo tiếng Việt và HTTP 401. DB không sẵ
 không lộ exception. Thành công cập nhật last_login_at UTC, audit login_success,
 xóa trạng thái phiên trước login rồi Flask-Login tạo phiên mới.
 
-Mặc định về `/dashboard`. next chỉ chấp nhận chính xác `/dashboard` hoặc `/admin`;
-URL ngoài, URL tương đối protocol, path khác đều về Dashboard. Staff theo next
-`/admin` vẫn bị backend trả 403. Không có remember-me.
+Sau login, Admin về `/admin/dashboard`, Staff về `/staff/dashboard`. Allowlist next
+chỉ chấp nhận chính xác bốn đường dẫn Dashboard/alias trong bảng trên; URL ngoài,
+URL tương đối protocol, path khác đều bị loại. Với phạm vi hiện tại tất cả next
+được quy về trang chủ role của tài khoản vừa xác thực. Admin có thể mở trực tiếp
+hoặc chuyển qua `/staff/dashboard`; Staff không qua được `/admin` hoặc
+`/admin/dashboard`, kể cả sửa URL. Không có remember-me.
 
 User loader tải MySQL ở request tiếp theo, từ chối inactive hoặc role ngoài
 admin/staff. Việc đổi role có hiệu lực ở request tiếp theo. Strong session
@@ -60,9 +65,12 @@ hay kiểm thử tải diện rộng.
 - `auth/forms.py`: form và thông báo validation.
 - `auth/routes.py`: request/session/redirect; không đặt SQL nghiệp vụ tại form.
 - `services/auth_service.py`: hash, rate limit và audit transaction.
-- `auth/permissions.py`: `@admin_required`, bao gồm login_required.
+- `auth/permissions.py`: `@admin_required` (Admin) và `@business_required` (Admin,
+  Staff), cùng dùng role_required và login_required; role khác bị 403.
 - `dashboard/routes.py`, `users/routes.py`: trang đã bảo vệ.
-- `templates/layouts/admin.html`: sidebar, topbar, breadcrumb, POST Logout.
+- `templates/layouts/admin.html`, `staff.html`: sidebar/nhận diện workspace riêng.
+- `templates/layouts/workspace.html`: shell/topbar/breadcrumb/POST Logout dùng chung.
+- `templates/admin/dashboard.html`, `staff/dashboard.html`: hai trang chủ riêng.
 - `templates/components/flash.html`: thông báo dùng chung.
 - `static/vendor`: Bootstrap/Icons/font nội bộ kèm license.
 - `static/css/techflow.css`, `static/js/app.js`: theme, offcanvas, password toggle,
@@ -71,7 +79,14 @@ hay kiểm thử tải diện rộng.
 Module Admin ở giai đoạn sau phải dùng decorator backend, mọi form ghi dữ liệu
 phải có CSRF token. Staff được cấp quyền theo ma trận đặc tả khi triển khai từng
 module, không dùng việc ẩn menu làm kiểm tra quyền. Không thêm route CRUD giả.
-Hiện Dashboard chỉ lấy thông tin current_user thật; chưa có số liệu kinh doanh.
+Hiện Dashboard lấy thông tin current_user thật; Admin thêm SELECT 1 kiểm tra kết
+nối, Business thêm ngày Việt Nam từ hệ thống; chưa có số liệu kinh doanh. Admin
+được quyền cả hai không gian, Staff chỉ Business. Business giữ layout Staff ngay
+cả khi Admin truy cập; topbar/phiên vẫn hiển thị role thật, breadcrumb và brand
+trỏ trang chủ Business. Admin chuyển về quản trị qua liên kết riêng, Staff không
+thấy liên kết đó. Hai liên kết chuyển workspace chỉ GET, không logout/login,
+không đổi session user/role/CSRF, không tạo audit login mới. Module nghiệp vụ
+tương lai phải sử dụng chính sách quyền backend tương ứng và validation riêng.
 
 ## Kiểm thử và kiểm tra giao diện
 
@@ -82,5 +97,9 @@ build, Nginx 127.0.0.1:8001 và cùng DB test. Playwright là công cụ host t�
 không cài vào image runtime. `scripts/verify_ui.py` có guard DB test trước khi
 tạo account, không in credentials; chụp Login/Dashboard/Menu/Staff403.
 
-Kết quả chi tiết và ảnh: [STAGE_3_REPORT.md](STAGE_3_REPORT.md). Không có migration
+Kết quả ban đầu: [STAGE_3_REPORT.md](STAGE_3_REPORT.md). Refactor và ảnh mới:
+[STAGE_3_REFACTOR_REPORT.md](STAGE_3_REFACTOR_REPORT.md). Không có migration
 mới ở giai đoạn 3; tiếp tục revision db55d828848e và filter bảo vệ stage1_probe.
+
+Chính sách quyền hiện tại và minh chứng Admin chuyển qua lại:
+[STAGE_3_ACCESS_REPORT.md](STAGE_3_ACCESS_REPORT.md).

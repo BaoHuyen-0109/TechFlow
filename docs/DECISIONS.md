@@ -45,3 +45,23 @@
 23. Tách commit nền tảng/database giai đoạn 1–2 và commit auth/layout giai đoạn 3
     theo yêu cầu commit/push của người dùng. Push cần URL remote đích; không sửa
     Git global. Dừng trước giai đoạn 4.
+
+## Refactor Giai đoạn 3 — hai không gian làm việc
+
+24. Admin và Staff có Dashboard/layout/menu riêng; kế thừa workspace shell và
+    navigation macro để tránh trùng auth, Logout, topbar và responsive.
+25. Giữ alias `/dashboard` theo role và `/admin` chỉ Admin; đăng nhập về trang chủ
+    role, next có allowlist chặt. Chính sách ban đầu chặn chéo hai Dashboard đã
+    được thay bằng quyết định 28 bên dưới. Không đổi role trong database.
+26. Admin ưu tiên thông tin tài khoản/ma trận quyền chỉ xem, trạng thái MySQL dùng
+    SELECT 1 thật. Staff ưu tiên bố cục nghiệp vụ và shortcut không tương tác khi
+    chưa triển khai, không dựng KPI, giao dịch hoặc cảnh báo giả.
+27. Dùng CSS workspace riêng, sidebar 244/80px, scrollbar mảnh, offcanvas mobile;
+    không đổi assets/framework. So sánh SHA-256 từng bảng trước/sau, kể cả users,
+    audit_logs, stage1_probe và alembic_version. Không seed lại demo.
+
+28. Theo điều chỉnh quyền của người dùng, Admin được cả Admin và Business;
+    Staff chỉ Business. business_required dùng allowlist admin/staff, còn
+    admin_required chỉ admin. Login mặc định giữ theo role. Menu chuyển workspace
+    không đổi session/role và không yêu cầu login lại. Business vẫn dùng layout
+    riêng; vai trò hiển thị lấy từ current_user, không suy ra từ layout.

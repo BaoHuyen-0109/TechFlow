@@ -1,0 +1,23 @@
+{% extends 'layouts/workspace.html' %}
+{% block workspace_kind %}staff{% endblock %}
+{% block workspace_label %}Không gian kinh doanh{% endblock %}
+{% block brand_caption %}QUẢN LÝ KINH DOANH{% endblock %}
+{% block breadcrumb %}Kinh doanh{% endblock %}
+{% block workspace_switch %}{% if current_user.role == 'admin' %}<a class="ws-switch-link" href="{{ url_for('admin.dashboard') }}" aria-label="Quay về quản trị" title="Quay về quản trị"><i class="bi bi-shield-lock" aria-hidden="true"></i><span>Quay về quản trị</span></a>{% endif %}{% endblock %}
+{% block workspace_navigation %}
+  {{ nav.section('KHÔNG GIAN LÀM VIỆC') }}
+  {{ nav.link(url_for('dashboard.staff'), 'bi-grid-1x2', 'Tổng quan', active_page == 'dashboard') }}
+  {{ nav.section('KINH DOANH', 'Chưa khả dụng') }}
+  {{ nav.pending('bi-cart3', 'Bán hàng và đơn bán') }}
+  {{ nav.pending('bi-box-seam', 'Sản phẩm') }}
+  {{ nav.section('KHO HÀNG', 'Chưa khả dụng') }}
+  {{ nav.pending('bi-boxes', 'Tổng quan tồn kho') }}
+  {{ nav.pending('bi-box-arrow-in-down', 'Nhập hàng') }}
+  {{ nav.pending('bi-arrow-left-right', 'Lịch sử nhập / xuất') }}
+  {{ nav.section('DANH MỤC', 'Chưa khả dụng') }}
+  {{ nav.pending('bi-tags', 'Danh mục sản phẩm') }}
+  {{ nav.pending('bi-buildings', 'Nhà cung cấp') }}
+  {{ nav.section('TÀI KHOẢN') }}
+  {{ nav.link(url_for('dashboard.staff') ~ '#session', 'bi-person-circle', 'Thông tin cá nhân') }}
+{% endblock %}
+{% block sidebar_context %}<i class="bi bi-stack" aria-hidden="true"></i><span>Quản lý thông minh.<br>Vận hành hiệu quả.</span>{% endblock %}

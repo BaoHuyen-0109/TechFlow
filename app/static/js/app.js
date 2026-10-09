@@ -1,5 +1,13 @@
 "use strict";
 
+document.querySelectorAll("[data-sidebar-collapse]").forEach((button) => {
+  button.addEventListener("click", () => {
+    const collapsed = document.body.classList.toggle("workspace-collapsed");
+    button.setAttribute("aria-expanded", String(!collapsed));
+    button.setAttribute("aria-label", collapsed ? "Mở rộng thanh điều hướng" : "Thu gọn thanh điều hướng");
+  });
+});
+
 document.querySelectorAll("[data-password-toggle]").forEach((button) => {
   button.addEventListener("click", () => {
     const input = button.parentElement.querySelector("input");

@@ -39,8 +39,27 @@ phải đặt transaction, khóa hàng và chống xử lý lặp trong services
 
 Giai đoạn 3 đã dùng Bootstrap 5 và Jinja2, sidebar navy, content sáng, accent xanh dương,
 CSS tùy chỉnh, icon thống nhất và offcanvas mobile. Assets Bootstrap lưu nội bộ.
-Trang `/` là thông tin nền tảng; `/login` dùng layout thương hiệu và `/dashboard`
-dùng `templates/layouts/admin.html`. CSS chung ở `static/css/techflow.css`.
+Trang `/` là thông tin nền tảng; `/login` dùng layout thương hiệu. `/dashboard`
+chỉ chuyển tới `/admin/dashboard` hoặc `/staff/dashboard` theo vai trò đã xác thực.
+Hai trang dùng `layouts/admin.html` và `layouts/staff.html`, có navigation và
+Dashboard riêng. Cùng kế thừa `layouts/workspace.html` để dùng chung shell,
+topbar, Logout, breadcrumb, flash và responsive. Macro navigation ở
+`components/navigation.html`. CSS thương hiệu/Login ở `static/css/techflow.css`;
+CSS workspace riêng ở `static/css/workspace.css`. Không copy layout Admin rồi ẩn
+menu cho Staff. Admin được vào cả hai không gian, Staff chỉ Business. Trang lỗi
+chọn layout theo vai trò và đường dẫn Business đang truy cập.
 Không tạo liên kết hoặc nút nghiệp vụ trước khi chức năng hoạt động.
+
+`users/routes.py` giữ Blueprint admin và route `/admin` tương thích bằng redirect
+có admin_required. `dashboard/routes.py` giữ redirect cũ và route Staff, dùng
+business_required (cho phép Admin và Staff). Cùng admin_required dùng chung
+role_required; quyền được kiểm tra
+trước render. `workspace_service.py` chỉ SELECT 1 cho trạng thái MySQL Admin;
+không ghi dữ liệu và không mô phỏng giám sát Docker/AWS. Ngày trên Staff lấy từ
+clock hệ thống, chuyển Asia/Ho_Chi_Minh. Chưa thêm bảng hoặc migration.
+
+Workspace hiện tại tách khỏi role tài khoản: Admin xem Business vẫn role Admin,
+layout Business và home/breadcrumb Business, có liên kết Quay về quản trị. Không
+thay đổi session, CSRF hoặc dữ liệu user khi chuyển không gian.
 
 Luồng xác thực, decorator quyền và cấu trúc mở rộng: [AUTHENTICATION.md](AUTHENTICATION.md).
