@@ -1,0 +1,15 @@
+# Isolated test runner. No connection to the development database/network.
+name: techflow-tests
+services:
+  tests:
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "true"
+    network_mode: none
+    environment:
+      APP_ENV: testing
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./pytest.ini:/app/pytest.ini:ro
+    command: ["python", "-m", "pytest", "-o", "cache_dir=/tmp/techflow-pytest-cache"]

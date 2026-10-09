@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Nền tảng dự án · TechFlow{% endblock %}
+{% block content %}
+<section class="panel">
+  <span class="eyebrow">PHIÊN BẢN GIỮA KỲ · GIAI ĐOẠN 2</span>
+  <h1>Nền tảng cho vận hành<br>thông minh.</h1>
+  <p>Ứng dụng Flask đã tiếp nhận và xử lý yêu cầu này. Đây là trang thông tin nền tảng, chưa phải Dashboard quản trị.</p>
+  <div class="status"><span class="dot" aria-hidden="true"></span>Ứng dụng đang phản hồi</div>
+  <div class="next"><h2>Lộ trình phát triển TechFlow</h2><p>Đã chuẩn bị models, migrations, dữ liệu demo và CLI tạo Admin. Các bước tiếp theo: Đăng nhập và phân quyền → Quản lý danh mục, nhà cung cấp, sản phẩm → Dashboard.</p><p>Các module nghiệp vụ chưa được triển khai trong giai đoạn này. Kết nối MySQL được kiểm tra riêng bằng lệnh <code>flask --app wsgi check-db</code>.</p></div>
+  <a href="{{ url_for('main.health') }}">Xem trạng thái ứng dụng <span aria-hidden="true">↗</span></a>
+</section>
+{% endblock %}

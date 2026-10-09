@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block title %}Lỗi {{ code }} · TechFlow{% endblock %}
+{% block content %}
+<section class="panel"><span class="eyebrow">LỖI {{ code }}</span><h1>Không thể xử lý yêu cầu.</h1><p>{{ message }}</p><a href="{{ url_for('main.index') }}">Về trang thông tin</a></section>
+{% endblock %}

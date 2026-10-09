@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TechFlow{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}">
+</head>
+<body>
+  <header class="brand"><span class="brand-mark" aria-hidden="true">TF</span><div><strong>TechFlow</strong><small>Hệ thống quản lý kinh doanh thiết bị công nghệ</small></div></header>
+  <main>{% block content %}{% endblock %}</main>
+  <footer>Quản lý thông minh – Vận hành hiệu quả.</footer>
+</body>
+</html>

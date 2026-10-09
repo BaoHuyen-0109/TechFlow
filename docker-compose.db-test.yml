@@ -1,0 +1,49 @@
+# Standalone MySQL integration project; never attaches to techflow_mysql_data.
+name: techflow-db-tests
+services:
+  db-test:
+    image: mysql:8.0.44
+    environment:
+      MYSQL_DATABASE: techflow_test
+      MYSQL_USER: techflow_test_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set local MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set local MYSQL_ROOT_PASSWORD}
+      TZ: UTC
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    volumes:
+      - mysql_test_data:/var/lib/mysql
+    networks: [test-backend]
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$$MYSQL_PASSWORD\" mysql --protocol=TCP -h 127.0.0.1 -u\"$$MYSQL_USER\" \"$$MYSQL_DATABASE\" -Nse 'SELECT 1' >/dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+  tests:
+    build:
+      context: .
+      args:
+        INSTALL_DEV: "true"
+    environment:
+      APP_ENV: testing
+      SECRET_KEY: ${SECRET_KEY:?Set local SECRET_KEY}
+      MYSQL_DATABASE: techflow_test
+      MYSQL_USER: techflow_test_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set local MYSQL_PASSWORD}
+      DB_HOST: db-test
+      RUN_MYSQL_TESTS: "1"
+      TEST_MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set local MYSQL_PASSWORD}
+      SESSION_COOKIE_SECURE: "false"
+    depends_on:
+      db-test:
+        condition: service_healthy
+    networks: [test-backend]
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./pytest.ini:/app/pytest.ini:ro
+    command: ["sh", "-c", "flask --app wsgi db upgrade && python -m pytest -o cache_dir=/tmp/techflow-pytest-cache"]
+networks:
+  test-backend:
+    internal: true
+volumes:
+  mysql_test_data:

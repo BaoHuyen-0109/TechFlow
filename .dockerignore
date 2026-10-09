@@ -1,0 +1,13 @@
+.git
+.env
+.env.*
+.venv
+__pycache__
+**/__pycache__
+.pytest_cache
+.coverage
+instance
+*.sql
+*.pem
+*.key
+.docker-local
