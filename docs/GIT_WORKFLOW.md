@@ -59,4 +59,26 @@ git -c safe.directory=E:/AWS diff
 
 Hoặc tự thêm đúng đường dẫn này vào cấu hình cá nhân nếu muốn áp dụng lâu dài:
 `git config --global --add safe.directory E:/AWS`. Không dùng wildcard `*`.
-Agent chưa sửa cấu hình Git global, chưa tạo commit hoặc remote.
+Agent không sửa cấu hình Git global. Remote chưa được cấu hình; người dùng cần
+cung cấp URL repository trước khi push.
+
+## Snapshot giai đoạn 1–2 trước thay đổi auth
+
+Trước khi code giai đoạn 3, agent đã stage có chọn lọc 72 file nền tảng/database
+(4.637 dòng). Sau khi người dùng yêu cầu commit/push, snapshot đã được commit
+thành `abb05e5` (`feat: establish TechFlow foundation and database`), thay đổi
+auth/layout giai đoạn 3 được commit riêng. Secrets local đã được kiểm tra và loại
+khỏi Git. Không có remote đích tại thời điểm tạo commit.
+
+```powershell
+git -c safe.directory=E:/AWS status --short
+git -c safe.directory=E:/AWS log --oneline
+git -c safe.directory=E:/AWS show --stat abb05e5
+git -c safe.directory=E:/AWS remote -v
+```
+
+Commit auth: `feat(auth): add authentication, role checks and admin layout`.
+Khi có remote đã được người dùng chỉ định, thêm origin và push nhánh main bằng
+`git push -u origin main`; không force-push nếu remote có lịch sử khác.
+Kiểm tra `.env`, `.venv`, `.browser-cache` được ignore bằng `git check-ignore`.
+Không dùng reset/clean để chia commit vì có thể mất thay đổi chưa commit.

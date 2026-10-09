@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, g, render_template
+from flask_login import AnonymousUserMixin
 from flask_wtf.csrf import CSRFError
 
 from app.extensions import db
@@ -9,14 +10,18 @@ def register_error_handlers(app: Flask) -> None:
         400: "Yêu cầu chưa hợp lệ. Vui lòng tải lại trang và thử lại.",
         403: "Bạn không có quyền truy cập trang này.",
         404: "Trang bạn tìm kiếm không tồn tại.",
+        405: "Thao tác này cần được thực hiện bằng phương thức phù hợp.",
         413: "Dữ liệu gửi lên vượt quá giới hạn cho phép.",
         500: "Hệ thống gặp sự cố. Vui lòng thử lại sau.",
+        429: "Bạn đã gửi quá nhiều yêu cầu. Vui lòng đợi một lát rồi thử lại.",
+        503: "Dịch vụ tạm thời chưa sẵn sàng. Vui lòng thử lại sau.",
     }
 
     def handle_error(error):
         code = getattr(error, "code", 500)
         if code == 500:
             db.session.rollback()
+            g._login_user = AnonymousUserMixin()
             # Avoid logging exception details which may contain a database URL.
             app.logger.error("Internal server error on request")
         return render_template("errors/error.html", code=code, message=messages[code]), code

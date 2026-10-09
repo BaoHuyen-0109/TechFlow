@@ -29,3 +29,19 @@
     giữ dữ liệu test có mã ngẫu nhiên trong volume test riêng.
 17. Set session MySQL UTC và ẩn SQL parameters trong exception/log. Giữ stack tách
     routes/services/models/templates như giai đoạn 1. Dừng chờ duyệt trước giai đoạn 3.
+
+## Giai đoạn 3 (đã được xác nhận)
+
+18. Flask-Login + Flask-WTF; giữ schema/migration giai đoạn 2. AuditLog lưu các
+    sự kiện auth và bộ đếm đăng nhập sai bằng HMAC, không lưu identity/password.
+19. Dùng MySQL GET_LOCK trên connection riêng để giới hạn sai 5 lần/15 phút có
+    hiệu lực giữa workers, kèm limiter POST theo IP ở Nginx. Không thêm Redis.
+20. Admin/Staff kiểm tra ở backend; quyền user được tải lại ở mỗi request.
+    `/admin` chỉ là trang thông tin phạm vi quyền, không triển khai quản lý user.
+21. Bootstrap 5.3.8 và Bootstrap Icons 1.13.1 lưu nội bộ kèm license; CSP không
+    unsafe-inline/unsafe-eval. Dashboard không có KPI khi chưa có truy vấn nghiệp vụ.
+22. Browser verification dùng Playwright tùy chọn trên host và UI profile riêng
+    nối DB test. Không tạo tài khoản hoặc mật khẩu demo mặc định.
+23. Tách commit nền tảng/database giai đoạn 1–2 và commit auth/layout giai đoạn 3
+    theo yêu cầu commit/push của người dùng. Push cần URL remote đích; không sửa
+    Git global. Dừng trước giai đoạn 4.

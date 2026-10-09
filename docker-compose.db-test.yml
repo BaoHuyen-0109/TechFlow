@@ -1,6 +1,33 @@
 # Standalone MySQL integration project; never attaches to techflow_mysql_data.
 name: techflow-db-tests
 services:
+  ui:
+    profiles: [ui]
+    image: techflow-db-tests-tests:latest
+    environment:
+      APP_ENV: testing
+      SECRET_KEY: ${SECRET_KEY:?Set local SECRET_KEY}
+      MYSQL_DATABASE: techflow_test
+      MYSQL_USER: techflow_test_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set local MYSQL_PASSWORD}
+      DB_HOST: db-test
+      SESSION_COOKIE_SECURE: "false"
+    depends_on:
+      db-test:
+        condition: service_healthy
+    networks:
+      test-backend:
+        aliases: [web]
+  ui-nginx:
+    profiles: [ui]
+    image: nginx:1.28.0-alpine
+    ports: ["127.0.0.1:8001:80"]
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      ui:
+        condition: service_healthy
+    networks: [test-backend, ui-frontend]
   db-test:
     image: mysql:8.0.44
     environment:
@@ -43,6 +70,7 @@ services:
       - ./pytest.ini:/app/pytest.ini:ro
     command: ["sh", "-c", "flask --app wsgi db upgrade && python -m pytest -o cache_dir=/tmp/techflow-pytest-cache"]
 networks:
+  ui-frontend:
   test-backend:
     internal: true
 volumes:

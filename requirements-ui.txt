@@ -1,0 +1,2 @@
+# Optional host-only browser verification, outside the application image.
+playwright==1.55.0

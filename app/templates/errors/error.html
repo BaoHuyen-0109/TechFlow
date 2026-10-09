@@ -1,5 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'layouts/admin.html' if current_user.is_authenticated else 'base.html' %}
 {% block title %}Lỗi {{ code }} · TechFlow{% endblock %}
-{% block content %}
-<section class="panel"><span class="eyebrow">LỖI {{ code }}</span><h1>Không thể xử lý yêu cầu.</h1><p>{{ message }}</p><a href="{{ url_for('main.index') }}">Về trang thông tin</a></section>
-{% endblock %}
+{% block breadcrumb %}Thông báo hệ thống{% endblock %}
+{% macro error_panel() %}
+<section class="error-panel"><div class="error-illustration"><span class="error-orbit"></span><i class="bi {{ 'bi-shield-lock' if code == 403 else 'bi-compass' if code == 404 else 'bi-exclamation-triangle' }}" aria-hidden="true"></i></div><span class="eyebrow">THÔNG BÁO HỆ THỐNG · {{ code }}</span><h1>{{ 'Bạn không có quyền truy cập' if code == 403 else 'Trang này không tồn tại' if code == 404 else 'Không thể xử lý yêu cầu' }}</h1><p>{{ message }}</p><a class="btn btn-primary" href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}"><i class="bi bi-arrow-left" aria-hidden="true"></i>{{ 'Về Tổng quan' if current_user.is_authenticated else 'Về trang đăng nhập' }}</a></section>
+{% endmacro %}
+{% block content %}{{ error_panel() }}{% endblock %}
+{% block workspace_content %}{{ error_panel() }}{% endblock %}

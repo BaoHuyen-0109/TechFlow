@@ -2,8 +2,8 @@
 
 Giai đoạn 1 cung cấp Flask app factory, cấu hình, extensions, health check,
 CLI kiểm tra database và Docker local. Giai đoạn 2 bổ sung 10 bảng nghiệp vụ,
-migrations, seed và CLI Admin; xem [database](DATABASE.md). Chưa triển khai
-đăng nhập, Dashboard hay CRUD.
+migrations, seed và CLI Admin; xem [database](DATABASE.md). Giai đoạn 3 bổ sung
+đăng nhập, phân quyền và layout Dashboard; chưa triển khai CRUD.
 
 ```mermaid
 flowchart LR
@@ -25,19 +25,22 @@ flowchart LR
 ## Ranh giới trách nhiệm
 
 `routes.py`: nhận request, kiểm tra quyền khi có auth, trả response.
-`forms.py`: validation backend bằng WTForms ở các giai đoạn sau.
+`forms.py`: validation backend bằng WTForms, hiện có LoginForm.
 `services/`: nghiệp vụ và transaction; không phụ thuộc vào template.
 `models/`: ORM và quan hệ, sẽ được import đầy đủ để Alembic phát hiện.
 `templates/`, `static/`: giao diện và assets.
 `extensions.py`: extensions chưa bind; bind trong `create_app()`.
 
-Các package auth/dashboard/categories/businesses/products/purchases/sales/users/audit
-đã dành sẵn chỗ nhưng chưa đăng ký route. Nhóm phát triển nhập kho và bán hàng
+Auth, dashboard và users đã đăng ký route. Categories/businesses/products/purchases/
+sales/audit dành cho giai đoạn sau. Nhóm phát triển nhập kho và bán hàng
 phải đặt transaction, khóa hàng và chống xử lý lặp trong services, không đặt trong route.
 
 ## Định hướng UI đã thống nhất
 
-Giai đoạn 3 dùng Bootstrap 5 và Jinja2, sidebar navy, content sáng, accent xanh dương,
+Giai đoạn 3 đã dùng Bootstrap 5 và Jinja2, sidebar navy, content sáng, accent xanh dương,
 CSS tùy chỉnh, icon thống nhất và offcanvas mobile. Assets Bootstrap lưu nội bộ.
-Trang `/` hiện tại là trang thông tin nền tảng với CSS riêng; không phải layout quản trị cuối cùng.
+Trang `/` là thông tin nền tảng; `/login` dùng layout thương hiệu và `/dashboard`
+dùng `templates/layouts/admin.html`. CSS chung ở `static/css/techflow.css`.
 Không tạo liên kết hoặc nút nghiệp vụ trước khi chức năng hoạt động.
+
+Luồng xác thực, decorator quyền và cấu trúc mở rộng: [AUTHENTICATION.md](AUTHENTICATION.md).

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block body_class %}admin-page{% endblock %}
+{% block body %}
+<aside class="sidebar offcanvas-lg offcanvas-start" tabindex="-1" id="admin-sidebar" aria-labelledby="sidebar-title">
+  <div class="sidebar-brand"><a class="tf-brand" href="{{ url_for('dashboard.index') }}"><span class="brand-icon"><i class="bi bi-stack" aria-hidden="true"></i></span><span id="sidebar-title">TechFlow<small>BUSINESS MANAGEMENT</small></span></a><button class="btn sidebar-close d-lg-none" type="button" data-bs-dismiss="offcanvas" data-bs-target="#admin-sidebar" aria-label="Đóng menu"><i class="bi bi-x-lg" aria-hidden="true"></i></button></div>
+  <div class="sidebar-section-label">KHÔNG GIAN LÀM VIỆC</div>
+  <nav class="sidebar-nav" aria-label="Điều hướng chính">
+    <a class="sidebar-link {{ 'active' if active_page == 'dashboard' }}" href="{{ url_for('dashboard.index') }}" {% if active_page == 'dashboard' %}aria-current="page"{% endif %}><i class="bi bi-grid-1x2" aria-hidden="true"></i><span>Tổng quan</span></a>
+    {% for icon, label in [('bi-box-seam', 'Sản phẩm'), ('bi-tags', 'Danh mục'), ('bi-buildings', 'Nhà cung cấp')] %}
+    <span class="sidebar-link unavailable" aria-disabled="true"><i class="bi {{ icon }}" aria-hidden="true"></i><span>{{ label }}</span><span class="nav-soon" title="Chưa triển khai">Sắp có</span></span>
+    {% endfor %}
+    <div class="sidebar-section-label">VẬN HÀNH</div>
+    {% for icon, label in [('bi-boxes', 'Quản lý kho'), ('bi-cart3', 'Đơn bán hàng'), ('bi-bar-chart', 'Báo cáo')] %}
+    <span class="sidebar-link unavailable" aria-disabled="true"><i class="bi {{ icon }}" aria-hidden="true"></i><span>{{ label }}</span><span class="nav-soon" title="Chưa triển khai">Sắp có</span></span>
+    {% endfor %}
+    {% if current_user.role == 'admin' %}
+    <div class="sidebar-section-label">QUẢN TRỊ</div>
+    <a class="sidebar-link {{ 'active' if active_page == 'admin' }}" href="{{ url_for('admin.index') }}" {% if active_page == 'admin' %}aria-current="page"{% endif %}><i class="bi bi-shield-check" aria-hidden="true"></i><span>Không gian quản trị</span></a>
+    {% endif %}
+  </nav>
+  <div class="sidebar-bottom"><div class="sidebar-note"><i class="bi bi-lightning-charge" aria-hidden="true"></i><span>Quản lý thông minh.<br>Vận hành hiệu quả.</span></div><div class="sidebar-user"><span class="avatar">{{ current_user.full_name[:1]|upper }}</span><div><strong>{{ current_user.full_name }}</strong><small>{{ 'Quản trị viên' if current_user.role == 'admin' else 'Nhân viên' }}</small></div><i class="bi bi-shield-lock" aria-hidden="true"></i></div></div>
+</aside>
+<div class="admin-shell">
+  <header class="topbar"><div class="topbar-leading"><button class="btn menu-toggle d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#admin-sidebar" aria-controls="admin-sidebar" aria-label="Mở menu điều hướng"><i class="bi bi-list" aria-hidden="true"></i></button><span class="topbar-workspace"><i class="bi bi-building" aria-hidden="true"></i> Không gian TechFlow <span class="workspace-badge">DEMO GIỮA KỲ</span></span></div><div class="topbar-actions"><div class="topbar-user"><strong>{{ current_user.full_name }}</strong><small>{{ 'Admin' if current_user.role == 'admin' else 'Staff' }}</small></div><span class="avatar avatar-light">{{ current_user.full_name[:1]|upper }}</span><form action="{{ url_for('auth.logout') }}" method="post" data-loading-form><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn logout-button" type="submit" aria-label="Đăng xuất"><i class="bi bi-box-arrow-right" aria-hidden="true"></i><span class="d-none d-md-inline">Đăng xuất</span></button></form></div></header>
+  <main id="main-content" class="admin-content">
+    <nav aria-label="Breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">TechFlow</a></li><li class="breadcrumb-item active" aria-current="page">{% block breadcrumb %}Tổng quan{% endblock %}</li></ol></nav>
+    {% include 'components/flash.html' %}
+    {% block workspace_content %}{% endblock %}
+    <footer class="workspace-footer"><span>TechFlow · Quản lý thông minh – Vận hành hiệu quả.</span><span>Phiên bản giữa kỳ</span></footer>
+  </main>
+</div>
+{% endblock %}

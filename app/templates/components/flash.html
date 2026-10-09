@@ -1,0 +1,8 @@
+<div class="flash-region" aria-live="polite" aria-atomic="false">
+{% for category, message in get_flashed_messages(with_categories=true) %}
+  <div class="alert alert-{{ category }} alert-dismissible fade show tf-alert" role="alert">
+    <i class="bi {{ 'bi-check-circle' if category == 'success' else 'bi-info-circle' }}" aria-hidden="true"></i>
+    <span>{{ message }}</span><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng thông báo"></button>
+  </div>
+{% endfor %}
+</div>

@@ -1,5 +1,6 @@
 """Environment configuration; values are read when the factory is called."""
 import os
+from datetime import timedelta
 
 from sqlalchemy.engine import URL, make_url
 
@@ -52,5 +53,8 @@ def load_config() -> dict:
         "SESSION_COOKIE_SAMESITE": "Lax",
         "SESSION_COOKIE_SECURE": secure,
         "MAX_CONTENT_LENGTH": 1024 * 1024,
+        "PERMANENT_SESSION_LIFETIME": timedelta(hours=8),
+        "LOGIN_MAX_FAILURES": 5,
+        "LOGIN_WINDOW_MINUTES": 15,
         "LOG_LEVEL": log_level,
     }

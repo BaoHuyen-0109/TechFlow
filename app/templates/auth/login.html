@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Đăng nhập · TechFlow{% endblock %}
+{% block body_class %}login-page{% endblock %}
+{% block body %}
+<main id="main-content" class="login-shell">
+  <section class="login-story" aria-label="Giới thiệu TechFlow">
+    <a class="tf-brand" href="{{ url_for('main.index') }}"><span class="brand-icon"><i class="bi bi-stack" aria-hidden="true"></i></span><span>TechFlow<small>BUSINESS MANAGEMENT</small></span></a>
+    <div class="story-content">
+      <span class="story-kicker"><span class="status-dot"></span> KHÔNG GIAN QUẢN TRỊ CỦA BẠN</span>
+      <h1>Một không gian.<br><span>Mọi vận hành.</span></h1>
+      <p>Nền tảng quản lý kinh doanh thiết bị công nghệ.<br>Kết nối công việc, tập trung vào điều quan trọng.</p>
+      <div class="workspace-art" aria-hidden="true">
+        <div class="art-toolbar"><span class="art-logo"><i class="bi bi-stack"></i> TechFlow</span><span class="art-dots">● ● ●</span></div>
+        <div class="art-body"><div class="art-nav"><span class="art-nav-active"><i class="bi bi-grid"></i></span><span><i class="bi bi-box-seam"></i></span><span><i class="bi bi-buildings"></i></span><span><i class="bi bi-shield-check"></i></span></div><div class="art-workspace"><div class="art-heading"></div><div class="art-subheading"></div><div class="art-tiles"><div><i class="bi bi-box-seam"></i><span></span></div><div><i class="bi bi-people"></i><span></span></div><div><i class="bi bi-layers"></i><span></span></div></div><div class="art-list"><span></span><span></span><span></span></div></div></div>
+        <div class="art-floating"><span><i class="bi bi-shield-check"></i></span><div>Quyền truy cập rõ ràng<small>Mỗi vai trò, một không gian phù hợp</small></div></div>
+      </div>
+    </div>
+    <div class="story-footer"><span>Quản lý thông minh – Vận hành hiệu quả.</span><span class="story-version">TECHFLOW / MIDTERM</span></div>
+  </section>
+  <section class="login-form-side" aria-labelledby="login-title">
+    <div class="login-form-wrap">
+      <span class="login-emblem"><i class="bi bi-arrow-right-square" aria-hidden="true"></i></span>
+      <div class="eyebrow">CHÀO MỪNG TRỞ LẠI</div>
+      <h2 id="login-title">Đăng nhập TechFlow</h2>
+      <p class="login-subtitle">Tiếp tục công việc trong không gian của bạn.</p>
+      {% include 'components/flash.html' %}
+      <form method="post" action="{{ url_for('auth.login') }}" data-loading-form novalidate>
+        {{ form.hidden_tag() }}
+        <div class="mb-4">
+          {{ form.identity.label(class='form-label') }}
+          <div class="input-icon"><i class="bi bi-person" aria-hidden="true"></i>{{ form.identity(class='form-control' + (' is-invalid' if form.identity.errors else ''), autocomplete='username', placeholder='Nhập username hoặc email', maxlength=190, required=true, aria_describedby='identity-errors') }}</div>
+          <div id="identity-errors" class="field-errors">{% for error in form.identity.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <div class="mb-3">
+          {{ form.password.label(class='form-label') }}
+          <div class="input-icon password-input"><i class="bi bi-lock" aria-hidden="true"></i>{{ form.password(class='form-control' + (' is-invalid' if form.password.errors else ''), autocomplete='current-password', placeholder='Nhập mật khẩu', maxlength=128, required=true, aria_describedby='password-errors') }}<button type="button" class="password-toggle" data-password-toggle aria-label="Hiện mật khẩu" aria-pressed="false"><i class="bi bi-eye" aria-hidden="true"></i></button></div>
+          <div id="password-errors" class="field-errors">{% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}</div>
+        </div>
+        <p class="secure-note"><i class="bi bi-shield-lock" aria-hidden="true"></i> Chỉ dành cho tài khoản được cấp quyền.</p>
+        <button class="btn btn-primary btn-login w-100" type="submit"><span data-submit-label>Đăng nhập <i class="bi bi-arrow-right" aria-hidden="true"></i></span><span class="d-none" data-submit-loading><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Đang đăng nhập…</span></button>
+        <div class="visually-hidden" data-loading-announcement role="status" aria-live="polite"></div>
+      </form>
+      <div class="login-help"><i class="bi bi-info-circle" aria-hidden="true"></i><p>Chưa có tài khoản hoặc cần hỗ trợ?<br><span>Vui lòng liên hệ quản trị viên hệ thống.</span></p></div>
+      <div class="login-footnote">TECHFLOW <span>Hệ thống quản lý kinh doanh thiết bị công nghệ</span></div>
+    </div>
+  </section>
+</main>
+{% endblock %}

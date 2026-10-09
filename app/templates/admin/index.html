@@ -1,0 +1,7 @@
+{% extends 'layouts/admin.html' %}
+{% block title %}Không gian quản trị · TechFlow{% endblock %}
+{% block breadcrumb %}Không gian quản trị{% endblock %}
+{% block workspace_content %}
+<div class="page-heading"><div><div class="eyebrow">ADMIN WORKSPACE</div><h1>Không gian quản trị</h1><p>Khu vực được bảo vệ bằng kiểm tra quyền Admin tại backend.</p></div><span class="role-pill"><i class="bi bi-shield-check" aria-hidden="true"></i>Chỉ Admin</span></div>
+<section class="surface-card"><div class="surface-heading"><span class="icon-tile"><i class="bi bi-shield-lock" aria-hidden="true"></i></span><div><h2>Quyền truy cập đã được xác minh</h2><p>Bạn đang đăng nhập bằng tài khoản quản trị viên.</p></div></div><div class="empty-state"><span class="empty-icon"><i class="bi bi-tools" aria-hidden="true"></i></span><h3>Các công cụ quản trị chưa triển khai</h3><p>Chưa có giao diện quản lý tài khoản, cấu hình hệ thống hoặc xem audit log.<br>Việc tạo Admin hiện được thực hiện qua CLI có kiểm soát.</p></div></section>
+{% endblock %}

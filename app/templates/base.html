@@ -3,12 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b34">
   <title>{% block title %}TechFlow{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/techflow.css') }}">
 </head>
-<body>
-  <header class="brand"><span class="brand-mark" aria-hidden="true">TF</span><div><strong>TechFlow</strong><small>Hệ thống quản lý kinh doanh thiết bị công nghệ</small></div></header>
-  <main>{% block content %}{% endblock %}</main>
-  <footer>Quản lý thông minh – Vận hành hiệu quả.</footer>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main-content">Đến nội dung chính</a>
+  {% block body %}
+  <header class="public-header"><a class="tf-brand" href="{{ url_for('main.index') }}"><span class="brand-icon"><i class="bi bi-stack" aria-hidden="true"></i></span><span>TechFlow<small>BUSINESS MANAGEMENT</small></span></a><a class="btn btn-primary" href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}">{{ 'Không gian làm việc' if current_user.is_authenticated else 'Đăng nhập' }} <i class="bi bi-arrow-right" aria-hidden="true"></i></a></header>
+  <main id="main-content" class="public-content">{% include 'components/flash.html' %}{% block content %}{% endblock %}</main>
+  <footer class="site-footer">TechFlow · Quản lý thông minh – Vận hành hiệu quả.</footer>
+  {% endblock %}
+  <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
 </body>
 </html>
