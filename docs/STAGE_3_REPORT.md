@@ -1,156 +1,113 @@
-# Báo cáo Giai đoạn 3 — Authentication, Authorization & Admin Layout
+# TechFlow — Báo cáo Giai đoạn 3: Authentication, Authorization và hai workspace
 
-Đây là báo cáo nghiệm thu ban đầu. Routing, layout và số bài test hiện tại được
-cập nhật trong [báo cáo refactor Admin/Staff](STAGE_3_REFACTOR_REPORT.md).
+Báo cáo tổng hợp các đợt đăng nhập/layout, refactor Admin–Business và điều chỉnh
+quyền ngày 09/10/2026. Các số kiểm thử dưới đây thuộc từng lần nghiệm thu đã
+thực hiện, không phải lượt chạy mới khi gộp tài liệu.
 
-Ngày kiểm tra: 09/10/2026. Phạm vi: chỉ giai đoạn 3 tại E:\AWS, tiếp tục Flask,
-Flask-Login, Jinja2, Bootstrap 5, MySQL, Docker và kiến trúc theo đặc tả.
+<a id="hai-workspace"></a>
+## Kết quả và phân quyền
 
-## Kết quả
+- Đăng nhập username hoặc email, kiểm tra password hash, chặn inactive và thu hồi
+  phiên khi tài khoản bị khóa/đổi role. Đăng xuất bằng POST có CSRF.
+- Flask-Login, session, cookie HttpOnly/SameSite/Secure theo environment, safe
+  redirect, rate limiting MySQL/Nginx và audit logging hoạt động.
+- Hai Dashboard có layout/sidebar riêng; dùng chung workspace shell, navigation
+  macro, topbar, breadcrumb, flash và design tokens.
+- Admin mặc định vào Admin Dashboard, chuyển sang Business rồi quay về quản trị
+  bằng GET, giữ nguyên user/role/CSRF/session và không tạo login audit mới.
+- Staff chỉ vào Business; quyền được kiểm tra ở backend, không chỉ ẩn menu.
 
-Đăng nhập username hoặc email, kiểm tra hash mật khẩu, chặn inactive, đăng xuất
-POST, CSRF, session và phân quyền backend đã hoạt động. Admin vào Dashboard và
-trang phạm vi quản trị; Staff chỉ vào Dashboard giới hạn, `/admin` trả 403.
-Dashboard hiển thị user/role thật, trạng thái module và empty state; không có KPI,
-biểu đồ hoặc doanh thu giả. Chưa triển khai CRUD hay nghiệp vụ nhập/bán hàng.
+<a id="phan-quyen"></a>
 
-Giao diện TechFlow tiếng Việt: Login riêng, sidebar navy với Bootstrap Icons,
-topbar user/role/Logout, breadcrumb, flash dismissible, offcanvas tablet/mobile,
-hover/focus, submit loading, toggle mật khẩu, reduced motion, trang lỗi chung
-400/403/404/405/413/429/500/503. Assets Bootstrap 5.3.8 và Icons 1.13.1 lưu nội bộ
-kèm license; không cần CDN khi mở website.
+| Đường dẫn/chức năng | Admin | Staff |
+| --- | --- | --- |
+| `/admin/dashboard`, alias `/admin` | Được truy cập | 403 |
+| `/staff/dashboard` | Được truy cập | Được truy cập |
+| `/dashboard` và mặc định sau login | Admin Dashboard | Business Dashboard |
+| Không gian kinh doanh trong sidebar Admin | Có | Không có sidebar Admin |
+| Quay về quản trị trong Business | Có | Không hiển thị |
+| `POST /logout` | Có CSRF | Có CSRF |
 
-## Kiểm tra nền tảng và dữ liệu
+`admin_required` dùng `role_required('admin')`; `business_required` dùng
+`role_required('admin', 'staff')`, cùng dựa trên Flask-Login. Quy tắc refactor
+ban đầu chặn Admin vào Business đã được thay thế hoàn toàn bằng bảng trên.
 
-Trước và sau cập nhật, db/web/nginx healthy; Docker Engine hoạt động. MySQL thật
-kết nối thành công bằng check-db. Migration vẫn db55d828848e (head), db check trả
-`No new upgrade operations detected`. Không có migration mới vì dùng bảng users
-và audit_logs đã tồn tại. Không downgrade, không xóa/reset DB hoặc Docker volume.
+## Giao diện và bảo mật
 
-| Dữ liệu demo | Trước cập nhật | Sau cập nhật |
-| --- | ---: | ---: |
-| users / Admin active | 0 / 0 | 0 / 0 |
-| categories | 6 | 6 |
-| businesses | 6 | 6 |
-| products | 36 | 36 |
-| purchase_receipts | 0 | 0 |
-| sales_orders | 0 | 0 |
-| stock_movements | 0 | 0 |
-| audit_logs | 0 | 0 |
+Login tiếng Việt, sidebar navy/xanh dương, Bootstrap Icons, vùng nội dung sáng;
+thu gọn desktop 244→80px, offcanvas tablet/mobile, active/hover/focus, bàn phím,
+reduced motion, password toggle và submit loading. Không lưu dữ liệu nhạy cảm
+hoặc tùy chọn collapse vào localStorage.
 
-Đã đối chiếu cả id và marker của dòng stage1_probe id=367209152, giữ nguyên.
-Không chạy lại seed trên demo trong giai đoạn này; kiểm thử seed lặp lại vẫn nằm
-trong suite MySQL riêng. Không tạo tài khoản test trong database demo.
+Assets Bootstrap 5.3.8 và Icons 1.13.1 lưu nội bộ kèm license. Trang lỗi đồng bộ
+400/403/404/405/413/429/500/503. Dashboard giai đoạn này hiển thị tài khoản/role
+thật, trạng thái MySQL qua SELECT 1 và nội dung chưa triển khai; không giả KPI,
+Docker/AWS monitoring hoặc dựng nút quản lý tài khoản chưa có backend.
 
-## Kết quả kiểm thử
+## Kiểm thử đã nghiệm thu
 
-```powershell
-docker compose -f docker-compose.db-test.yml run --build --rm tests
-```
+| Đợt | Backend MySQL 8.0.44 riêng | Browser |
+| --- | --- | --- |
+| Authentication/layout ban đầu | 70 passed / 14.55s: 45 bài nền tảng/database + 25 auth | Login, Dashboard, lỗi, logout và responsive đạt |
+| Refactor hai workspace | 76 passed / 13.63s: thêm 6 ca | 6 tổ hợp Admin/Staff × desktop/tablet/mobile đạt |
+| Admin truy cập cả hai workspace | 85 passed / 14.79s: thêm 8 unit + 1 integration | 6 tổ hợp, chuyển qua lại chỉ một POST login, Staff403 đạt |
 
-**70 passed in 14.55s**, không skip. Bao gồm 45 bài giai đoạn 1–2 và 25 trường
-hợp auth mới. Runner áp dụng db upgrade trước pytest trên techflow_test/MySQL
-8.0.44 trong Docker, project/network/volume tách khỏi demo.
+Phạm vi: đúng/sai/username/email/inactive, role thay đổi, anonymous, Logout
+GET405/POST, CSRF, next URL ngoài/path bất thường, session ID hỏng, cookie trước
+login, audit và không echo/log password. Sáu lần sai đồng thời qua connection
+độc lập cho 5 thất bại + 1 bị giới hạn. POST thiếu CSRF qua Nginx test nhận400,
+vượt limiter nhận429; giữ cấu hình production Secure và toàn bộ kiểm thử cũ.
 
-Phạm vi auth: username/email viết hoa, đúng/sai/không tồn tại, inactive, session
-inactive bị thu hồi quyền ở request sau, đổi role có hiệu lực, Staff bị 403 và ẩn
-menu, anonymous bị redirect, Logout GET bị 405/POST hoạt động, CSRF Login/Logout,
-safe next cho URL ngoài/path bất thường, cookie/session trước login bị xóa, audit,
-không echo/log password, form lỗi, session user id hỏng, giới hạn dùng chung
-username/email, 6 lần sai đồng thời qua connection độc lập cho kết quả 5 thất bại
-và 1 bị giới hạn. Các bài cấu hình production Secure, schema/constraints/quan hệ,
-migration, hash/CLI, seed lặp lại và nền tảng vẫn đạt.
+Browser Chromium: 1440×1000, 834×1112, 390×844; collapse/offcanvas, menu/anchor
+thật, bàn phím/hover, 404, loading, không tràn ngang/pageerror/asset error.
+Chưa kiểm thử thiết bị vật lý, Safari/Firefox hoặc screen reader.
 
-Kiểm tra bổ sung trên container chính: nginx -t thành công và reload cấu hình;
-check-db thành công; db current/head và db check đạt. HTTP `/`, `/login`, `/health`
-trả 200, `/dashboard` chưa login được chuyển tới Login. Kiểm tra POST không CSRF
-qua Nginx test nhận 400, gửi liên tiếp vượt giới hạn nhận 429 có giao diện TechFlow
-và thông báo tiếng Việt. Không dùng việc này để thử mật khẩu trên DB demo.
+## Bảo toàn dữ liệu
 
-## Kiểm tra trình duyệt thực tế
+Không migration mới; revision tại Giai đoạn 3 là `db55d828848e (head)`,
+db check không có upgrade operations. Không sửa models, seed, CLI Admin hoặc
+migration đã áp dụng; không reset database/xóa volume/đổi mật khẩu.
 
-Chạy scripts/verify_ui.py bằng Playwright Chromium 140 trên UI profile, cổng
-8001, DB test riêng. Đã kiểm tra và xem ảnh ở cả ba kích thước:
+Fingerprint/count 12 bảng khớp ở mỗi đợt. Baseline thay đổi giữa các lần do hoạt
+động hợp lệ có sẵn: ban đầu users/audit là0/0; refactor1/2; điều chỉnh quyền1/4.
+Categories6, businesses6, products36 và stage1_probe1 giữ nguyên; giao dịch/
+movement rỗng. Snapshot chỉ đọc nằm trong `.docker-local`, không đưa vào Git.
+Test account chỉ ở database test, không dùng tài khoản demo để thử brute force.
 
-| Viewport | Kết quả |
+## File triển khai
+
+| Nhóm | File tạo/chỉnh sửa chính |
 | --- | --- |
-| Desktop 1440 × 1000 | Login, Dashboard, Admin, 404, Logout, redirect, không tràn ngang đạt |
-| Tablet 834 × 1112 | Các luồng trên và mở/đóng sidebar offcanvas đạt |
-| Mobile 390 × 844 | Các luồng trên và mở/đóng sidebar offcanvas đạt |
-| Staff email login | Không thấy menu Admin; truy cập trực tiếp /admin trả 403 |
+| Auth/quyền/routes | app/auth/{forms,permissions,routes}.py; app/services/auth_service.py; app/dashboard/routes.py; app/users/routes.py |
+| Nền tảng | app/{__init__,config,errors}.py; app/services/workspace_service.py |
+| Layout và trang | app/templates/auth/login.html; layouts/{workspace,admin,staff}.html; components/{navigation,flash}.html; admin/dashboard.html; staff/dashboard.html; base.html; main/index.html; errors/error.html |
+| Assets | app/static/css/{techflow,workspace}.css; app/static/js/app.js; app/static/vendor/{bootstrap,bootstrap-icons}/ |
+| Kiểm thử | tests/{test_auth,test_permissions}.py; scripts/{verify_ui,verify_demo_integrity}.py; requirements-ui.txt |
+| Cấu hình/tài liệu | nginx/default.conf; docker-compose.db-test.yml; .gitattributes; .gitignore; .dockerignore; README; ARCHITECTURE, AUTHENTICATION, DECISIONS, GIT_WORKFLOW, SECURITY |
 
-Không có JavaScript pageerror.
+Hai template cũ `admin/index.html`, `dashboard/index.html` được thay thế; route
+cũ giữ alias có kiểm tra quyền. Không thêm dependency runtime trong đợt refactor.
 
-Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
+## Git, truy cập và giới hạn
 
-Đây là kiểm tra browser thật với viewport mô phỏng; chưa kiểm tra thiết bị cảm
-ứng vật lý, Safari hoặc Firefox. Người dùng cần xác minh các môi trường đó nếu
-buổi demo sử dụng. Công cụ browser tùy chọn, không thêm vào runtime image.
+Các checkpoint: nền tảng/database `abb05e5`, auth ban đầu `14f0a52`, bản hoàn
+thiện authentication/hai Dashboard `09e9c4ba4f9bdefa7fbd6516e0f2911da79bd8b7`
+(`feat: complete authentication and role-based dashboards`). Bản hoàn thiện
+được push main thông thường theo xác nhận; không force/reset lịch sử chung.
 
-## Truy cập và tạo Admin
-
-Services demo đang chạy tại **http://localhost:8000/login**. Hiện chưa có Admin;
-không tự đặt mật khẩu. Tạo tài khoản bằng terminal tương tác:
+Mở http://localhost:8000/login bằng tài khoản đã cấp. CLI tạo Admin khi chưa có
+tài khoản, yêu cầu nhập mật khẩu tại prompt ẩn, không đặt mặc định:
 
 ```powershell
-Set-Location E:\AWS
 docker compose exec web flask --app wsgi create-admin --username admin --full-name "Quản trị TechFlow"
 ```
 
-Nhập mật khẩu do bạn chọn hai lần tại prompt ẩn, 12–128 ký tự. Có thể thêm
-`--email` nếu muốn login bằng email. Sau đó mở Login, nhập username/email và mật
-khẩu vừa tạo; đăng nhập thành công chuyển về Dashboard. Không gửi mật khẩu vào
-chat, không thêm vào command hoặc README. Nếu username đã tồn tại, CLI không
-reset password; dùng tài khoản đã tạo hoặc chọn username khác.
+CLI không reset mật khẩu tài khoản trùng username. Không ghi mật khẩu vào chat,
+command hoặc tài liệu. Giới hạn quản lý tài khoản/reset mật khẩu/MFA/kho phiên
+và proxy xem [AUTHENTICATION.md](AUTHENTICATION.md), [SECURITY.md](SECURITY.md).
+Không ghi nhận lỗi còn tái hiện tại nghiệm thu Giai đoạn 3.
 
-## File mới
-
-- `app/auth/forms.py`, `permissions.py`, `routes.py`.
-- `app/services/auth_service.py`, `app/dashboard/routes.py`, `app/users/routes.py`.
-- `app/templates/auth/login.html`, `layouts/admin.html`, `components/flash.html`,
-  `dashboard/index.html`, `admin/index.html`.
-- `app/static/css/techflow.css`, `app/static/js/app.js`.
-- `app/static/vendor/bootstrap/` và `bootstrap-icons/`: CSS/JS/font/license.
-- `tests/test_auth.py`, `scripts/verify_ui.py`, `requirements-ui.txt`.
-- `.gitattributes`, `docs/AUTHENTICATION.md`, báo cáo này và 9 ảnh trong
-  `docs/screenshots/`.
-
-## File chỉnh sửa
-
-- `app/__init__.py`: LoginManager, user loader, blueprint và security headers.
-- `app/config.py`: session lifetime, ngưỡng đăng nhập sai.
-- `app/errors.py`: lỗi bổ sung, rollback và fallback user khi lỗi 500.
-- `app/templates/base.html`, `errors/error.html`, `main/index.html`: layout/assets
-  và trạng thái giai đoạn hiện tại; giữ trang nền tảng `/` tương thích.
-- `nginx/default.conf`: limiter POST /login và trang 429.
-- `docker-compose.db-test.yml`: UI profile riêng dùng DB test.
-- `.gitignore`, `.dockerignore`: bỏ qua browser cache.
-- `README.md`, `docs/ARCHITECTURE.md`, `DECISIONS.md`, `GIT_WORKFLOW.md`, `SECURITY.md`.
-
-Không sửa models, seed, CLI Admin hoặc migration đã áp dụng.
-
-## Git và bàn giao
-
-Khi bàn giao ban đầu, repository chưa có commit/remote. Trước thay đổi giai đoạn 3,
-đã stage có chọn lọc snapshot 72 file giai đoạn 1–2. Sau khi người dùng yêu cầu
-commit/push, đã tạo commit nền tảng `abb05e5` và tách thay đổi authentication/layout
-thành commit tiếp theo. Đã kiểm tra index/working files không chứa giá trị secrets
-trong .env; không sửa Git global. Chưa cấu hình remote, cần URL repository đích
-để push. Hướng dẫn: [GIT_WORKFLOW.md](GIT_WORKFLOW.md).
-
-`.env`, `.venv`, `.browser-cache` được git check-ignore xác nhận. Diff thay đổi
-giai đoạn 3 không có lỗi whitespace. Snapshot giai đoạn 1–2 còn cảnh báo whitespace
-vốn có ở đặc tả, header migration và dòng trống cuối DATABASE_SCHEMA.md; giữ nguyên
-nội dung lịch sử và đặc tả, không coi `diff --cached --check` là đã đạt tuyệt đối.
-Git có cảnh báo LF/CRLF trên một số file Windows, không phải lỗi chạy ứng dụng.
-
-## Giới hạn và bước tiếp theo
-
-Chưa có tài khoản Admin demo cho đến khi bạn tạo bằng CLI. Chưa có quản lý tài
-khoản, reset mật khẩu, MFA hoặc kho phiên server; xem giới hạn session/proxy và
-chống brute force trong [AUTHENTICATION.md](AUTHENTICATION.md), [SECURITY.md](SECURITY.md).
-Không có lỗi chức năng còn ghi nhận trong phạm vi các bài kiểm tra đã chạy.
-
-CRUD danh mục/nhà cung cấp/sản phẩm thuộc giai đoạn 4, KPI thuộc giai đoạn 6;
-nhập kho, bán hàng và AWS chưa triển khai. Không tạo tài nguyên AWS hoặc phát sinh
-chi phí dịch vụ cloud. Dừng ở giai đoạn 3 và chờ người dùng xác nhận tiếp theo.
+CRUD, giao dịch, khách hàng, bảo hành và KPI được phát triển ở các giai đoạn sau;
+xem [Giai đoạn 4](STAGE_4_REPORT.md), [Giai đoạn 5](STAGE_5_REPORT.md),
+[Giai đoạn 6](STAGE_6_REPORT.md). [Danh mục ảnh còn giữ](screenshots/README.md);
+ảnh lịch sử đã dọn vẫn có trong Git, không tạo thêm ảnh khi gộp tài liệu.

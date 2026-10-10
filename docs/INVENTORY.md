@@ -11,7 +11,7 @@ kinh doanh**. Các route:
 - Mỗi module giao dịch có `/new`, `/<id>`, POST `/<id>/complete`, POST `/<id>/cancel`.
 - GET `/business/{purchases|sales}/products?q=...`: tìm tối đa 50 sản phẩm active.
 
-Chi tiết ma trận quyền và state machine: [STAGE_5_PLAN.md](STAGE_5_PLAN.md).
+Chi tiết ma trận quyền và state machine: [Quy tắc Giai đoạn 5](STAGE_5_REPORT.md#quy-tac-va-phan-quyen).
 Không có quyền nhập kho riêng trong schema hiện tại: Staff chưa được cấp quyền
 đó. Chỉ Admin hủy giao dịch completed. Staff có thể hủy đơn draft do mình tạo.
 Thay role/account bị vô hiệu hóa có hiệu lực theo loader Flask-Login hiện có;

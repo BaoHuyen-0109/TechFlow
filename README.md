@@ -1,28 +1,31 @@
 # TechFlow
 
 Hệ thống quản lý kinh doanh thiết bị công nghệ — đồ án Flask, Docker và Amazon EC2.
-**Trạng thái: Giai đoạn 6 đã tích hợp vào main; Giai đoạn 5 được duyệt lưu trên branch feature/stage-5-inventory-sales, chưa merge main.**
-Có đăng nhập username/email, phân quyền Admin/Staff và Dashboard responsive.
-CRUD lưu trực tiếp vào MySQL; Dashboard có thống kê catalog và tồn kho từ database.
-Có phiếu nhập, đơn bán draft/confirm/cancel và lịch sử kho; giao dịch cập nhật
-tồn kho trong transaction. Báo cáo doanh thu nâng cao chưa triển khai.
-Dashboard đã được refactor thành hai không gian: Admin quản trị và Staff kinh doanh.
-Không triển khai AWS trong giai đoạn này.
+**Trạng thái: Giai đoạn 1–6, gồm khách hàng 5.1 và bảo hành 5.2, đã được tích hợp
+vào main tại baseline `ba70f97`. Đợt UI/UX trước Giai đoạn 7 đã được nghiệm thu
+trên branch `feature/ui-ux-before-stage-7`.**
+
+Có đăng nhập username/email, phân quyền Admin/Staff, hai workspace riêng và
+sidebar xổ xuống. Catalog lưu vào MySQL; nhập/bán cập nhật tồn bằng transaction,
+có hồ sơ khách/lịch sử mua, bảo hành và Dashboard thống kê dữ liệu thật.
+Báo cáo doanh thu nâng cao chưa triển khai; không triển khai AWS ở phạm vi hiện tại.
 
 Đặc tả chính thức: [tech_business_manager_aws_spec.md](tech_business_manager_aws_spec.md).
-Kết quả đã kiểm tra và giới hạn: [docs/STAGE_1_REPORT.md](docs/STAGE_1_REPORT.md).
-Kết quả database: [docs/STAGE_2_REPORT.md](docs/STAGE_2_REPORT.md).
-Kết quả đăng nhập và giao diện: [docs/STAGE_3_REPORT.md](docs/STAGE_3_REPORT.md).
-Refactor hai Dashboard: [docs/STAGE_3_REFACTOR_REPORT.md](docs/STAGE_3_REFACTOR_REPORT.md).
-CRUD và bàn giao: [docs/STAGE_4_REPORT.md](docs/STAGE_4_REPORT.md),
-[hướng dẫn module](docs/CATALOG.md).
-Hoàn thiện giao diện trước nghiệm thu: [docs/STAGE_4_UI_REPORT.md](docs/STAGE_4_UI_REPORT.md).
-Dashboard và công thức thống kê: [docs/DASHBOARD.md](docs/DASHBOARD.md).
-Kết quả kiểm thử/ảnh trước–sau: [docs/STAGE_6_REPORT.md](docs/STAGE_6_REPORT.md).
-Nghiệp vụ kho và quyền sử dụng: [docs/INVENTORY.md](docs/INVENTORY.md).
-Kết quả Giai đoạn 5: [docs/STAGE_5_REPORT.md](docs/STAGE_5_REPORT.md).
-Module khách hàng Giai đoạn 5.1 (đang nghiệm thu, chưa commit/push):
-[docs/CUSTOMERS.md](docs/CUSTOMERS.md).
+
+Mỗi giai đoạn dùng một báo cáo tổng hợp:
+
+| Giai đoạn | Báo cáo |
+| --- | --- |
+| 1 — Nền tảng Flask, Docker, MySQL | [Giai đoạn 1](docs/STAGE_1_REPORT.md) |
+| 2 — Database và seed | [Giai đoạn 2](docs/STAGE_2_REPORT.md) |
+| 3 — Authentication, phân quyền, hai workspace | [Giai đoạn 3](docs/STAGE_3_REPORT.md) |
+| 4 — Catalog CRUD và các đợt UI/UX | [Giai đoạn 4](docs/STAGE_4_REPORT.md) |
+| 5 — Nhập/bán, khách hàng 5.1, bảo hành 5.2 và UI chi tiết | [Giai đoạn 5](docs/STAGE_5_REPORT.md) |
+| 6 — Dashboard và thống kê | [Giai đoạn 6](docs/STAGE_6_REPORT.md) |
+
+Hướng dẫn nghiệp vụ: [Catalog](docs/CATALOG.md), [Kho/bán hàng](docs/INVENTORY.md),
+[Khách hàng](docs/CUSTOMERS.md), [Bảo hành](docs/WARRANTY.md),
+[Dashboard](docs/DASHBOARD.md).
 
 ## Yêu cầu
 
@@ -256,7 +259,6 @@ xóa thủ công sau khi kiểm tra; ứng dụng không tự tạo/xóa bảng 
 - [Bảo mật và vận hành local](docs/SECURITY.md)
 - [Authentication và quyền truy cập](docs/AUTHENTICATION.md)
 - [Catalog CRUD và quy ước nhập giá VND](docs/CATALOG.md)
-- [Nghiệm thu tinh chỉnh UI cuối Giai đoạn 4](docs/STAGE_4_FINAL_UI_REPORT.md)
 
 Giai đoạn tiếp theo chỉ bắt đầu sau khi người dùng xác nhận. AWS deployment,
 HTTPS public, backup/restore nghiệp vụ và kiểm thử tải nằm ở giai đoạn sau;
@@ -272,6 +274,8 @@ thiết bị để tiếp nhận. Admin cấu hình chính sách trong form sả
 
 - [Hướng dẫn, schema, ERD, quyền và transaction bảo hành](docs/WARRANTY.md)
 - [Khách hàng và lịch sử mua](docs/CUSTOMERS.md)
+- [Đề xuất Cài đặt hệ thống cho giai đoạn sau](docs/SYSTEM_SETTINGS_PROPOSAL.md)
+- [Tinh chỉnh chi tiết giao dịch và bảo hành trước Giai đoạn 7](docs/STAGE_5_REPORT.md#ui-ux-truoc-giai-doan-7)
 
 Kiểm tra liên kết tài liệu bằng `python scripts/verify_document_links.py`.
 Backup/restore kiểm chứng trước migration demo được mô tả trong hướng dẫn bảo hành.

@@ -143,4 +143,4 @@ nên dùng HTTPS cho ảnh. Upload và proxy tải ảnh chưa triển khai.
 
 Giao diện không còn nhãn đồ án/giai đoạn/giữa kỳ; footer © 2026 TechFlow.
 Mã/tên/email seed trong DB giữ nguyên. Chi tiết nghiệm thu và ảnh trước/sau:
-[STAGE_4_UI_REPORT.md](STAGE_4_UI_REPORT.md).
+[Giai đoạn 4 — Hoàn thiện UI/UX](STAGE_4_REPORT.md#hoan-thien-ui).

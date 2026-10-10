@@ -1,0 +1,13 @@
+{% macro progress(steps, label, status) %}
+<section class="catalog-panel detail-progress" aria-label="{{ label }}" data-progress-status="{{ status }}">
+  <h2>{{ label }}</h2>
+  <ol class="detail-steps">
+    {% for step in steps %}
+    <li class="detail-step detail-step--{{ step.state }}" data-stage="{{ step.key }}"{% if step.state == 'current' %} aria-current="step"{% endif %}>
+      <span class="detail-step-icon" aria-hidden="true"><i class="bi {{ step.icon }}"></i></span>
+      <div><strong>{{ step.label }}</strong>{% if step.time %}<small>{{ step.time }}</small>{% endif %}{% if step.note %}<small>{{ step.note }}</small>{% endif %}</div>
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+{% endmacro %}

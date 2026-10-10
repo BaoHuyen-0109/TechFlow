@@ -1,4 +1,7 @@
 {% macro state(value,states) %}<span class="wr-state wr-state-{{ value }}">{{ states[value] }}</span>{% endmacro %}
 {% macro policy(coverage,coverage_state) %}
-<div class="wr-policy"><i class="bi bi-shield-check" aria-hidden="true"></i><div><strong>{{ coverage_state(coverage) }}</strong>{% if coverage and coverage.enabled %}<span>{{ coverage.months }} tháng · {{ coverage.starts_on.strftime('%d/%m/%Y') if coverage.starts_on else 'Chưa kích hoạt' }} → {{ coverage.expires_on.strftime('%d/%m/%Y') if coverage.expires_on else '—' }}</span>{% endif %}<p>{{ coverage.notes if coverage and coverage.notes else 'Kiểm tra điều kiện thực tế trước khi quyết định bảo hành.' }}</p></div></div>
+{% set label = coverage_state(coverage) %}
+{% set appearance = {'Còn hạn':('valid','bi-shield-check'),'Hết hạn':('expired','bi-clock-history'),'Không bảo hành':('off','bi-shield-slash'),'Chưa xác định chính sách':('unknown','bi-question-circle')} %}
+{% set style,icon = appearance.get(label,('unknown','bi-hourglass-split')) %}
+<div class="wr-policy"><div><strong class="detail-policy-status detail-policy-{{ style }}" data-policy-state="{{ style }}"><i class="bi {{ icon }}" aria-hidden="true"></i>{{ label }}</strong>{% if coverage and coverage.enabled %}<span>{{ coverage.months }} tháng · {{ coverage.starts_on.strftime('%d/%m/%Y') if coverage.starts_on else 'Chưa kích hoạt' }} → {{ coverage.expires_on.strftime('%d/%m/%Y') if coverage.expires_on else '—' }}</span>{% endif %}<p>{{ coverage.notes if coverage and coverage.notes else 'Kiểm tra điều kiện thực tế trước khi quyết định bảo hành.' }}</p></div></div>
 {% endmacro %}

@@ -114,4 +114,4 @@ Chạy các suite tuần tự; giãn thời gian để tôn trọng limiter đă
 
 Chưa có merge hồ sơ, bulk import/export, gán lại đơn cũ, xác minh OTP, giảm giá,
 điểm/thành viên, xếp hạng hoặc AWS. Kết quả nghiệm thu:
-[STAGE_5_1_REPORT.md](STAGE_5_1_REPORT.md).
+[Giai đoạn 5 — Khách hàng và lịch sử mua](STAGE_5_REPORT.md#khach-hang).

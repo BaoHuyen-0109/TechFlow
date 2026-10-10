@@ -1,7 +1,8 @@
 {% extends 'layouts/staff.html' %}
-{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static',filename='css/catalog.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/catalog-polish.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/transactions.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/warranties.css') }}">{% endblock %}
+{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static',filename='css/catalog.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/catalog-polish.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/transactions.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/warranties.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/detail-polish.css') }}">{% endblock %}
 {% block breadcrumb %}<a href="{{ url_for('warranties.index') }}">Hậu mãi / Bảo hành</a>{% endblock %}
 {% block workspace_content %}
+
 {% if message %}<div class="alert alert-danger" role="alert">{{ message }}</div>{% endif %}
 {% block warranty_content %}{% endblock %}
 {% endblock %}

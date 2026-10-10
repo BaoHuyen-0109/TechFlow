@@ -1,5 +1,30 @@
 "use strict";
 document.documentElement.classList.add('tx-enhanced');
+document.querySelectorAll('[data-copy-code]').forEach(button => {
+  button.classList.remove('d-none');
+  button.addEventListener('click', async () => {
+    const feedback = document.querySelector('[data-copy-feedback]');
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+      await navigator.clipboard.writeText(button.dataset.copyCode);
+      feedback.textContent = 'Đã sao chép mã giao dịch.';
+    } catch {
+      const code = document.querySelector('#document-code');
+      const range = document.createRange();
+      range.selectNodeContents(code);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+      feedback.textContent = 'Không thể sao chép tự động. Mã đã được chọn; nhấn Ctrl+C hoặc dùng Sao chép trên thiết bị.';
+    } finally {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+      button.focus({preventScroll: true});
+    }
+  });
+});
 // Integer cents with BigInt: preview never changes the authoritative backend total.
 const txForm = document.querySelector('[data-transaction-form]');
 if (txForm) {

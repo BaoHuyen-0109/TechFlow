@@ -114,17 +114,17 @@ build, Nginx 127.0.0.1:8001 và cùng DB test. Playwright là công cụ host t�
 không cài vào image runtime. `scripts/verify_ui.py` có guard DB test trước khi
 tạo account, không in credentials; chụp Login/Dashboard/Menu/Staff403.
 
-Kết quả ban đầu: [STAGE_3_REPORT.md](STAGE_3_REPORT.md). Refactor và ảnh mới:
-[STAGE_3_REFACTOR_REPORT.md](STAGE_3_REFACTOR_REPORT.md). Không có migration
+Báo cáo tổng hợp authentication và refactor:
+[Giai đoạn 3 — hai workspace](STAGE_3_REPORT.md#hai-workspace). Không có migration
 mới ở giai đoạn 3; tiếp tục revision db55d828848e và filter bảo vệ stage1_probe.
 
 Chính sách quyền hiện tại và minh chứng Admin chuyển qua lại:
-[STAGE_3_ACCESS_REPORT.md](STAGE_3_ACCESS_REPORT.md).
+[Ma trận quyền Giai đoạn 3](STAGE_3_REPORT.md#phan-quyen).
 
 Thay đổi quyền và CRUD mới nhất: [CATALOG.md](CATALOG.md),
 [STAGE_4_REPORT.md](STAGE_4_REPORT.md). Báo cáo Giai đoạn 3 giữ lại làm lịch sử.
 
-Giai đoạn 5 bổ sung quyền giao dịch: [STAGE_5_PLAN.md](STAGE_5_PLAN.md),
+Giai đoạn 5 bổ sung quyền giao dịch: [Ma trận quyền nhập/bán](STAGE_5_REPORT.md#quy-tac-va-phan-quyen),
 [INVENTORY.md](INVENTORY.md). Admin nhập kho/quản lý mọi đơn; Staff chỉ tạo/xem/
 xác nhận/hủy draft đơn của mình và đọc movement thuộc đơn đó. Hủy completed chỉ
 Admin. Quyền được kiểm tra cả service; query danh sách/detail/history scope theo

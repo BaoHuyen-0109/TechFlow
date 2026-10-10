@@ -14,6 +14,8 @@ BASE = "http://localhost:8001"
 
 
 def capture(page, *, path, full_page=False):
+    if os.environ.get('TECHFLOW_CAPTURE_SCREENSHOTS') == '0':
+        return
     if os.environ.get('TECHFLOW_SCREENSHOT_DIR'):
         directory=Path(os.environ['TECHFLOW_SCREENSHOT_DIR'])
         directory.mkdir(parents=True,exist_ok=True)

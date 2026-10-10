@@ -5,12 +5,12 @@ from zoneinfo import ZoneInfo
 from flask import Blueprint, abort, current_app, flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user
 from itsdangerous import URLSafeTimedSerializer, BadSignature, SignatureExpired
-from sqlalchemy import or_, select
+from sqlalchemy import or_, select, func, case
 from sqlalchemy.orm import selectinload
 
 from app.auth.permissions import business_required
 from app.extensions import db
-from app.models import Business, Product, Customer
+from app.models import Business, Product, Customer, AuditLog
 from app.purchases.forms import TransactionForm, ActionForm
 from app.services.inventory_service import InventoryError
 from app.services.customer_service import DuplicateCustomer
@@ -39,6 +39,16 @@ def build_transaction_blueprint(kind):
         if not record:
             abort(404)
         return record
+
+    def progress_dates(record):
+        # Called only after document_or_404 has enforced the existing scope.
+        # Return operation timestamps, never audit descriptions or actor details.
+        completed, cancelled = db.session.execute(select(
+            func.min(case((AuditLog.action == 'complete', AuditLog.created_at))),
+            func.min(case((AuditLog.action == 'cancel', AuditLog.created_at))),
+        ).where(AuditLog.entity_type == model.__tablename__, AuditLog.entity_id == record.id)).one()
+        return dict(completed_at=record.completed_at if kind == 'sales' and record.completed_at else completed,
+                    cancelled_at=cancelled)
 
     @blueprint.get('')
     @business_required
@@ -173,6 +183,7 @@ def build_transaction_blueprint(kind):
     def detail(record_id):
         record = document_or_404(record_id)
         return render_template('transactions/detail.html', **context(record=record, form=ActionForm(),
+            progress_dates=progress_dates(record),
             can_cancel=record.status in {'draft','completed'} and permitted(current_user,kind,record,'cancel')))
 
     @blueprint.post('/<int:record_id>/<action>')
@@ -194,6 +205,7 @@ def build_transaction_blueprint(kind):
             db.session.rollback()
             record = document_or_404(record_id)
             return render_template('transactions/detail.html', **context(record=record,form=form,
+                progress_dates=progress_dates(record),
                 can_cancel=record.status in {'draft','completed'} and permitted(current_user,kind,record,'cancel'), message=error.message)), error.status
         return redirect(url_for(kind+'.detail',record_id=record_id),code=303)
 
