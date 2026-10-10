@@ -1,5 +1,16 @@
 # Bảo mật nền tảng và vận hành local
 
+Giai đoạn 4: các route catalog dùng business_required (Admin và Staff), CSRF
+toàn cục và whitelist trường ghi, không nhận tồn kho/ID/timestamp từ client.
+ORM bind tham số, search escape wildcard, sort allowlist. Giá Decimal hữu hạn;
+kiểm tra FK ở form và DB. Template autoescape; tên trong modal gán textContent.
+URL ảnh chỉ HTTP/HTTPS không credentials, không server fetch. Theo xác nhận
+riêng của người dùng trong đợt UI/UX, img-src mở HTTP/HTTPS ngoài chỉ trên
+Blueprint products để preview; các trang khác giữ CSP cũ, script/style/font vẫn self.
+Audit và bản ghi commit cùng transaction; lỗi rollback cả hai, không log chi
+tiết exception chứa input/credentials. FK RESTRICT và khóa sản phẩm khi xóa
+bảo vệ liên kết/tồn kho. Xem chính sách và giới hạn tại [CATALOG.md](CATALOG.md).
+
 - SECRET_KEY bắt buộc và không có fallback. Secrets được cấp qua môi trường.
 - `.env`, keys, dumps, instance và virtualenv bị ignore trong Git/Docker context.
 - Ứng dụng chạy non-root trong image. Debug tắt; Gunicorn xử lý HTTP nội bộ.
@@ -20,8 +31,8 @@ Admin được cả hai Dashboard; Staff bị chặn ở route Admin. Chuyển w
 đã xác thực, không tạo phiên mới hoặc đổi role.
 Allowlist redirect gồm `/dashboard`, `/admin`, `/admin/dashboard`, `/staff/dashboard`;
 sau login luôn chọn Dashboard chính xác theo role, kể cả next trỏ role khác.
-HTML trả Cache-Control=no-store. CSP chỉ dùng
-assets nội bộ, không cho inline script/eval. Password không xuất hiện trong form
+HTML trả Cache-Control=no-store. CSP dùng script/style/font
+nội bộ, không cho inline script/eval; ngoại lệ ảnh preview như mô tả ở trên. Password không xuất hiện trong form
 render lại hoặc log; lỗi tài khoản không tồn tại/sai mật khẩu/inactive dùng chung
 thông báo. Không có tài khoản mặc định.
 

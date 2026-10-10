@@ -12,6 +12,10 @@
 | GET /staff/dashboard | Admin, Staff active | Không gian kinh doanh riêng, empty state |
 | POST /logout | Đã đăng nhập + CSRF | Audit, xóa phiên, về Login |
 | GET /auth/rate-limit | Công khai | Trang 429 dùng cho Nginx limiter |
+| GET /business/categories, /business/suppliers, /business/products | Admin, Staff active | Danh sách, tìm kiếm/lọc/phân trang |
+| GET /business/{module}/{id} | Admin, Staff active | Chi tiết |
+| GET, POST /business/{module}/new, /{id}/edit | Admin, Staff active | Form CRUD, POST có CSRF |
+| POST /business/{module}/{id}/delete | Admin, Staff active | Xóa có kiểm tra liên kết/tồn kho + CSRF |
 
 Không có user mặc định. Tạo Admin bằng CLI trong README, prompt mật khẩu ẩn hai
 lần. User.set_password dùng scrypt; authenticate dùng check_password_hash. Email
@@ -77,8 +81,10 @@ hay kiểm thử tải diện rộng.
   submit loading và khôi phục trạng thái khi quay lại trang.
 
 Module Admin ở giai đoạn sau phải dùng decorator backend, mọi form ghi dữ liệu
-phải có CSRF token. Staff được cấp quyền theo ma trận đặc tả khi triển khai từng
-module, không dùng việc ẩn menu làm kiểm tra quyền. Không thêm route CRUD giả.
+phải có CSRF token. Theo yêu cầu Giai đoạn 4 mới, cả Admin và Staff được CRUD
+danh mục/nhà cung cấp/sản phẩm; chính sách này thay quyền Staff chỉ xem của đặc tả
+ban đầu trong phạm vi ba module. Các route đều dùng business_required ở backend.
+Staff vẫn không được quản trị user/role/cấu hình. Không dùng việc ẩn menu để kiểm tra quyền.
 Hiện Dashboard lấy thông tin current_user thật; Admin thêm SELECT 1 kiểm tra kết
 nối, Business thêm ngày Việt Nam từ hệ thống; chưa có số liệu kinh doanh. Admin
 được quyền cả hai không gian, Staff chỉ Business. Business giữ layout Staff ngay
@@ -103,3 +109,6 @@ mới ở giai đoạn 3; tiếp tục revision db55d828848e và filter bảo v�
 
 Chính sách quyền hiện tại và minh chứng Admin chuyển qua lại:
 [STAGE_3_ACCESS_REPORT.md](STAGE_3_ACCESS_REPORT.md).
+
+Thay đổi quyền và CRUD mới nhất: [CATALOG.md](CATALOG.md),
+[STAGE_4_REPORT.md](STAGE_4_REPORT.md). Báo cáo Giai đoạn 3 giữ lại làm lịch sử.

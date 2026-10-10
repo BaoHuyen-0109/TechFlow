@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Nền tảng dự án · TechFlow{% endblock %}
+{% block title %}TechFlow · Quản lý kinh doanh{% endblock %}
 {% block content %}
 <section class="panel">
-  <span class="eyebrow">PHIÊN BẢN GIỮA KỲ · GIAI ĐOẠN 3</span>
-  <h1>Nền tảng cho vận hành<br>thông minh.</h1>
-  <p>Ứng dụng Flask đã tiếp nhận và xử lý yêu cầu này. Đây là trang thông tin nền tảng, chưa phải Dashboard quản trị.</p>
-  <div class="status"><span class="dot" aria-hidden="true"></span>Ứng dụng đang phản hồi</div>
-  <div class="next"><h2>Không gian làm việc TechFlow</h2><p>Đăng nhập, phân quyền Admin/Staff và giao diện Dashboard đã sẵn sàng. Chọn Đăng nhập ở đầu trang để truy cập bằng tài khoản đã tạo.</p><p>CRUD sản phẩm, nhập kho, bán hàng và báo cáo doanh thu chưa triển khai. Kết nối MySQL được kiểm tra riêng bằng lệnh <code>flask --app wsgi check-db</code>.</p></div>
-  <a href="{{ url_for('main.health') }}">Xem trạng thái ứng dụng <span aria-hidden="true">↗</span></a>
+  <span class="eyebrow">TECHFLOW · QUẢN LÝ KINH DOANH</span>
+  <h1>Quản lý thông minh.<br>Vận hành hiệu quả.</h1>
+  <p>Quản lý sản phẩm, danh mục thiết bị và đối tác cung cấp trong không gian làm việc của bạn.</p>
+  <div class="next"><h2>Không gian làm việc TechFlow</h2><p>Đăng nhập bằng tài khoản được cấp để bắt đầu công việc.</p><p>Các chức năng nhập kho, bán hàng và báo cáo doanh thu hiện chưa khả dụng.</p></div>
+  <a class="btn btn-primary" href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}">{{ 'Vào không gian làm việc' if current_user.is_authenticated else 'Đăng nhập TechFlow' }}</a>
 </section>
+<footer class="text-center text-muted mt-4 small">© 2026 TechFlow</footer>
 {% endblock %}

@@ -1,0 +1,21 @@
+{% macro input(field) -%}
+<div class="catalog-field {{ 'catalog-wide' if field.type in ['TextAreaField', 'BooleanField'] or field.name in ['address', 'image_url'] else '' }}">
+  {% if field.type == 'BooleanField' %}
+    <div class="form-check form-switch">{{ field(class='form-check-input') }}{{ field.label(class='form-check-label') }}</div>
+    <small class="catalog-help">Ngừng hoạt động để giữ thông tin và các dữ liệu liên kết.</small>
+  {% else %}
+    {{ field.label(class='form-label') }}{% if field.flags.required %}<span class="catalog-required" aria-label="Bắt buộc"> *</span>{% endif %}
+    {% set classes = ('form-select' if field.type in ['SelectField', 'ChoiceField'] else 'form-control') ~ (' is-invalid' if field.errors else '') %}
+    {{ field(class=classes, aria_describedby=field.id ~ '-help ' ~ field.id ~ '-errors', aria_invalid='true' if field.errors else 'false', rows=4) if field.type == 'TextAreaField' else field(class=classes, aria_describedby=field.id ~ '-help ' ~ field.id ~ '-errors', aria_invalid='true' if field.errors else 'false', step='any', data_vnd_input='') if field.name in ['purchase_price','selling_price'] else field(class=classes, aria_describedby=field.id ~ '-help ' ~ field.id ~ '-errors', aria_invalid='true' if field.errors else 'false') }}
+    <small class="catalog-help" id="{{ field.id }}-help">{% if field.name in ['purchase_price','selling_price'] %}Nhập số không có dấu phân cách hàng nghìn; ví dụ 15000000.50. Tối đa 2 chữ số thập phân.{% elif field.name == 'image_url' %}URL HTTP/HTTPS. Không chứa thông tin đăng nhập.{% elif field.name == 'reorder_level' %}Cảnh báo khi số lượng tồn kho bằng hoặc thấp hơn ngưỡng này.{% endif %}</small>
+  {% endif %}
+  <div id="{{ field.id }}-errors">{% for error in field.errors %}<div class="catalog-field-error">{{ error }}</div>{% endfor %}</div>
+</div>
+{%- endmacro %}
+
+{% macro image_preview(source='', editable=false) -%}
+<figure class="catalog-image-preview" data-image-preview data-image-source="{{ source or '' }}" data-image-placeholder="{{ url_for('static', filename='images/product-placeholder.svg') }}" {% if editable %}data-image-input="image_url"{% endif %}>
+  <img data-preview-image src="{{ url_for('static', filename='images/product-placeholder.svg') }}" width="120" height="100" alt="Ảnh mặc định" referrerpolicy="no-referrer">
+  <figcaption><strong>Ảnh sản phẩm</strong><span data-preview-status aria-live="polite">Chưa có ảnh. Đang dùng ảnh mặc định.</span></figcaption>
+</figure>
+{%- endmacro %}

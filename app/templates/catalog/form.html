@@ -1,0 +1,22 @@
+{% extends 'catalog/base.html' %}
+{% from 'catalog/fields.html' import input, image_preview %}
+{% block title %}{{ 'Sửa' if record else 'Thêm' }} {{ resource.singular }} · TechFlow{% endblock %}
+{% block catalog_content %}
+<header class="catalog-heading">
+  <div><span class="catalog-eyebrow">{{ resource.label }}</span><h1>{{ 'Sửa' if record else 'Thêm' }} {{ resource.singular }}</h1><p>{{ 'Cập nhật thông tin ' ~ resource.singular ~ ' trong hệ thống.' if record else resource.create_description }}</p></div>
+  <a class="btn btn-light" href="{{ url_for(resource.key ~ '.index') }}"><i aria-hidden="true" class="bi bi-arrow-left me-2"></i>Danh sách</a>
+</header>
+<form method="post" class="catalog-panel catalog-edit catalog-edit-{{ resource.key }}" data-loading-form data-loading-message="Đang lưu thông tin." novalidate>
+  {{ form.hidden_tag() }}
+  <span class="visually-hidden" role="status" data-loading-announcement></span>
+  {% if form.errors %}<div class="alert alert-danger" role="alert">Thông tin chưa hợp lệ. Vui lòng kiểm tra các trường bên dưới.</div>{% endif %}
+  {% for title, icon, fields in resource.groups %}
+  <section class="catalog-form-section" aria-labelledby="section-{{ loop.index }}">
+    <h2 id="section-{{ loop.index }}"><i aria-hidden="true" class="bi bi-{{ icon }}"></i>{{ title }}</h2>
+    <div class="catalog-form-grid">{% for name in fields %}{{ input(form[name]) }}{% if name == 'image_url' %}<div class="catalog-wide">{{ image_preview(form.image_url.data, true) }}</div>{% endif %}{% endfor %}</div>
+    {% if resource.key == 'products' and 'reorder_level' in fields %}<div class="catalog-note"><i aria-hidden="true" class="bi bi-lock"></i><div>Tồn kho hiện tại: <strong>{{ record.stock_quantity if record else 0 }}</strong> · Chỉ xem.<br>Số lượng tồn kho được cập nhật qua nghiệp vụ kho.</div></div>{% endif %}
+  </section>
+  {% endfor %}
+  <div class="catalog-form-footer"><span><span class="catalog-required">*</span> Thông tin bắt buộc</span><div><a class="btn btn-light" href="{{ url_for(resource.key ~ '.detail', record_id=record.id) if record else url_for(resource.key ~ '.index') }}">Hủy</a><button class="btn btn-primary" type="submit"><i aria-hidden="true" class="bi bi-check2 me-2"></i>Lưu {{ resource.singular }}</button></div></div>
+</form>
+{% endblock %}

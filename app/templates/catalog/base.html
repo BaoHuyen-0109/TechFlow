@@ -1,0 +1,7 @@
+{% extends 'layouts/staff.html' %}
+{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static', filename='css/catalog.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/catalog-polish.css') }}">{% endblock %}
+{% block breadcrumb %}<a href="{{ url_for(resource.key ~ '.index') }}">{{ resource.label }}</a>{% endblock %}
+{% block workspace_content %}
+{% if message %}<div class="alert alert-danger" role="alert"><i aria-hidden="true" class="bi bi-exclamation-circle me-2"></i>{{ message }}</div>{% endif %}
+{% block catalog_content %}{% endblock %}
+{% endblock %}

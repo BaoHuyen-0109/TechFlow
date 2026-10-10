@@ -231,7 +231,8 @@ def test_separate_workspaces_and_legacy_redirects(auth_client, account, role, ho
     assert missing.status_code == 404 and f'{role}-workspace' in missing.text
     if role == "staff":
         assert "/admin/dashboard" not in page.text
-        assert "Không có số liệu giả lập" in page.text
+        assert "Chỉ số kinh doanh hiện chưa khả dụng" in page.text
+        assert "Phiên bản giữa kỳ" not in page.text
         assert 'aria-disabled="true"' in page.text
     else:
         assert "business-shortcuts" not in page.text

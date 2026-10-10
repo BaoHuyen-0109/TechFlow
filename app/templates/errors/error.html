@@ -1,5 +1,5 @@
-{% extends ('layouts/staff.html' if current_user.role == 'staff' or request.path.startswith('/staff/') else 'layouts/admin.html') if current_user.is_authenticated else 'base.html' %}
-{% set workspace_home = url_for('dashboard.staff') if request.path.startswith('/staff/') or (current_user.is_authenticated and current_user.role == 'staff') else url_for('admin.dashboard') %}
+{% extends ('layouts/staff.html' if current_user.role == 'staff' or request.path.startswith(('/staff/', '/business/')) else 'layouts/admin.html') if current_user.is_authenticated else 'base.html' %}
+{% set workspace_home = url_for('dashboard.staff') if request.path.startswith(('/staff/', '/business/')) or (current_user.is_authenticated and current_user.role == 'staff') else url_for('admin.dashboard') %}
 {% block title %}Lỗi {{ code }} · TechFlow{% endblock %}
 {% block breadcrumb %}Thông báo hệ thống{% endblock %}
 {% macro error_panel() %}

@@ -16,3 +16,5 @@ instance/
 .vscode/
 .docker-local/
 .browser-cache/
+# Generated browser evidence stays local; referenced screenshots are tracked explicitly.
+/docs/screenshots/stage4-*.png

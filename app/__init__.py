@@ -1,6 +1,6 @@
 import logging
 
-from flask import Flask
+from flask import Flask, request
 
 from app.config import load_config
 from app.extensions import csrf, db, login_manager, migrate
@@ -42,6 +42,16 @@ def create_app() -> Flask:
     app.register_blueprint(auth_blueprint)
     app.register_blueprint(dashboard_blueprint)
     app.register_blueprint(admin_blueprint)
+    from app.categories.routes import blueprint as categories_blueprint
+    from app.businesses.routes import blueprint as businesses_blueprint
+    from app.products.routes import blueprint as products_blueprint
+    for catalog_blueprint in (categories_blueprint, businesses_blueprint, products_blueprint):
+        app.register_blueprint(catalog_blueprint)
+
+    @app.template_filter("vnd")
+    def format_vnd(value):
+        return format(value, ",.2f").replace(",", "_").replace(".", ",").replace("_", ".") + " ₫"
+
     register_commands(app)
     register_error_handlers(app)
 
@@ -50,7 +60,9 @@ def create_app() -> Flask:
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+        # External image previews are authorized only in the product workspace.
+        image_sources = "'self' data:" + (" https: http:" if request.blueprint == "products" else "")
+        response.headers["Content-Security-Policy"] = f"default-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; img-src {image_sources}; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         if response.mimetype == "text/html":
             response.headers["Cache-Control"] = "no-store"
         return response

@@ -1,0 +1,33 @@
+{% extends 'catalog/base.html' %}
+{% from 'catalog/fields.html' import image_preview %}
+{% block title %}{{ record.name }} · TechFlow{% endblock %}
+{% macro value(name) -%}
+  {% if name == 'category_id' %}<a href="{{ url_for('categories.detail', record_id=record.category_id) }}">{{ record.category.name }}</a>
+  {% elif name == 'business_id' %}{% if record.business %}<a href="{{ url_for('businesses.detail', record_id=record.business_id) }}">{{ record.business.name }}</a>{% else %}Chưa chọn nhà cung cấp{% endif %}
+  {% elif name in ['purchase_price','selling_price'] %}{{ record[name]|vnd }}
+  {% elif name == 'is_active' %}{{ 'Đang hoạt động' if record.is_active else 'Ngừng hoạt động' }}
+  {% elif name == 'image_url' %}{% if record.image_url %}<a href="{{ record.image_url }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Mở hình ảnh <i aria-hidden="true" class="bi bi-box-arrow-up-right"></i></a>{% else %}Chưa có ảnh{% endif %}
+  {% else %}{{ record[name] if record[name] is not none else 'Chưa có thông tin' }}{% endif %}
+{%- endmacro %}
+{% block catalog_content %}
+<header class="catalog-heading"><div><span class="catalog-eyebrow">{{ resource.label }}</span><h1>{{ record.name }}</h1><p>{{ record[resource.code] }} · Thông tin chi tiết</p></div><div class="d-flex gap-2"><a class="btn btn-light" href="{{ url_for(resource.key ~ '.index') }}">Danh sách</a><a class="btn btn-primary" href="{{ url_for(resource.key ~ '.edit', record_id=record.id) }}"><i aria-hidden="true" class="bi bi-pencil me-2"></i>Chỉnh sửa</a></div></header>
+<section class="catalog-panel catalog-detail">
+  <div class="catalog-detail-intro"><span class="catalog-detail-icon"><i aria-hidden="true" class="bi bi-{{ resource.icon }}"></i></span><div><h2>Thông tin {{ resource.singular }}</h2><p>Xem và cập nhật thông tin đã lưu.</p></div><span class="catalog-status {{ 'is-active' if record.is_active else 'is-inactive' }}">{{ 'Hoạt động' if record.is_active else 'Ngừng hoạt động' }}</span></div>
+  {% for title, icon, fields in resource.groups %}
+  <section class="catalog-detail-section"><h3><i aria-hidden="true" class="bi bi-{{ icon }}"></i>{{ title }}</h3><dl class="catalog-detail-grid">
+    {% for name in fields %}<div class="{{ 'catalog-wide' if name in ['address','description','notes'] else '' }}"><dt>{{ form[name].label.text }}</dt><dd>{{ value(name) }}</dd></div>{% endfor %}
+    {% if 'reorder_level' in fields %}<div><dt>Tồn kho (chỉ xem)</dt><dd>{{ record.stock_quantity }}</dd></div>{% endif %}
+  </dl>{% if 'image_url' in fields %}{{ image_preview(record.image_url) }}{% endif %}</section>
+  {% endfor %}
+  <dl class="catalog-detail-grid catalog-record-meta">
+    {% if linked is not none %}<div><dt>Sản phẩm liên kết</dt><dd><a href="{{ url_for('products.index', **({'category_id': record.id} if resource.key == 'categories' else {'business_id': record.id})) }}">{{ linked }} sản phẩm</a></dd></div>{% endif %}
+    {% if receipts is not none %}<div><dt>Phiếu nhập liên kết</dt><dd>{{ receipts }} · Chỉ xem</dd></div>{% endif %}
+    <div><dt>Ngày tạo (UTC)</dt><dd>{{ record.created_at.strftime('%d/%m/%Y %H:%M') }}</dd></div><div><dt>Cập nhật (UTC)</dt><dd>{{ record.updated_at.strftime('%d/%m/%Y %H:%M') }}</dd></div>
+  </dl>
+  <div class="catalog-danger-zone"><div><strong>Xóa {{ resource.singular }}</strong><p>Không thể xóa dữ liệu đang được sử dụng. Có thể ngừng hoạt động thay vì xóa.</p></div><button class="btn btn-outline-danger" type="button" data-bs-toggle="modal" data-bs-target="#delete-modal" data-delete-url="{{ url_for(resource.key ~ '.delete', record_id=record.id) }}" data-record-name="{{ record.name }}">Xóa dữ liệu</button></div>
+</section>
+{% include 'catalog/delete_modal.html' %}
+{% if receipt_history %}
+<section class="catalog-panel mt-4"><div class="catalog-results"><strong>Phiếu nhập liên quan</strong><span>10 phiếu gần nhất · Chỉ xem</span></div><div class="table-responsive"><table class="table catalog-table"><thead><tr><th>Mã phiếu</th><th>Ngày nhập (UTC)</th><th>Trạng thái</th><th class="text-end">Tổng tiền</th></tr></thead><tbody>{% for receipt in receipt_history %}<tr><td>{{ receipt.receipt_code }}</td><td>{{ receipt.receipt_date.strftime('%d/%m/%Y %H:%M') }}</td><td>{{ {'draft':'Nháp','completed':'Hoàn tất','cancelled':'Đã hủy'}[receipt.status] }}</td><td class="text-end text-nowrap">{{ receipt.total_amount|vnd }}</td></tr>{% endfor %}</tbody></table></div></section>
+{% endif %}
+{% endblock %}

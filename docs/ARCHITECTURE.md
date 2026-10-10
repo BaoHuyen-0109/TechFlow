@@ -3,7 +3,8 @@
 Giai đoạn 1 cung cấp Flask app factory, cấu hình, extensions, health check,
 CLI kiểm tra database và Docker local. Giai đoạn 2 bổ sung 10 bảng nghiệp vụ,
 migrations, seed và CLI Admin; xem [database](DATABASE.md). Giai đoạn 3 bổ sung
-đăng nhập, phân quyền và layout Dashboard; chưa triển khai CRUD.
+đăng nhập, phân quyền và layout Dashboard. Giai đoạn 4 bổ sung CRUD danh mục,
+nhà cung cấp và sản phẩm trong Business workspace.
 
 ```mermaid
 flowchart LR
@@ -25,14 +26,14 @@ flowchart LR
 ## Ranh giới trách nhiệm
 
 `routes.py`: nhận request, kiểm tra quyền khi có auth, trả response.
-`forms.py`: validation backend bằng WTForms, hiện có LoginForm.
+`forms.py`: validation backend bằng WTForms, gồm LoginForm và các CatalogForm.
 `services/`: nghiệp vụ và transaction; không phụ thuộc vào template.
 `models/`: ORM và quan hệ, sẽ được import đầy đủ để Alembic phát hiện.
 `templates/`, `static/`: giao diện và assets.
 `extensions.py`: extensions chưa bind; bind trong `create_app()`.
 
-Auth, dashboard và users đã đăng ký route. Categories/businesses/products/purchases/
-sales/audit dành cho giai đoạn sau. Nhóm phát triển nhập kho và bán hàng
+Auth, dashboard, users, categories, businesses và products đã đăng ký route.
+Purchases/sales và màn hình audit dành cho giai đoạn sau. Nhóm phát triển nhập kho và bán hàng
 phải đặt transaction, khóa hàng và chống xử lý lặp trong services, không đặt trong route.
 
 ## Định hướng UI đã thống nhất
@@ -63,3 +64,22 @@ layout Business và home/breadcrumb Business, có liên kết Quay về quản t
 thay đổi session, CSRF hoặc dữ liệu user khi chuyển không gian.
 
 Luồng xác thực, decorator quyền và cấu trúc mở rộng: [AUTHENTICATION.md](AUTHENTICATION.md).
+
+## Module catalog — Giai đoạn 4
+
+- `categories/routes.py`, `businesses/routes.py`, `products/routes.py` khai báo ba
+  Blueprint riêng. `catalog/routes.py` tạo các route đồng nhất, kiểm tra quyền,
+  tìm kiếm/lọc/phân trang và render; không chứa transaction ghi dữ liệu.
+- `catalog/resources.py` định nghĩa model/form/nhãn/mã của từng module;
+  `catalog/forms.py` validation theo schema và nạp lựa chọn FK từ database qua routes.
+- `services/catalog_service.py` chỉ nhận các trường đã khai báo trong form,
+  commit bản ghi và AuditLog cùng transaction; rollback cả hai nếu lỗi.
+  Xóa sản phẩm khóa hàng để kiểm tra tồn kho; FK RESTRICT bảo vệ liên kết.
+- `templates/catalog/` dùng layout Staff cho cả hai vai trò; `static/css/catalog.css`
+  định dạng bảng/form/detail/modal và responsive. JS ngoài template xử lý modal/loading.
+- Không thay models, migration hoặc service nhập/bán hàng. Không có trường form
+  ghi `stock_quantity`. URL hình ảnh được kiểm tra, preview trên browser và có liên kết;
+  ứng dụng không tải URL từ server. CSP chỉ mở img-src HTTP/HTTPS ở products theo
+  xác nhận bổ sung của người dùng; script/style/font và các trang khác giữ nguyên.
+
+Hợp đồng route, validation và bàn giao: [CATALOG.md](CATALOG.md).

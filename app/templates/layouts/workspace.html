@@ -16,7 +16,7 @@
     <nav aria-label="Breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="{{ home_url }}">TechFlow</a></li><li class="breadcrumb-item active" aria-current="page">{% block breadcrumb %}{{ 'Quản trị' if current_user.role == 'admin' else 'Kinh doanh' }}{% endblock %}</li></ol></nav>
     {% include 'components/flash.html' %}
     {% block workspace_content %}{% endblock %}
-    <footer class="ws-footer"><span>TechFlow · Quản lý thông minh – Vận hành hiệu quả.</span><span>Phiên bản giữa kỳ</span></footer>
+    <footer class="ws-footer"><span>© 2026 TechFlow</span></footer>
   </main>
 </div>
 {% endblock %}

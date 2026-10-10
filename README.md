@@ -1,9 +1,9 @@
 # TechFlow
 
 Hệ thống quản lý kinh doanh thiết bị công nghệ — đồ án Flask, Docker và Amazon EC2.
-**Trạng thái: hoàn thành giai đoạn 3 — Authentication, Authorization & Admin Layout.**
+**Trạng thái: đã nghiệm thu Giai đoạn 4 — CRUD danh mục, nhà cung cấp và sản phẩm.**
 Có đăng nhập username/email, phân quyền Admin/Staff và Dashboard responsive.
-CRUD và các KPI kinh doanh chưa triển khai.
+CRUD lưu trực tiếp vào MySQL; các KPI kinh doanh chưa triển khai.
 Dashboard đã được refactor thành hai không gian: Admin quản trị và Staff kinh doanh.
 Không triển khai AWS trong giai đoạn này.
 
@@ -12,6 +12,9 @@ Kết quả đã kiểm tra và giới hạn: [docs/STAGE_1_REPORT.md](docs/STAG
 Kết quả database: [docs/STAGE_2_REPORT.md](docs/STAGE_2_REPORT.md).
 Kết quả đăng nhập và giao diện: [docs/STAGE_3_REPORT.md](docs/STAGE_3_REPORT.md).
 Refactor hai Dashboard: [docs/STAGE_3_REFACTOR_REPORT.md](docs/STAGE_3_REFACTOR_REPORT.md).
+CRUD và bàn giao: [docs/STAGE_4_REPORT.md](docs/STAGE_4_REPORT.md),
+[hướng dẫn module](docs/CATALOG.md).
+Hoàn thiện giao diện trước nghiệm thu: [docs/STAGE_4_UI_REPORT.md](docs/STAGE_4_UI_REPORT.md).
 
 ## Yêu cầu
 
@@ -105,10 +108,36 @@ CLI không ghi đè mật khẩu hoặc role.
 - Sidebar navy, nội dung sáng, Bootstrap Icons và assets Bootstrap lưu nội bộ.
   Sidebar 244px, thu gọn desktop 80px, offcanvas tablet/mobile và scrollbar tinh tế.
   Admin có tài khoản, ma trận quyền chỉ đọc và SELECT 1 kiểm tra MySQL tại thời điểm
-  tải trang. Staff có tổng quan hoạt động, shortcut khóa và empty state nghiệp vụ.
+  tải trang. Business có menu CRUD hoạt động; tác vụ nhập/bán/kho vẫn khóa.
   Module chưa triển khai hiển thị trạng thái; không có nút CRUD giả hay số liệu KPI giả.
 
 Chi tiết bảo mật và tích hợp module sau: [docs/AUTHENTICATION.md](docs/AUTHENTICATION.md).
+
+## Quản lý dữ liệu kinh doanh — Giai đoạn 4
+
+Đăng nhập bằng tài khoản hiện có; Admin chọn **Không gian kinh doanh** trên sidebar.
+Admin và Staff đều được dùng ba module theo yêu cầu quyền mới:
+
+| Module | Đường dẫn |
+| --- | --- |
+| Danh mục sản phẩm | http://localhost:8000/business/categories |
+| Nhà cung cấp | http://localhost:8000/business/suppliers |
+| Sản phẩm | http://localhost:8000/business/products |
+
+Mỗi module có danh sách, chi tiết, thêm, sửa, xóa có xác nhận, tìm kiếm, sắp xếp,
+lọc trạng thái và phân trang. Sản phẩm lọc thêm danh mục/nhà cung cấp. Giá dùng
+Decimal, hiển thị VND; nhập `15.000.000,50` hoặc `15000000,50` khi có JavaScript
+(không JS dùng `15000000.50`). Tồn kho chỉ xem; sản phẩm mới
+có tồn kho 0. Không tạo phiếu nhập, đơn bán hoặc stock movement.
+
+Không xóa dữ liệu có liên kết hoặc sản phẩm còn tồn kho; dùng tùy chọn ngừng
+hoạt động ở form sửa. Các thao tác thành công và audit được commit cùng nhau.
+Không cần migration mới, không chạy lại seed trên database hiện có.
+
+Sau khi cập nhật code, chạy `docker compose up --build -d --wait`, rồi
+`docker compose exec nginx nginx -s reload` để Nginx nhận địa chỉ container mới.
+Giữ nguyên `.env`, tài khoản và volume hiện tại. Giai đoạn 4 đã được chấp thuận
+lưu bằng commit local; không tự động push. Giai đoạn 3 đã push tại commit `09e9c4b`.
 
 Xem [schema và ERD](docs/DATABASE.md). Không chạy downgrade hoặc xóa volume trên
 database đang dùng. `db check` so sánh schema với models, tự bỏ qua bảng probe.
@@ -157,14 +186,15 @@ $env:PLAYWRIGHT_BROWSERS_PATH = 'E:\AWS\.browser-cache'
 .\.venv\Scripts\python.exe -m playwright install chromium
 # Chạy runner MySQL ở trên trước để có image test và schema.
 docker compose -f docker-compose.db-test.yml --profile ui up -d --wait ui-nginx
-.\.venv\Scripts\python.exe scripts/verify_ui.py
+.\.venv\Scripts\python.exe scripts/verify_ui.py --screenshot-prefix stage4-ui-regression
+.\.venv\Scripts\python.exe scripts/verify_catalog_ui.py --screenshot-prefix stage4-ui
 docker compose -f docker-compose.db-test.yml --profile ui stop ui-nginx ui db-test
 ```
 
-Script chỉ tạo tài khoản có mật khẩu ngẫu nhiên trong DB test và lưu ảnh vào
+Scripts tạo tài khoản có mật khẩu ngẫu nhiên và dữ liệu CRUD trong DB test, lưu ảnh vào
 `docs/screenshots`; không in credentials, không thay đổi demo. Kiểm tra ba viewport
 desktop/tablet/mobile cho cả hai vai trò, menu, collapse, hover/focus bàn phím,
-login/logout, 403/404, link/anchor thực và tràn ngang. Khi image UI thay
+login/logout, 403/404, link/anchor thực, CRUD thật, modal, validation và tràn ngang. Khi image UI thay
 đổi địa chỉ container, restart riêng `ui-nginx` nếu gặp 502.
 
 Chạy app local tùy chọn: load `.env` qua wsgi rồi dùng
@@ -217,6 +247,8 @@ xóa thủ công sau khi kiểm tra; ứng dụng không tự tạo/xóa bảng 
 - [Git workflow và quy ước code](docs/GIT_WORKFLOW.md)
 - [Bảo mật và vận hành local](docs/SECURITY.md)
 - [Authentication và quyền truy cập](docs/AUTHENTICATION.md)
+- [Catalog CRUD và quy ước nhập giá VND](docs/CATALOG.md)
+- [Nghiệm thu tinh chỉnh UI cuối Giai đoạn 4](docs/STAGE_4_FINAL_UI_REPORT.md)
 
 Giai đoạn tiếp theo chỉ bắt đầu sau khi người dùng xác nhận. AWS deployment,
 HTTPS public, backup/restore nghiệp vụ và kiểm thử tải nằm ở giai đoạn sau;

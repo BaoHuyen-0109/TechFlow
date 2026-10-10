@@ -17,7 +17,8 @@ def test_public_page_and_stylesheet(client):
     assert response.status_code == 200
     assert 'lang="vi"' in response.text
     assert "TechFlow" in response.text
-    assert "chưa phải Dashboard" in response.text
+    assert 'href="/login"' in response.text
+    assert "giữa kỳ" not in response.text.lower()
     assert client.get("/static/css/foundation.css").status_code == 200
     assert response.headers["X-Content-Type-Options"] == "nosniff"
     assert response.headers["X-Frame-Options"] == "DENY"

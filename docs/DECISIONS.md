@@ -65,3 +65,35 @@
     admin_required chỉ admin. Login mặc định giữ theo role. Menu chuyển workspace
     không đổi session/role và không yêu cầu login lại. Business vẫn dùng layout
     riêng; vai trò hiển thị lấy từ current_user, không suy ra từ layout.
+
+## Giai đoạn 4 — dữ liệu kinh doanh
+
+29. Theo yêu cầu mới, Admin và Staff đều có CRUD danh mục/nhà cung cấp/sản phẩm.
+    Quyền này thay phần Staff chỉ xem của đặc tả gốc trong ba module; đã báo cáo
+    khác biệt trước khi lập trình. Admin workspace vẫn chỉ Admin.
+30. Kiểm tra schema cho thấy businesses chỉ là nhà cung cấp, không có cột loại
+    đối tác. Dùng nguyên ba bảng và các FK/unique/index hiện có; không migration mới.
+31. Ba Blueprint dùng bộ route/template chung qua catalog/resources.py; transaction
+    ghi dữ liệu nằm trong catalog_service. Form là whitelist trường cho phép ghi;
+    stock_quantity không được nhận từ client và sản phẩm mới có tồn kho 0.
+32. Audit create/update/delete và dữ liệu catalog commit cùng nhau. FK RESTRICT
+    ngăn xóa bản ghi đã dùng; sản phẩm còn tồn kho cũng bị chặn với khóa hàng.
+33. Ảnh dùng placeholder nội bộ và URL đã validation mở qua liên kết; không tải
+    URL từ backend, không thêm external assets vào CSP, chưa có upload ảnh.
+34. Giai đoạn 3 commit/push riêng tại 09e9c4b, xác minh remote main. Giai đoạn 4
+    để uncommitted cho người dùng duyệt; không triển khai Giai đoạn 5 hoặc AWS.
+
+35. Đợt hoàn thiện UI/UX: người dùng xác nhận riêng cho phép preview ảnh HTTP/HTTPS
+    bên ngoài ở trang sản phẩm. Thay phần chỉ liên kết của quyết định 33: CSP chỉ
+    mở img-src tại Blueprint products, các trang khác/script/style/font giữ self.
+    Browser tải trực tiếp không referrer, không log URL, không server proxy;
+    ảnh lỗi về SVG nội bộ. Không thêm upload hoặc thay schema.
+36. Nhóm field/microcopy dùng metadata Resource và macro chung cho create/edit/detail.
+    Danh mục tạo mới có placeholder bắt buộc, sửa giữ giá trị cũ. Giá không format
+    hoặc làm tròn trên client; chỉ bổ sung hướng dẫn nhập. Seed và tồn kho giữ nguyên.
+
+37. Đợt tinh chỉnh cuối thay phần nhập giá của quyết định 36: progressive enhancement
+    tạo ô hiển thị Việt Nam và giữ trường chuẩn có name gốc cho backend Decimal.
+    Dấu chấm nhóm nghìn, dấu phẩy thập phân; chuyển bằng chuỗi, không số thực,
+    không làm tròn. Không JS dùng form number nguyên bản. Không thay schema,
+    API form POST, URL, quyền truy cập, dashboard hoặc kích thước toàn bộ UI.

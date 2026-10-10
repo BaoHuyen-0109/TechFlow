@@ -7,16 +7,16 @@
 {% block workspace_navigation %}
   {{ nav.section('KHÔNG GIAN LÀM VIỆC') }}
   {{ nav.link(url_for('dashboard.staff'), 'bi-grid-1x2', 'Tổng quan', active_page == 'dashboard') }}
-  {{ nav.section('KINH DOANH', 'Chưa khả dụng') }}
+  {{ nav.section('KINH DOANH') }}
   {{ nav.pending('bi-cart3', 'Bán hàng và đơn bán') }}
-  {{ nav.pending('bi-box-seam', 'Sản phẩm') }}
+  {{ nav.link(url_for('products.index'), 'bi-box-seam', 'Sản phẩm', active_page == 'products') }}
   {{ nav.section('KHO HÀNG', 'Chưa khả dụng') }}
   {{ nav.pending('bi-boxes', 'Tổng quan tồn kho') }}
   {{ nav.pending('bi-box-arrow-in-down', 'Nhập hàng') }}
   {{ nav.pending('bi-arrow-left-right', 'Lịch sử nhập / xuất') }}
-  {{ nav.section('DANH MỤC', 'Chưa khả dụng') }}
-  {{ nav.pending('bi-tags', 'Danh mục sản phẩm') }}
-  {{ nav.pending('bi-buildings', 'Nhà cung cấp') }}
+  {{ nav.section('DANH MỤC') }}
+  {{ nav.link(url_for('categories.index'), 'bi-tags', 'Danh mục sản phẩm', active_page == 'categories') }}
+  {{ nav.link(url_for('businesses.index'), 'bi-buildings', 'Nhà cung cấp', active_page == 'businesses') }}
   {{ nav.section('TÀI KHOẢN') }}
   {{ nav.link(url_for('dashboard.staff') ~ '#session', 'bi-person-circle', 'Thông tin cá nhân') }}
 {% endblock %}

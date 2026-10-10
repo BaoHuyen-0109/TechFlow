@@ -1,6 +1,7 @@
 """Browser verification of separate role workspaces against isolated test MySQL."""
 from pathlib import Path
 import json
+import argparse
 import os
 import secrets
 import subprocess
@@ -11,12 +12,18 @@ from playwright.sync_api import sync_playwright
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--screenshot-prefix", default="access")
+    prefix = parser.parse_args().screenshot_prefix
+    if not prefix.replace("-", "").isalnum():
+        raise ValueError("Invalid screenshot prefix")
     suffix = secrets.token_hex(6)
     password = secrets.token_urlsafe(24)
     accounts = {role: f"ui-{role}-{suffix}" for role in ("admin", "staff")}
     payload = json.dumps({"accounts": accounts, "password": password})
     source = """
 import json
+import argparse
 from wsgi import app
 from app.extensions import db
 from app.models import User
@@ -52,7 +59,7 @@ print('Isolated UI accounts ready; credentials not printed.')
                 assert page.goto("http://localhost:8001/login").status == 200
                 page.evaluate("document.fonts.ready")
                 if role == "admin":
-                    page.screenshot(path=str(screenshots / f"access-login-{label}.png"), full_page=True)
+                    page.screenshot(path=str(screenshots / f"{prefix}-login-{label}.png"), full_page=True)
                 page.locator("#identity").fill(accounts[role] + ("@example.invalid" if role == "staff" else ""))
                 page.locator("#password").fill(password)
                 page.get_by_role("button", name="Hiện mật khẩu").click()
@@ -64,17 +71,17 @@ print('Isolated UI accounts ready; credentials not printed.')
                 assert page.get_by_role("heading", name=heading, exact=True).is_visible()
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
                 assert page.locator("a.ws-nav-link.active[aria-current=page]").count() == 1
-                assert page.locator(".ws-pending a, .business-shortcut a, .business-shortcut button").count() == 0
+                assert page.locator(".ws-pending a, .business-shortcut[aria-disabled=true] a, .business-shortcut[aria-disabled=true] button").count() == 0
                 assert page.locator(".ws-topbar").is_visible()
                 assert page.locator(".ws-identity small").text_content() == ("Quản trị viên" if role == "admin" else "Nhân viên")
-                page.screenshot(path=str(screenshots / f"access-{role}-{label}.png"), full_page=True)
+                page.screenshot(path=str(screenshots / f"{prefix}-{role}-{label}.png"), full_page=True)
                 if width >= 992:
                     collapse = page.locator("[data-sidebar-collapse]")
                     collapse.click()
                     assert collapse.get_attribute("aria-expanded") == "false"
                     assert page.locator("#workspace-sidebar").bounding_box()["width"] == 80
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
-                    page.screenshot(path=str(screenshots / f"access-{role}-collapsed.png"), full_page=True)
+                    page.screenshot(path=str(screenshots / f"{prefix}-{role}-collapsed.png"), full_page=True)
                     page.get_by_role("button", name="Mở rộng thanh điều hướng").click()
                     assert page.locator("#workspace-sidebar").bounding_box()["width"] == 244
                 else:
@@ -85,7 +92,7 @@ print('Isolated UI accounts ready; credentials not printed.')
                 for link in links.all():
                     href = link.get_attribute("href")
                     path = href.split("#")[0]
-                    assert path in ({"/admin/dashboard", "/staff/dashboard"} if role == "admin" else {"/staff/dashboard"})
+                    assert path in ({"/admin/dashboard", "/staff/dashboard"} if role == "admin" else {"/staff/dashboard", "/business/products", "/business/categories", "/business/suppliers"})
                     if "#" in href:
                         assert page.locator("#" + href.split("#")[1]).count() == 1
                     link.scroll_into_view_if_needed()
@@ -102,7 +109,7 @@ print('Isolated UI accounts ready; credentials not printed.')
                 assert target.evaluate("(element) => getComputedStyle(element).outlineStyle") != "none"
                 links.first.scroll_into_view_if_needed()
                 if width < 992:
-                    page.screenshot(path=str(screenshots / f"access-{role}-menu-{label}.png"))
+                    page.screenshot(path=str(screenshots / f"{prefix}-{role}-menu-{label}.png"))
                     page.get_by_role("button", name="Đóng menu").click()
                     page.wait_for_selector("#workspace-sidebar:not(.show)", state="attached")
                 # Legacy routing and cross-role backend restrictions.
@@ -121,19 +128,19 @@ print('Isolated UI accounts ready; credentials not printed.')
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
                     assert page.locator(".breadcrumb-item.active").text_content().strip() == "Kinh doanh"
                     assert page.locator("a[aria-current=page]").get_attribute("href") == "/staff/dashboard"
-                    page.screenshot(path=str(screenshots / f"access-admin-business-{label}.png"), full_page=True)
+                    page.screenshot(path=str(screenshots / f"{prefix}-admin-business-{label}.png"), full_page=True)
                     page.get_by_role("link", name="Quay về quản trị", exact=True).click()
                     page.wait_for_url("**/admin/dashboard")
                     assert page.locator("body").get_attribute("class").endswith("admin-workspace")
                     assert len(login_posts) == 1
-                    page.screenshot(path=str(screenshots / f"access-admin-return-{label}.png"), full_page=True)
+                    page.screenshot(path=str(screenshots / f"{prefix}-admin-return-{label}.png"), full_page=True)
                 else:
                     assert page.get_by_role("link", name="Quay về quản trị").count() == 0
                     assert page.locator("a[href*='/admin']").count() == 0
                     assert page.goto("http://localhost:8001/admin").status == 403
                     assert page.goto("http://localhost:8001/admin/dashboard").status == 403
                     assert page.locator("body").get_attribute("class").endswith("staff-workspace")
-                    page.screenshot(path=str(screenshots / f"access-staff-403-{label}.png"), full_page=True)
+                    page.screenshot(path=str(screenshots / f"{prefix}-staff-403-{label}.png"), full_page=True)
                 assert page.goto("http://localhost:8001/missing-ui-page").status == 404
                 page.get_by_role("button", name="Đăng xuất", exact=True).click()
                 page.wait_for_url("**/login")
