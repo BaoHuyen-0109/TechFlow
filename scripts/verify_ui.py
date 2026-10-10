@@ -92,7 +92,7 @@ print('Isolated UI accounts ready; credentials not printed.')
                 for link in links.all():
                     href = link.get_attribute("href")
                     path = href.split("#")[0]
-                    assert path in ({"/admin/dashboard", "/staff/dashboard"} if role == "admin" else {"/staff/dashboard", "/business/products", "/business/categories", "/business/suppliers"})
+                    assert path in ({"/admin/dashboard", "/staff/dashboard"} if role == "admin" else {"/staff/dashboard", "/business/products", "/business/categories", "/business/suppliers", "/business/sales", "/business/inventory"})
                     if "#" in href:
                         assert page.locator("#" + href.split("#")[1]).count() == 1
                     link.scroll_into_view_if_needed()

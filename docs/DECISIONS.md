@@ -108,3 +108,15 @@
 40. Sáu SELECT trong snapshot đọc mới; top 8 danh mục và nhóm còn lại, 8 cảnh báo,
     6 recent. Dùng Chart.js 4.5.1 UMD/MIT nội bộ và bảng HTML fallback; không CDN,
     CSP mới, API mới hoặc migration/index khi chưa có số liệu tải chứng minh cần.
+
+41. Giai đoạn 6 commit dc0d7be, main fast-forward/push theo xác nhận người dùng;
+    Giai đoạn 5 phát triển trên feature/stage-5-inventory-sales, chờ nghiệm thu.
+42. Admin quản lý nhập kho và toàn bộ giao dịch; Staff chỉ đơn bán do mình tạo,
+    hủy draft, xem movement của đơn đó. Chưa cấp Staff nhập kho, hủy completed
+    hoặc quyền hệ thống. Không thay quyền CRUD catalog đã nghiệm thu.
+43. Session ghi riêng với begin/commit/rollback, khóa document rồi product theo
+    ID tăng dần. Không sửa/xóa giao dịch hoặc movement, không giữ chỗ draft.
+    Mã có UNIQUE, ticket ký gắn actor/kind/code chống gửi cùng form hai lần.
+44. Đảo nhập completed dùng adjustment/reference purchase_receipt và lý do cố
+    định, không đổi schema/CHECK. Không thay purchase_price catalog khi nhập,
+    không tính giá vốn/lợi nhuận hoặc thêm báo cáo doanh thu trong đợt này.

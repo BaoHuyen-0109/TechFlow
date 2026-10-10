@@ -1,1 +1,1 @@
-"""Future purchase module. Inventory transactions are outside stage 1."""
+"""Purchase receipt routes, forms and shared transaction views."""

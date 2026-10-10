@@ -1,5 +1,9 @@
 # Dashboard — Thống kê catalog và tồn kho
 
+Giai đoạn 5 đã bổ sung nhập/bán và cập nhật kho; xem [INVENTORY.md](INVENTORY.md).
+Các công thức KPI dưới đây giữ nguyên và đọc stock thực sau transaction. Nội dung
+giới hạn về nghiệp vụ nhập/bán ở cuối tài liệu là snapshot Giai đoạn 6 ban đầu.
+
 Phạm vi Giai đoạn 6 giữa kỳ, dựa trên dữ liệu hiện có; không cần Giai đoạn 5.
 Giữ hai workspace: `/admin/dashboard` quản trị hệ thống và `/staff/dashboard`
 kinh doanh. Admin mặc định vào quản trị, chọn **Không gian kinh doanh** để xem

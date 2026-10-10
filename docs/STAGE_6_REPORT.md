@@ -1,5 +1,10 @@
 # TechFlow — Giai đoạn 6 Dashboard & Thống kê giữa kỳ
 
+> Cập nhật baseline 10/10/2026: người dùng đã duyệt commit/tích hợp. Giai đoạn 6
+> được commit `dc0d7be96ab5217bf8cd7c978c8669918cc7b4b6`, fast-forward vào main và
+> push thông thường; local/remote cùng hash. Nội dung bên dưới giữ snapshot thời
+> điểm báo cáo trước nghiệm thu. Giai đoạn 5 phát triển trên branch riêng.
+
 Ngày: 10/10/2026, giờ Việt Nam. Website Docker local đã cập nhật.
 **Chưa commit/push; dừng chờ nghiệm thu. Không triển khai Giai đoạn 5/7/8/9 hoặc AWS.**
 

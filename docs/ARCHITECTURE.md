@@ -101,3 +101,14 @@ khác không phải tải thư viện biểu đồ. Thông tin phiên `#session`
 
 Models/migrations/seed/tồn kho và Dashboard hệ thống Admin không thay đổi.
 Chi tiết phạm vi, công thức và giới hạn index: [DASHBOARD.md](DASHBOARD.md).
+
+## Giai đoạn 5: giao dịch kho
+
+`purchases/routes.py` và `sales/routes.py` dùng builder trong `purchases/views.py`
+để thống nhất GET/POST, CSRF, scope owner và template `transactions/*`. Forms nằm
+trong `purchases/forms.py`; giao diện chia sẻ không gộp hai workspace.
+Service `purchase_service.py`/`sales_service.py` là interface module;
+`transaction_service.py` quản lý state/transaction và `inventory_service.py` chứa
+validation Decimal, khóa stock, movement/audit. `inventory/routes.py` chỉ đọc
+lịch sử theo quyền. Không dùng session auth để sở hữu transaction ghi.
+Chi tiết isolation/lock/idempotency và giới hạn: [INVENTORY.md](INVENTORY.md).

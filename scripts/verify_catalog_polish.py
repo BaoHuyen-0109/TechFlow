@@ -37,6 +37,12 @@ def sign_in(page, username, password):
     page.wait_for_url("**/dashboard")
 
 
+def navigate_click(page, locator):
+    # Wait for the GET document before asserting row counts or URL filter state.
+    with page.expect_navigation(wait_until='domcontentloaded'):
+        locator.click(no_wait_after=True)
+
+
 def main():
     accounts, password = provision()
     tag = "FINAL-" + secrets.token_hex(6).upper()
@@ -77,7 +83,7 @@ print(json.dumps(dict(category=categories[0].id, supplier=suppliers[0].id)))
                         if kind == "products":
                             page.locator("#category_id").select_option(str(fixture["category"]))
                             page.locator("#business_id").select_option(str(fixture["supplier"]))
-                        page.get_by_role("button", name="Áp dụng", exact=True).click()
+                        navigate_click(page, page.get_by_role("button", name="Áp dụng", exact=True))
                         assert page.locator("tbody tr").count() == 10
                         names = page.locator(".catalog-record-name").all_text_contents()
                         assert names == sorted(names)
@@ -86,21 +92,21 @@ print(json.dumps(dict(category=categories[0].id, supplier=suppliers[0].id)))
                         if width == 1440 and kind != "products":
                             assert filters["height"] < 120, "Short filters should occupy one row"
                         original = parse_qs(urlsplit(page.url).query)
-                        page.get_by_role("link", name="Tiếp", exact=True).click()
+                        navigate_click(page, page.get_by_role("link", name="Tiếp", exact=True))
                         current = parse_qs(urlsplit(page.url).query)
                         assert current.pop("page") == ["2"]
                         assert current == original
                         assert page.locator("tbody tr").count() == 1
-                        page.get_by_role("link", name="Trước", exact=True).click()
+                        navigate_click(page, page.get_by_role("link", name="Trước", exact=True))
                         assert page.locator("tbody tr").count() == 10
                         page.locator("#per_page").select_option("20")
-                        page.get_by_role("button", name="Áp dụng", exact=True).click()
+                        navigate_click(page, page.get_by_role("button", name="Áp dụng", exact=True))
                         assert page.locator("tbody tr").count() == 11
                         assert "page" not in parse_qs(urlsplit(page.url).query)
                         page.locator("#status").select_option("inactive")
-                        page.get_by_role("button", name="Áp dụng", exact=True).click()
+                        navigate_click(page, page.get_by_role("button", name="Áp dụng", exact=True))
                         assert page.get_by_role("heading", name="Chưa có kết quả phù hợp").is_visible()
-                        page.get_by_role("link", name="Xóa lọc", exact=True).click()
+                        navigate_click(page, page.get_by_role("link", name="Xóa lọc", exact=True))
                         assert page.url == BASE + f"/business/{kind}"
                         assert page.locator("#q").input_value() == ""
                         assert page.locator("#status").input_value() == ""

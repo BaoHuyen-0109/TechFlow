@@ -1,1 +1,1 @@
-"""Future sales module. No order or stock changes are implemented yet."""
+"""Sales order module with server-side snapshot prices and stock transactions."""

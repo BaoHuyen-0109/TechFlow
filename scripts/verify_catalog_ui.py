@@ -232,8 +232,8 @@ document.addEventListener('submit', (event) => {
                     page.wait_for_url(BASE + f"/business/{kind}")
                     page.locator("#q").fill(tag)
                     page.get_by_role("button", name="Áp dụng").click()
-                    assert page.locator("tbody tr").count() == 0
-                    assert page.get_by_role("heading", name="Chưa có kết quả phù hợp").is_visible()
+                    expect(page.locator("tbody tr")).to_have_count(0)
+                    expect(page.get_by_role("heading", name="Chưa có kết quả phù hợp")).to_be_visible()
                 if role == "staff":
                     assert page.goto(BASE + "/admin/dashboard").status == 403
                 else:

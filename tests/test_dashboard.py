@@ -156,7 +156,7 @@ def test_dashboard_render_and_permission(auth_client, account, role):
     assert 'data-kpi="products"' in response.text
     assert ('data-kpi="inventory_value"' in response.text) is (role == "admin")
     assert ("Giá trị tồn kho ước tính" in response.text) is (role == "admin")
-    assert "Doanh thu và đơn hàng chưa khả dụng" in response.text
+    assert "Báo cáo doanh thu nâng cao chưa triển khai" in response.text
     assert auth_client.get("/admin/dashboard").status_code == (200 if role == "admin" else 403)
 
 

@@ -8,12 +8,11 @@
   {{ nav.section('KHÔNG GIAN LÀM VIỆC') }}
   {{ nav.link(url_for('dashboard.staff'), 'bi-grid-1x2', 'Tổng quan', active_page == 'dashboard') }}
   {{ nav.section('KINH DOANH') }}
-  {{ nav.pending('bi-cart3', 'Bán hàng và đơn bán') }}
+  {{ nav.link(url_for('sales.index'), 'bi-cart3', 'Bán hàng và đơn bán', active_page == 'sales') }}
   {{ nav.link(url_for('products.index'), 'bi-box-seam', 'Sản phẩm', active_page == 'products') }}
-  {{ nav.section('KHO HÀNG', 'Chưa khả dụng') }}
-  {{ nav.pending('bi-boxes', 'Tổng quan tồn kho') }}
-  {{ nav.pending('bi-box-arrow-in-down', 'Nhập hàng') }}
-  {{ nav.pending('bi-arrow-left-right', 'Lịch sử nhập / xuất') }}
+  {{ nav.section('KHO HÀNG') }}
+  {% if current_user.role == 'admin' %}{{ nav.link(url_for('purchases.index'), 'bi-box-arrow-in-down', 'Nhập hàng', active_page == 'purchases') }}{% endif %}
+  {{ nav.link(url_for('inventory.index'), 'bi-arrow-left-right', 'Lịch sử nhập / xuất', active_page == 'inventory') }}
   {{ nav.section('DANH MỤC') }}
   {{ nav.link(url_for('categories.index'), 'bi-tags', 'Danh mục sản phẩm', active_page == 'categories') }}
   {{ nav.link(url_for('businesses.index'), 'bi-buildings', 'Nhà cung cấp', active_page == 'businesses') }}

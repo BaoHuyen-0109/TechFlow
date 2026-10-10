@@ -9,7 +9,7 @@
 | GET /dashboard | Admin, Staff active | Redirect theo vai trò |
 | GET /admin | Admin active | Redirect /admin/dashboard |
 | GET /admin/dashboard | Admin active | Tài khoản, ma trận quyền, kết nối MySQL chỉ đọc |
-| GET /staff/dashboard | Admin, Staff active | Không gian kinh doanh riêng, empty state |
+| GET /staff/dashboard | Admin, Staff active | Không gian kinh doanh riêng, KPI/catalog/tồn kho thật |
 | POST /logout | Đã đăng nhập + CSRF | Audit, xóa phiên, về Login |
 | GET /auth/rate-limit | Công khai | Trang 429 dùng cho Nginx limiter |
 | GET /business/categories, /business/suppliers, /business/products | Admin, Staff active | Danh sách, tìm kiếm/lọc/phân trang |
@@ -115,3 +115,9 @@ Chính sách quyền hiện tại và minh chứng Admin chuyển qua lại:
 
 Thay đổi quyền và CRUD mới nhất: [CATALOG.md](CATALOG.md),
 [STAGE_4_REPORT.md](STAGE_4_REPORT.md). Báo cáo Giai đoạn 3 giữ lại làm lịch sử.
+
+Giai đoạn 5 bổ sung quyền giao dịch: [STAGE_5_PLAN.md](STAGE_5_PLAN.md),
+[INVENTORY.md](INVENTORY.md). Admin nhập kho/quản lý mọi đơn; Staff chỉ tạo/xem/
+xác nhận/hủy draft đơn của mình và đọc movement thuộc đơn đó. Hủy completed chỉ
+Admin. Quyền được kiểm tra cả service; query danh sách/detail/history scope theo
+owner trước phân trang. Không mở route sửa/xóa movement hoặc xóa giao dịch.

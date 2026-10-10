@@ -1,0 +1,8 @@
+{% extends 'layouts/staff.html' %}
+{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static',filename='css/catalog.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/catalog-polish.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/transactions.css') }}">{% endblock %}
+{% block extra_js %}<script src="{{ url_for('static',filename='js/transactions.js') }}" defer></script>{% endblock %}
+{% block workspace_content %}{% if message %}<div class="alert alert-danger" role="alert">{{ message }}</div>{% endif %}{% block transaction_content %}{% endblock %}{% endblock %}
+{% macro status(value) %}<span class="badge rounded-pill {{ 'text-bg-success' if value == 'completed' else 'text-bg-secondary' if value == 'cancelled' else 'text-bg-light' }}">{{ {'draft':'Bản nháp','completed':'Hoàn thành','cancelled':'Đã hủy'}[value] }}</span>{% endmacro %}
+{% macro pagination(results) %}
+<nav class="tx-pagination" aria-label="Phân trang"><span>{{ results.total }} kết quả · Trang {{ results.page }} / {{ results.pages or 1 }}</span><div>{% for number in [results.prev_num if results.has_prev else none, results.next_num if results.has_next else none] %}{% if number %}{% set args = request.args.to_dict() %}{% set _ = args.update({'page':number}) %}<a class="btn btn-light btn-sm" href="{{ url_for(request.endpoint,**args) }}">{{ 'Trước' if number < results.page else 'Sau' }}</a>{% endif %}{% endfor %}</div></nav>
+{% endmacro %}
