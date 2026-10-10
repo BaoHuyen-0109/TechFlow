@@ -9,6 +9,7 @@ class Product(Record, Timestamps, db.Model):
     __table_args__ = (
         db.CheckConstraint("purchase_price >= 0", name="purchase_price_nonnegative"),
         db.CheckConstraint("selling_price >= 0", name="selling_price_nonnegative"),
+        db.CheckConstraint("(warranty_enabled = 0 AND warranty_months IS NULL) OR (warranty_enabled = 1 AND warranty_months IS NOT NULL AND warranty_months BETWEEN 1 AND 120)", name="warranty_policy"),
         TABLE_OPTIONS,
     )
     sku = db.Column(db.String(50), nullable=False, unique=True)
@@ -23,6 +24,9 @@ class Product(Record, Timestamps, db.Model):
     stock_quantity = db.Column(INTEGER(unsigned=True), nullable=False, default=0, server_default="0")
     reorder_level = db.Column(INTEGER(unsigned=True), nullable=False, default=5, server_default="5")
     image_url = db.Column(db.String(500))
+    warranty_enabled = db.Column(db.Boolean, nullable=False, default=False, server_default=db.false())
+    warranty_months = db.Column(INTEGER(unsigned=True))
+    warranty_notes = db.Column(db.String(2000))
     is_active = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true(), index=True)
     category = db.relationship("Category", back_populates="products")
     business = db.relationship("Business", back_populates="products")

@@ -1,0 +1,6 @@
+{% extends 'warranties/base.html' %}
+{% from 'catalog/fields.html' import input %}
+{% block title %}Xác minh bảo hành đơn cũ · TechFlow{% endblock %}
+{% block warranty_content %}
+<header class="catalog-heading"><div><span class="catalog-eyebrow">ADMIN / XÁC MINH</span><h1>Chính sách cho đơn cũ</h1><p>{{ item.order.order_code }} · {{ item.product.sku }} · {{ item.order.customer_name }}</p></div></header><div class="wr-notice">Chỉ ghi khi đã xác minh chứng từ hoặc chính sách lúc bán. Không áp dụng ngược cấu hình sản phẩm hiện tại; không sửa snapshot đơn cũ.</div><form method="post" class="catalog-panel catalog-edit wr-narrow" data-loading-form novalidate>{{ form.hidden_tag() }}<section class="catalog-form-section"><div class="catalog-form-grid">{{ input(form.starts_on) }}{{ input(form.months) }}{{ input(form.reason) }}{{ input(form.notes) }}</div></section><div class="catalog-form-footer"><span>Lưu căn cứ xác minh</span><div><a class="btn btn-light" href="{{ url_for('warranties.lookup',q=item.order.order_code) }}">Hủy</a><button class="btn btn-primary" type="submit">Xác nhận chính sách</button></div></div></form>
+{% endblock %}

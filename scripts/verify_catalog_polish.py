@@ -113,6 +113,7 @@ print(json.dumps(dict(category=categories[0].id, supplier=suppliers[0].id)))
                         # The account menu is a real read-only section, not a fake profile page.
                         if width < 992:
                             page.get_by_role("button", name="Mở menu điều hướng").click()
+                        page.locator('[data-nav-group="account"] > summary').click()
                         page.get_by_role("link", name="Thông tin cá nhân", exact=True).click()
                         page.wait_for_url("**/staff/dashboard#session")
                         expect(page.locator("#session")).to_be_in_viewport()

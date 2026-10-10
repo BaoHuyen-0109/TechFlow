@@ -6,6 +6,7 @@
   {% elif name == 'business_id' %}{% if record.business %}<a href="{{ url_for('businesses.detail', record_id=record.business_id) }}">{{ record.business.name }}</a>{% else %}Chưa chọn nhà cung cấp{% endif %}
   {% elif name in ['purchase_price','selling_price'] %}{{ record[name]|vnd }}
   {% elif name == 'is_active' %}{{ 'Đang hoạt động' if record.is_active else 'Ngừng hoạt động' }}
+  {% elif name == 'warranty_enabled' %}{{ 'Có bảo hành' if record.warranty_enabled else 'Không bảo hành' }}
   {% elif name == 'image_url' %}{% if record.image_url %}<a href="{{ record.image_url }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Mở hình ảnh <i aria-hidden="true" class="bi bi-box-arrow-up-right"></i></a>{% else %}Chưa có ảnh{% endif %}
   {% else %}{{ record[name] if record[name] is not none else 'Chưa có thông tin' }}{% endif %}
 {%- endmacro %}

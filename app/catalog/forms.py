@@ -101,6 +101,20 @@ class BusinessForm(FlaskForm):
 
 
 class ProductForm(FlaskForm):
+    warranty_enabled = BooleanField('Có bảo hành', default=False)
+    warranty_months = CountField('Thời hạn bảo hành (tháng)', validators=[Optional(), NumberRange(min=1,max=120,message='Từ 1 đến 120 tháng.')])
+    warranty_notes = TextAreaField('Điều kiện và ghi chú bảo hành', filters=[clean], validators=[Optional(),Length(max=2000,message='Tối đa 2000 ký tự.')])
+
+    def validate(self, extra_validators=None):
+        valid = super().validate(extra_validators)
+        # Optional stops field validators for an empty month, so check explicitly.
+        if self.warranty_enabled.data and self.warranty_months.data is None:
+            self.warranty_months.errors = list(self.warranty_months.errors) + ['Vui lòng nhập thời hạn khi bật bảo hành.']
+            valid = False
+        if not self.warranty_enabled.data:
+            self.warranty_months.data = None
+        return valid
+
     sku = StringField("Mã SKU", filters=[clean], validators=[InputRequired(message="Vui lòng nhập mã SKU."), Length(max=50, message="Tối đa 50 ký tự."), identifier])
     name = text("Tên sản phẩm", 180, True)
     category_id = ChoiceField("Danh mục", coerce=int, validators=[InputRequired(message="Vui lòng chọn danh mục."), NumberRange(min=1, message="Vui lòng chọn danh mục.")])

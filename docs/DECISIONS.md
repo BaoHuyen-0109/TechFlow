@@ -132,3 +132,18 @@
 48. Migration additive c051_customers kiểm thử empty/legacy và backup restore
     trước demo. Chặn downgrade tự động vì mất hồ sơ/liên kết; rollback app giữ
     schema tương thích, recovery/forward fix phải được duyệt riêng. Không AWS.
+
+49. 5.2 được duyệt: snapshot chính sách lúc tạo draft, bắt đầu từ completed_at
+    thực tế theo ngày Việt Nam; cộng tháng lịch và còn hạn hết ngày kết thúc.
+    Không suy đoán chính sách hoặc thời điểm hoàn tất cho đơn cũ.
+50. Thêm warranty_devices ngoài coverage/ticket/event để MySQL UNIQUE bảo vệ
+    serial và (coverage,unit_index). Tạo thiết bị theo nhu cầu, không sinh theo
+    toàn bộ số lượng bán. Phiếu open có generated device key UNIQUE.
+51. Còn hạn không cam kết miễn phí: phải có kết quả kiểm tra trước khi chấp nhận.
+    Từ chối phải ghi lý do. Hoàn thành/từ chối vẫn giữ thiết bị đến khi trả khách.
+52. Staff tra cứu completed tối thiểu toàn cửa hàng nhưng chỉ xử lý phiếu mình
+    tạo/được phân công. Chính sách, legacy verification và assignment Admin-only.
+53. Nhận/xử lý bảo hành và hủy đơn dùng chung order lock đầu tiên; không đổi kho
+    từ module bảo hành. Hủy đơn completed bị chặn khi còn phiếu chưa trả khách.
+54. Giữ native details/summary cho menu Business để bàn phím/no-JS hoạt động;
+    route con tự mở nhóm, không gộp Admin/Business hoặc thay URL cũ.

@@ -118,3 +118,13 @@ Service `purchase_service.py`/`sales_service.py` là interface module;
 validation Decimal, khóa stock, movement/audit. `inventory/routes.py` chỉ đọc
 lịch sử theo quyền. Không dùng session auth để sở hữu transaction ghi.
 Chi tiết isolation/lock/idempotency và giới hạn: [INVENTORY.md](INVENTORY.md).
+
+## Giai đoạn 5.2: bảo hành
+
+Blueprint `warranties` tách forms/routes/templates/static; `warranty_service.py`
+chịu trách nhiệm snapshot eligibility, định danh thiết bị, state machine và ghi
+lịch sử/audit. `transaction_service.py` chụp chính sách khi tạo đơn, kích hoạt khi
+completed và chặn hủy đơn đang bảo hành. Bảo hành không gọi change_stock.
+Mọi thao tác cạnh tranh khóa sales_order trước; serial/open-device còn được bảo
+vệ bởi UNIQUE MySQL. Bốn model mới và ERD: [WARRANTY.md](WARRANTY.md).
+Sidebar Business dùng native details/summary, giữ layout Admin riêng và offcanvas.

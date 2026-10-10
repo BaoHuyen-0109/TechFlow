@@ -1,6 +1,7 @@
 """Stage 5 acceptance. Hard guard: exclusively isolated Docker test application."""
 import json
 import secrets
+import re
 
 from playwright.sync_api import sync_playwright, expect
 from verify_catalog_ui import ROOT, BASE, provision, capture
@@ -128,8 +129,9 @@ cancel_order({payload['admin']},{sale_id})
                     option=simple.locator('#lines-0-product_id option').nth(1).get_attribute('value')
                     simple.locator('#lines-0-product_id').select_option(option)
                     simple.locator('#lines-0-quantity').fill('1');simple.locator('#lines-0-unit_cost').fill('0.01')
-                    simple.get_by_role('button',name='Lưu bản nháp',exact=True).click(no_wait_after=True)
-                    simple.wait_for_url('**/business/purchases/*', wait_until='domcontentloaded')
+                    with simple.expect_navigation(wait_until='domcontentloaded'):
+                        simple.get_by_role('button',name='Lưu bản nháp',exact=True).press('Enter',no_wait_after=True)
+                    simple.wait_for_url(re.compile(r'/business/purchases/\d+$'), wait_until='domcontentloaded')
                     expect(simple.locator('[data-document-total]')).to_have_text('0,01 ₫')
                     no_js.close()
                 context.close()

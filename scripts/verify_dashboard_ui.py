@@ -101,14 +101,14 @@ db.session.commit()
                         fallback_page.route("**/vendor/chartjs/chart.umd.min.js", lambda route: route.abort())
                         fallback_page.goto(BASE + "/staff/dashboard")
                         expect(fallback_page.locator("[data-chart-status]")).to_have_text("Chưa thể hiển thị biểu đồ. Số liệu vẫn có trong bảng bên dưới.")
-                        assert fallback_page.locator("details").get_attribute("open") is not None
+                        assert fallback_page.locator("[data-category-chart] details").get_attribute("open") is not None
                         capture(fallback_page,path=str(ROOT / "docs/screenshots" / f"stage6-chart-fallback-{role}.png"),full_page=True)
                         fallback.close()
                         no_js = browser.new_context(storage_state=state, java_script_enabled=False, viewport={"width":width,"height":height})
                         no_js_page = no_js.new_page()
                         no_js_page.goto(BASE + "/staff/dashboard")
                         expect(no_js_page.locator('[data-kpi="products"]')).to_have_text(str(stats["totals"]["products"]))
-                        assert no_js_page.locator("details").get_attribute("open") is not None
+                        assert no_js_page.locator("[data-category-chart] details").get_attribute("open") is not None
                         assert no_js_page.locator("[data-category-count]").count() == len(stats["categories"])
                         capture(no_js_page,path=str(ROOT / "docs/screenshots" / f"stage6-no-js-{role}.png"),full_page=True)
                         no_js.close()

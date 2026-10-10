@@ -99,8 +99,14 @@ def create_document(kind, actor_id, header, lines, code=None):
                     raise InventoryError(f'Sản phẩm {product.sku} không đủ tồn kho.')
                 line_total = money(unit * qty)
                 total = money(total + line_total)
-                session.add(item_model(**{parent_field: document.id, 'product_id': product_id,
-                    'quantity': qty, 'unit_cost' if kind == 'purchases' else 'unit_price': unit, 'line_total': line_total}))
+                item = item_model(**{parent_field: document.id, 'product_id': product_id,
+                    'quantity': qty, 'unit_cost' if kind == 'purchases' else 'unit_price': unit, 'line_total': line_total})
+                session.add(item)
+                if kind == 'sales':
+                    from app.models import WarrantyCoverage
+                    session.flush()
+                    session.add(WarrantyCoverage(sale_item_id=item.id, enabled=product.warranty_enabled,
+                        months=product.warranty_months, notes=product.warranty_notes, source='sale'))
             document.total_amount = total
             audit(session, actor_id, 'create_draft', model.__tablename__, document.id)
             identifier = document.id
@@ -132,6 +138,22 @@ def transition(kind, actor_id, identifier, action):
             items = session.scalars(select(item_model).where(getattr(item_model, parent_field) == identifier).order_by(item_model.product_id)).all()
             if not items:
                 raise InventoryError('Giao dịch không có dòng sản phẩm hợp lệ.')
+            if kind == 'sales':
+                from app.models import WarrantyCoverage, WarrantyDevice, WarrantyTicket
+                from app.services.warranty_service import expiry, local_day
+                if action == 'cancel' and document.status == 'completed':
+                    opened = session.scalar(select(WarrantyTicket.id).join(WarrantyDevice).join(WarrantyCoverage)
+                        .where(WarrantyCoverage.sale_item_id.in_([i.id for i in items]),
+                               WarrantyTicket.status != 'returned').limit(1).with_for_update())
+                    if opened:
+                        raise InventoryError('Đơn còn phiếu bảo hành chưa trả khách. Kết thúc bảo hành trước khi hủy đơn.')
+                if action == 'complete':
+                    document.completed_at = utc_now()
+                    for coverage in session.scalars(select(WarrantyCoverage).where(
+                            WarrantyCoverage.sale_item_id.in_([i.id for i in items])).with_for_update()):
+                        if coverage.enabled:
+                            coverage.starts_on = local_day(document.completed_at)
+                            coverage.expires_on = expiry(coverage.starts_on, coverage.months)
             if action == 'complete' or document.status == 'completed':
                 products = lock_products(session, [item.product_id for item in items])
                 if action == 'complete' and kind == 'purchases':

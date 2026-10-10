@@ -129,6 +129,43 @@ document.querySelectorAll("[data-sidebar-collapse]").forEach((button) => {
   });
 });
 
+document.querySelectorAll("[data-nav-group]").forEach((group) => {
+  const summary = group.querySelector("summary");
+  const sync = () => summary.setAttribute("aria-expanded", String(group.open));
+  group.addEventListener("toggle", sync);
+  summary.addEventListener("click", (event) => {
+    if (matchMedia("(min-width: 992px)").matches && document.body.classList.contains("workspace-collapsed")) {
+      event.preventDefault();
+      document.body.classList.remove("workspace-collapsed");
+      group.open = true;
+      document.querySelectorAll("[data-sidebar-collapse]").forEach((button) => {
+        button.setAttribute("aria-expanded", "true");
+        button.setAttribute("aria-label", "Thu gọn thanh điều hướng");
+      });
+    }
+  });
+  sync();
+});
+function syncAccountNavigation() {
+  const account = document.querySelector('[data-nav-group="account"]');
+  if (!account) return;
+  const profile = account.querySelector("a");
+  const isProfile = location.pathname === new URL(profile.href).pathname && location.hash === "#session";
+  if (isProfile) account.open = true;
+  account.classList.toggle("is-active", isProfile);
+  profile.classList.toggle("active", isProfile);
+  if (isProfile) profile.setAttribute("aria-current", "location");
+  else profile.removeAttribute("aria-current");
+  const overview = document.querySelector('.ws-navigation > a[href="/staff/dashboard"]');
+  if (overview && location.pathname === "/staff/dashboard") {
+    overview.classList.toggle("active", !isProfile);
+    if (isProfile) overview.removeAttribute("aria-current");
+    else overview.setAttribute("aria-current", "page");
+  }
+}
+syncAccountNavigation();
+window.addEventListener("hashchange", syncAccountNavigation);
+
 document.querySelectorAll("[data-password-toggle]").forEach((button) => {
   button.addEventListener("click", () => {
     const input = button.parentElement.querySelector("input");

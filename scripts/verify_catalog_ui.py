@@ -14,6 +14,10 @@ BASE = "http://localhost:8001"
 
 
 def capture(page, *, path, full_page=False):
+    if os.environ.get('TECHFLOW_SCREENSHOT_DIR'):
+        directory=Path(os.environ['TECHFLOW_SCREENSHOT_DIR'])
+        directory.mkdir(parents=True,exist_ok=True)
+        path=str(directory/Path(path).name)
     if full_page:
         # Chromium paints fixed elements at the current viewport offset in a
         # full-page shot. Capture from the top, preserving the focused field.
@@ -130,6 +134,7 @@ document.addEventListener('submit', (event) => {
                 assert "giữa kỳ" not in page.locator("body").inner_text().lower()
                 if width < 992:
                     page.get_by_role("button", name="Mở menu điều hướng").click()
+                page.locator('[data-nav-group="inventory"] > summary').click()
                 page.locator(".ws-navigation").get_by_role("link", name="Sản phẩm", exact=True).click()
                 page.wait_for_url("**/business/products")
                 assert page.locator('a.ws-nav-link.active').get_attribute("href") == "/business/products"

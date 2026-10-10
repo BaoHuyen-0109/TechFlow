@@ -13,7 +13,10 @@
   {% for title, icon, fields in resource.groups %}
   <section class="catalog-form-section" aria-labelledby="section-{{ loop.index }}">
     <h2 id="section-{{ loop.index }}"><i aria-hidden="true" class="bi bi-{{ icon }}"></i>{{ title }}</h2>
-    <div class="catalog-form-grid">{% for name in fields %}{{ input(form[name]) }}{% if name == 'image_url' %}<div class="catalog-wide">{{ image_preview(form.image_url.data, true) }}</div>{% endif %}{% endfor %}</div>
+    {% if 'warranty_enabled' in fields and current_user.role != 'admin' %}
+    <p class="text-muted">{{ 'Có bảo hành · ' ~ record.warranty_months ~ ' tháng' if record and record.warranty_enabled else 'Không bảo hành' }}. Chỉ Admin được thay đổi chính sách.</p>
+    {% else %}<div class="catalog-form-grid">{% for name in fields %}{{ input(form[name]) }}{% if name == 'image_url' %}<div class="catalog-wide">{{ image_preview(form.image_url.data, true) }}</div>{% endif %}{% endfor %}</div>{% endif %}
+    {% if 'warranty_enabled' in fields %}<p class="catalog-help">Chính sách được chụp tại lúc tạo đơn mới; không thay đổi bảo hành đơn cũ. Còn hạn vẫn cần kiểm tra điều kiện thực tế.</p>{% endif %}
     {% if resource.key == 'products' and 'reorder_level' in fields %}<div class="catalog-note"><i aria-hidden="true" class="bi bi-lock"></i><div>Tồn kho hiện tại: <strong>{{ record.stock_quantity if record else 0 }}</strong> · Chỉ xem.<br>Số lượng tồn kho được cập nhật qua nghiệp vụ kho.</div></div>{% endif %}
   </section>
   {% endfor %}

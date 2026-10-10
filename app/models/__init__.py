@@ -8,8 +8,10 @@ from app.models.sale import SalesOrder, SalesOrderItem
 from app.models.stock_movement import StockMovement
 from app.models.audit_log import AuditLog
 from app.models.customer import Customer
+from app.models.warranty import WarrantyCoverage, WarrantyDevice, WarrantyTicket, WarrantyEvent
 
 __all__ = [
     "User", "Business", "Category", "Product", "PurchaseReceipt",
     "PurchaseReceiptItem", "SalesOrder", "SalesOrderItem", "StockMovement", "AuditLog", "Customer",
+    "WarrantyCoverage", "WarrantyDevice", "WarrantyTicket", "WarrantyEvent",
 ]

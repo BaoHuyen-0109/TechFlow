@@ -31,9 +31,14 @@ def persist(resource, record, form=None, delete=False):
             db.session.delete(record)
         else:
             action = "update" if record.id else "create"
+            if isinstance(record, Product) and current_user.role != 'admin' and any(
+                    name in request.form for name in ('warranty_enabled','warranty_months','warranty_notes')):
+                raise CatalogError('Chỉ Admin được cấu hình chính sách bảo hành.',403)
             # Explicit form whitelist: never accept stock_quantity, IDs or timestamps.
             for name in resource.form.__dict__:
                 if name.startswith("_") or name not in form._fields:
+                    continue
+                if name.startswith('warranty_') and current_user.role != 'admin':
                     continue
                 value = form[name].data
                 if isinstance(value, str):

@@ -28,7 +28,9 @@ def main() -> None:
                 rules.append("UNIQUE")
             for foreign_key in column.foreign_keys:
                 rules.append(f"FK {foreign_key.target_fullname}, DELETE {foreign_key.ondelete}")
-            if column.server_default is not None:
+            if column.computed is not None:
+                rules.append(f"GENERATED ALWAYS ({column.computed.sqltext}) STORED")
+            elif column.server_default is not None:
                 rules.append(f"DEFAULT {column.server_default.arg}")
             if column.onupdate is not None:
                 rules.append("ORM cập nhật UTC")
@@ -44,7 +46,7 @@ def main() -> None:
             elif isinstance(constraint, UniqueConstraint):
                 lines.append(f"- `{constraint.name}`: UNIQUE ({', '.join(column.name for column in constraint.columns)})")
         lines.append("")
-    (ROOT / "docs" / "DATABASE_SCHEMA.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    (ROOT / "docs" / "DATABASE_SCHEMA.md").write_text("\n".join(lines).rstrip() + "\n", encoding="utf-8")
     print(f"Exported docs/DATABASE_SCHEMA.md from {len(db.metadata.tables)} model tables.")
 
 

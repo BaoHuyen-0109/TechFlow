@@ -165,19 +165,7 @@ Chromium, hai vai trò × ba viewport **1440×1000, 834×1112, 390×844**:
   typography/spacing đồng nhất, trường form không tràn, modal nằm trong màn hình,
   mã không bị ngắt dòng tùy tiện. Form dài và ảnh full_page có thể cao hơn viewport.
 
-Ảnh tiêu biểu:
-
-| Nội dung | Desktop | Tablet | Mobile |
-| --- | --- | --- | --- |
-| Sản phẩm | [Xem](screenshots/stage4-admin-products-desktop.png) | [Xem](screenshots/stage4-admin-products-tablet.png) | [Xem](screenshots/stage4-staff-products-mobile.png) |
-| Form sản phẩm | [Xem](screenshots/stage4-admin-product-form-desktop.png) | [Xem](screenshots/stage4-admin-product-form-tablet.png) | [Xem](screenshots/stage4-staff-product-form-mobile.png) |
-| Modal xóa | [Xem](screenshots/stage4-admin-delete-modal-desktop.png) | [Xem](screenshots/stage4-admin-delete-modal-tablet.png) | [Xem](screenshots/stage4-staff-delete-modal-mobile.png) |
-| Danh mục | [Xem](screenshots/stage4-admin-categories-desktop.png) | [Xem](screenshots/stage4-admin-categories-tablet.png) | [Xem](screenshots/stage4-staff-categories-mobile.png) |
-| Nhà cung cấp | [Xem](screenshots/stage4-admin-suppliers-desktop.png) | [Xem](screenshots/stage4-admin-suppliers-tablet.png) | [Xem](screenshots/stage4-staff-suppliers-mobile.png) |
-
-Minh chứng quyền: [Admin sang Business](screenshots/stage4-regression-admin-business-desktop.png),
-[Admin quay về quản trị](screenshots/stage4-regression-admin-return-desktop.png),
-[Staff bị 403](screenshots/stage4-regression-staff-403-mobile.png).
+Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
 
 ## Truy cập và giới hạn
 

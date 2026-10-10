@@ -122,29 +122,9 @@ Chromium, Admin/Staff × **1440×1000 / 834×1112 / 390×844**:
 - Chụp full-page từ đầu trang để tránh Chromium ghi fixed sidebar ở vị trí cuộn
   của input; ảnh full-page cao hơn viewport là bình thường. Ảnh trước giữ nguyên.
 
-## Screenshot trước/sau
+## Ảnh minh chứng
 
-| Nội dung | Trước | Sau |
-| --- | --- | --- |
-| Form sản phẩm desktop | [Trước](screenshots/stage4-admin-product-form-desktop.png) | [Sau](screenshots/stage4-ui-admin-products-form-desktop.png) |
-| Sản phẩm mobile | [Trước](screenshots/stage4-staff-products-mobile.png) | [Sau](screenshots/stage4-ui-staff-products-mobile.png) |
-| Business Dashboard | [Trước](screenshots/stage4-regression-admin-business-desktop.png) | [Sau](screenshots/stage4-ui-admin-business-desktop.png) |
-| Danh mục | [Trước](screenshots/stage4-admin-categories-desktop.png) | [Sau](screenshots/stage4-ui-admin-categories-desktop.png) |
-| Nhà cung cấp | [Trước](screenshots/stage4-admin-suppliers-desktop.png) | [Sau](screenshots/stage4-ui-admin-suppliers-desktop.png) |
-
-Minh chứng thêm:
-
-- [Sửa sản phẩm](screenshots/stage4-ui-admin-products-edit-desktop.png),
-  [chi tiết](screenshots/stage4-ui-admin-products-detail-desktop.png),
-  [form mobile](screenshots/stage4-ui-staff-products-form-mobile.png).
-- [Form danh mục](screenshots/stage4-ui-admin-categories-form-desktop.png),
-  [form nhà cung cấp tablet](screenshots/stage4-ui-admin-suppliers-form-tablet.png).
-- [Modal mobile](screenshots/stage4-ui-staff-delete-modal-mobile.png),
-  [validation](screenshots/stage4-ui-staff-validation-mobile.png),
-  [ảnh lỗi/fallback](screenshots/stage4-ui-staff-image-fallback-mobile.png).
-- [Login](screenshots/stage4-ui-regression-login-desktop.png),
-  [Admin quay về quản trị](screenshots/stage4-ui-regression-admin-return-desktop.png),
-  [Staff403](screenshots/stage4-ui-regression-staff-403-mobile.png).
+Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
 
 ## Database và vận hành
 

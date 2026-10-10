@@ -182,3 +182,13 @@ network `test-backend` và volume riêng. Không publish MySQL test ra host. Fix
 chỉ chấp nhận host db-test và database techflow_test. Migration được chạy trước pytest;
 không dùng create_all/drop_all. Dữ liệu test có mã ngẫu nhiên và được giữ trong volume
 test; chạy lại không yêu cầu reset/xóa volume. Dừng service test khi xong để tiết kiệm RAM.
+
+## Schema bổ sung hiện tại (5.2)
+
+`w052_warranty` → `w052_guards` sau `c051_customers`: 15 bảng nghiệp vụ, 23 FK.
+Thêm chính sách sản phẩm, completed_at nullable và coverage/device/ticket/event.
+Không backfill đơn cũ, không đổi snapshot khách/giá/tồn kho. Coverage theo dòng
+bán và device theo đơn vị; serial UNIQUE, generated open_device_key UNIQUE ngăn
+hai phiếu mở cho cùng máy. Xem [WARRANTY.md](WARRANTY.md) và schema được xuất lại.
+Các đoạn giai đoạn 2 ở trên giữ làm lịch sử thiết kế; nghiệp vụ transaction
+đã thực hiện ở Stage 5. Không sử dụng downgrade tự động cho dữ liệu khách/bảo hành.

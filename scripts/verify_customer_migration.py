@@ -35,7 +35,7 @@ with app.app_context():
             conn.execute(text('CREATE TABLE stage1_probe(id INT PRIMARY KEY, value VARCHAR(30))'))
             conn.execute(text("INSERT INTO stage1_probe VALUES(1,'preserve')"))
             before=[tuple(row) for row in conn.execute(text('SELECT * FROM sales_orders ORDER BY id'))]
-    upgrade()
+    upgrade(revision='c051_customers')
     with db.engine.connect() as conn:
         assert conn.scalar(text('SELECT version_num FROM alembic_version'))=='c051_customers'
         assert conn.scalar(text('SELECT COUNT(*) FROM customers'))==0

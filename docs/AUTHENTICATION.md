@@ -129,3 +129,9 @@ Giai đoạn 5 bổ sung quyền giao dịch: [STAGE_5_PLAN.md](STAGE_5_PLAN.md)
 xác nhận/hủy draft đơn của mình và đọc movement thuộc đơn đó. Hủy completed chỉ
 Admin. Quyền được kiểm tra cả service; query danh sách/detail/history scope theo
 owner trước phân trang. Không mở route sửa/xóa movement hoặc xóa giao dịch.
+
+Giai đoạn 5.2: tra cứu completed phục vụ bảo hành dùng projection tối thiểu, không
+mở rộng quyền route đơn bán. Admin quản lý mọi phiếu; Staff chỉ xem/xử lý phiếu
+mình tạo hoặc được phân công. Chỉ Admin cấu hình chính sách sản phẩm, xác minh
+đơn cũ và phân công. Backend kiểm tra actor/state/owner trong transaction, giữ
+CSRF/session/rate limit/CSP. Ma trận đầy đủ: [WARRANTY.md](WARRANTY.md).

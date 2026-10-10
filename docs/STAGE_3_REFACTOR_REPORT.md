@@ -122,18 +122,11 @@ không lỗi tải assets. Account ngẫu nhiên chỉ tạo trong techflow_test
 
 Đã chụp 21 ảnh mới và tự xem lại cả hai Dashboard trên ba viewport. Sau kiểm tra
 trực quan đã chỉnh phần phiên Staff mobile và bảng quyền Admin mobile để nội dung
-không bị ép hẹp/cắt. Ảnh chính:
+không bị ép hẹp/cắt.
 
-| Vai trò | Desktop | Tablet | Mobile |
-| --- | --- | --- | --- |
-| Admin | [Ảnh](screenshots/refactor-admin-desktop.png) | [Ảnh](screenshots/refactor-admin-tablet.png) | [Ảnh](screenshots/refactor-admin-mobile.png) |
-| Staff | [Ảnh](screenshots/refactor-staff-desktop.png) | [Ảnh](screenshots/refactor-staff-tablet.png) | [Ảnh](screenshots/refactor-staff-mobile.png) |
+Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
 
-Ảnh thêm: [Admin thu gọn](screenshots/refactor-admin-collapsed.png),
-[Staff thu gọn](screenshots/refactor-staff-collapsed.png),
-[Menu Staff mobile](screenshots/refactor-staff-menu-mobile.png),
-[Staff bị 403](screenshots/refactor-staff-403-desktop.png).
-Ảnh giai đoạn 3 ban đầu được giữ để đối chiếu. Đây là viewport mô phỏng trên
+Đây là viewport mô phỏng trên
 Chromium thật, chưa kiểm tra thiết bị cảm ứng vật lý, Safari/Firefox hoặc screen reader.
 
 Lần chạy đầu phát hiện lỗi mất dấu khi ghi file qua PowerShell; đã sửa cách truyền

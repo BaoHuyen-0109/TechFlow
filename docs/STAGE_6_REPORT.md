@@ -126,17 +126,17 @@ tra quyền, rate limiting hoặc xóa dữ liệu để làm test thành công.
 
 | Vai trò/viewport | Trước | Sau |
 | --- | --- | --- |
-| Admin desktop | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Admin tablet | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Admin mobile | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Staff desktop | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Staff tablet | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Staff mobile | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Admin desktop | Trước (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Sau (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Admin tablet | Trước (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Sau (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Admin mobile | Trước (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Sau (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Staff desktop | Trước (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Sau (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Staff tablet | Trước (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Sau (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Staff mobile | Trước (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Sau (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
 
-Thêm minh chứng: Chart lỗi vẫn đọc bảng (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o),
-Staff không JS (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o),
-Admin quay về quản trị (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o),
-Staff bị chặn quản trị (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o).
+Thêm minh chứng: Chart lỗi vẫn đọc bảng (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo),
+Staff không JS (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo),
+Admin quay về quản trị (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo),
+Staff bị chặn quản trị (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo).
 
 ## Xem local và bàn giao
 

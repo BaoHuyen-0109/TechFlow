@@ -140,12 +140,12 @@ chi tiết đơn bán. Không tràn ngang toàn trang; bảng cuộn trong regio
 
 | Minh chứng | Desktop | Mobile |
 | --- | --- | --- |
-| Tạo phiếu nhập | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Nhập hoàn thành | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Tạo đơn bán | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Đơn bán hoàn thành | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Lịch sử kho | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
-| Staff403 | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Tạo phiếu nhập | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Nhập hoàn thành | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Tạo đơn bán | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Đơn bán hoàn thành | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Lịch sử kho | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
+| Staff403 | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) | Ảnh (ảnh cũ đã dọn; xem kết quả kiểm thử trong báo cáo) |
 
 Ảnh/dữ liệu là fixture trong DB test, không phải dữ liệu demo chính. Ảnh sinh tự
 động được ignore, giữ local để chọn minh chứng sau nghiệm thu.

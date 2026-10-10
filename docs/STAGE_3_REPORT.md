@@ -79,12 +79,9 @@ Chạy scripts/verify_ui.py bằng Playwright Chromium 140 trên UI profile, c�
 | Mobile 390 × 844 | Các luồng trên và mở/đóng sidebar offcanvas đạt |
 | Staff email login | Không thấy menu Admin; truy cập trực tiếp /admin trả 403 |
 
-Không có JavaScript pageerror. Có thể xem trực tiếp các ảnh:
+Không có JavaScript pageerror.
 
-- [Login desktop](screenshots/stage3-login-desktop.png), [tablet](screenshots/stage3-login-tablet.png), [mobile](screenshots/stage3-login-mobile.png).
-- [Dashboard desktop](screenshots/stage3-dashboard-desktop.png), [tablet](screenshots/stage3-dashboard-tablet.png), [mobile](screenshots/stage3-dashboard-mobile.png).
-- [Menu tablet](screenshots/stage3-menu-tablet.png), [mobile](screenshots/stage3-menu-mobile.png).
-- [Staff 403](screenshots/stage3-staff-403.png).
+Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
 
 Đây là kiểm tra browser thật với viewport mô phỏng; chưa kiểm tra thiết bị cảm
 ứng vật lý, Safari hoặc Firefox. Người dùng cần xác minh các môi trường đó nếu

@@ -1,0 +1,4 @@
+{% macro state(value,states) %}<span class="wr-state wr-state-{{ value }}">{{ states[value] }}</span>{% endmacro %}
+{% macro policy(coverage,coverage_state) %}
+<div class="wr-policy"><i class="bi bi-shield-check" aria-hidden="true"></i><div><strong>{{ coverage_state(coverage) }}</strong>{% if coverage and coverage.enabled %}<span>{{ coverage.months }} tháng · {{ coverage.starts_on.strftime('%d/%m/%Y') if coverage.starts_on else 'Chưa kích hoạt' }} → {{ coverage.expires_on.strftime('%d/%m/%Y') if coverage.expires_on else '—' }}</span>{% endif %}<p>{{ coverage.notes if coverage and coverage.notes else 'Kiểm tra điều kiện thực tế trước khi quyết định bảo hành.' }}</p></div></div>
+{% endmacro %}

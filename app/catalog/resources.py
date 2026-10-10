@@ -37,6 +37,7 @@ class Resource:
                 ("Thông tin cơ bản", "box-seam", ("sku", "name", "brand", "model")),
                 ("Phân loại", "tags", ("category_id", "business_id")),
                 ("Giá và tồn kho", "wallet2", ("purchase_price", "selling_price", "reorder_level")),
+                ("Chính sách bảo hành", "shield-check", ("warranty_enabled", "warranty_months", "warranty_notes")),
                 ("Thông tin bổ sung", "card-text", ("image_url", "description", "is_active")),
             ],
             "categories": [("Thông tin danh mục", "tags", ("code", "name", "description", "is_active"))],

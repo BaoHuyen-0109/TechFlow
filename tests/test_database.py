@@ -20,8 +20,8 @@ from app.models import (
 def test_migrated_schema_matches_models(mysql_app):
     inspector = inspect(db.engine)
     assert set(db.metadata.tables).issubset(inspector.get_table_names())
-    assert len(db.metadata.tables) == 11
-    assert sum(len(inspector.get_foreign_keys(table)) for table in db.metadata.tables) == 14
+    assert len(db.metadata.tables) == 15
+    assert sum(len(inspector.get_foreign_keys(table)) for table in db.metadata.tables) == 23
     with db.engine.connect() as connection:
         context = MigrationContext.configure(connection, opts={"include_object": include_object})
         assert compare_metadata(context, db.metadata) == []

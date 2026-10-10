@@ -49,15 +49,8 @@ quản trị, truy cập trực tiếp /admin và /admin/dashboard đều 403. G
 collapse/offcanvas, hover/focus bằng bàn phím, active menu, Logout, CSRF flow,
 404, anonymous redirect, không tràn ngang, không pageerror/asset error.
 
-Ảnh minh chứng (đã tự xem lại):
+Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
 
-| Trạng thái Admin | Desktop | Tablet | Mobile |
-| --- | --- | --- | --- |
-| Vào Business | [Ảnh](screenshots/access-admin-business-desktop.png) | [Ảnh](screenshots/access-admin-business-tablet.png) | [Ảnh](screenshots/access-admin-business-mobile.png) |
-| Quay về Admin | [Ảnh](screenshots/access-admin-return-desktop.png) | [Ảnh](screenshots/access-admin-return-tablet.png) | [Ảnh](screenshots/access-admin-return-mobile.png) |
-
-[Staff bị 403](screenshots/access-staff-403-desktop.png),
-[Staff mobile bị 403](screenshots/access-staff-403-mobile.png).
 Chromium là trình duyệt thật với viewport mô phỏng, chưa kiểm tra thiết bị vật lý,
 Safari/Firefox hoặc screen reader.
 

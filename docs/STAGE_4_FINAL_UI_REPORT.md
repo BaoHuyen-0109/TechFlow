@@ -97,23 +97,9 @@ Hai lượt browser đầu bị 429 vì chạy các runner đồng thời qua c�
 log xác nhận `limiting requests` tại POST /login. Chạy lại tuần tự đạt toàn bộ.
 Không nới hoặc tắt rate limiting/authentication/CSRF để kiểm thử.
 
-## Ảnh trước/sau
+## Ảnh minh chứng
 
-Ảnh trước là đợt UI ngay trước lần tinh chỉnh này, cùng viewport/zoom; dữ liệu
-trong ảnh là fixture riêng mỗi lượt chạy. Ảnh full-page có thể cao hơn viewport.
-
-| Nội dung | Trước | Sau |
-| --- | --- | --- |
-| Filter danh mục desktop | [Trước](screenshots/stage4-ui-admin-categories-desktop.png) | [Sau](screenshots/stage4-final-admin-categories-desktop.png) |
-| Filter sản phẩm tablet | [Trước](screenshots/stage4-ui-staff-products-tablet.png) | [Sau](screenshots/stage4-final-staff-products-tablet.png) |
-| Form danh mục gọn | [Trước](screenshots/stage4-ui-admin-categories-form-desktop.png) | [Sau](screenshots/stage4-final-admin-categories-form-desktop.png) |
-| Form giá VND desktop | [Trước](screenshots/stage4-ui-admin-products-form-desktop.png) | [Sau](screenshots/stage4-final-admin-products-form-desktop.png) |
-| Form sản phẩm mobile | [Trước](screenshots/stage4-ui-staff-products-form-mobile.png) | [Sau](screenshots/stage4-final-staff-products-form-mobile.png) |
-
-Minh chứng thêm: [validation mobile](screenshots/stage4-final-staff-validation-mobile.png),
-[nhà cung cấp tablet](screenshots/stage4-final-admin-suppliers-form-tablet.png),
-[Admin quay về quản trị](screenshots/stage4-final-regression-admin-return-desktop.png),
-[Staff bị chặn](screenshots/stage4-final-regression-staff-403-mobile.png).
+Ảnh cũ đã được dọn theo yêu cầu giảm screenshot. Xem [4 ảnh minh chứng hiện tại](screenshots/README.md); ảnh đã commit trước đây vẫn có trong lịch sử Git.
 
 ## Lặp lại kiểm thử và bàn giao
 

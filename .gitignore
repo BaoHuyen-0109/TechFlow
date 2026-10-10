@@ -21,3 +21,8 @@ instance/
 /docs/screenshots/stage6-*.png
 /docs/screenshots/stage5-*.png
 /docs/screenshots/stage51-*.png
+/docs/screenshots/stage52-*.png
+!/docs/screenshots/stage51-admin-desktop-profile.png
+!/docs/screenshots/stage51-admin-mobile-profile.png
+!/docs/screenshots/stage52-admin-desktop-intake.png
+!/docs/screenshots/stage52-admin-mobile-returned.png

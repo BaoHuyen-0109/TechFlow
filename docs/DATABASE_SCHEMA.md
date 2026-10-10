@@ -1,7 +1,7 @@
 # Chi tiết schema MySQL
 
 Xuất từ models bằng `python scripts/export_database_schema.py`.
-Mô tả 11 bảng nghiệp vụ; không kết nối DB hoặc đọc secrets.
+Mô tả 15 bảng nghiệp vụ; không kết nối DB hoặc đọc secrets.
 Giai đoạn 5.1 bổ sung customers và liên kết tùy chọn vào đơn bán; xem [CUSTOMERS.md](CUSTOMERS.md).
 
 ## businesses
@@ -139,6 +139,9 @@ Constraints bổ sung:
 | stock_quantity | INTEGER UNSIGNED | Không | DEFAULT 0 |
 | reorder_level | INTEGER UNSIGNED | Không | DEFAULT 5 |
 | image_url | VARCHAR(500) | Có |  |
+| warranty_enabled | BOOL | Không | DEFAULT false |
+| warranty_months | INTEGER UNSIGNED | Có |  |
+| warranty_notes | VARCHAR(2000) | Có |  |
 | is_active | BOOL | Không | DEFAULT true |
 | id | BIGINT UNSIGNED | Không | PK, AUTO_INCREMENT |
 | created_at | DATETIME | Không | DEFAULT CURRENT_TIMESTAMP |
@@ -155,6 +158,7 @@ Constraints bổ sung:
 
 - `ck_products_purchase_price_nonnegative`: CHECK (purchase_price >= 0)
 - `ck_products_selling_price_nonnegative`: CHECK (selling_price >= 0)
+- `ck_products_warranty_policy`: CHECK ((warranty_enabled = 0 AND warranty_months IS NULL) OR (warranty_enabled = 1 AND warranty_months IS NOT NULL AND warranty_months BETWEEN 1 AND 120))
 - `uq_products_sku`: UNIQUE (sku)
 
 ## purchase_receipts
@@ -220,6 +224,7 @@ Constraints bổ sung:
 | customer_id | BIGINT UNSIGNED | Có | FK customers.id, DELETE RESTRICT |
 | created_by | BIGINT UNSIGNED | Không | FK users.id, DELETE RESTRICT |
 | order_date | DATETIME | Không |  |
+| completed_at | DATETIME | Có |  |
 | status | VARCHAR(20) | Không | DEFAULT draft |
 | total_amount | NUMERIC(14, 2) | Không | DEFAULT 0 |
 | notes | TEXT | Có |  |
@@ -289,3 +294,118 @@ Constraints bổ sung:
 - `ck_sales_order_items_quantity_positive`: CHECK (quantity > 0)
 - `ck_sales_order_items_unit_price_nonnegative`: CHECK (unit_price >= 0)
 
+## warranty_coverages
+
+| Cột | Kiểu MySQL | Nullable | Quy tắc |
+| --- | --- | --- | --- |
+| sale_item_id | BIGINT UNSIGNED | Không | FK sales_order_items.id, DELETE RESTRICT |
+| enabled | BOOL | Không |  |
+| months | INTEGER UNSIGNED | Có |  |
+| notes | VARCHAR(2000) | Có |  |
+| starts_on | DATE | Có |  |
+| expires_on | DATE | Có |  |
+| source | VARCHAR(20) | Không |  |
+| verified_by | BIGINT UNSIGNED | Có | FK users.id, DELETE RESTRICT |
+| verification_reason | VARCHAR(1000) | Có |  |
+| id | BIGINT UNSIGNED | Không | PK, AUTO_INCREMENT |
+| created_at | DATETIME | Không | DEFAULT CURRENT_TIMESTAMP |
+
+Indexes:
+
+- `ix_warranty_coverages_expires_on`: expires_on
+- `ix_warranty_coverages_sale_item_id`: sale_item_id
+- `ix_warranty_coverages_verified_by`: verified_by
+
+Constraints bổ sung:
+
+- `ck_warranty_coverages_dates`: CHECK ((starts_on IS NULL AND expires_on IS NULL) OR (starts_on IS NOT NULL AND expires_on IS NOT NULL AND expires_on >= starts_on))
+- `ck_warranty_coverages_policy`: CHECK ((enabled = 0 AND months IS NULL) OR (enabled = 1 AND months IS NOT NULL AND months BETWEEN 1 AND 120))
+- `ck_warranty_coverages_valid_source`: CHECK (source IN ('sale', 'legacy_verified'))
+- `uq_warranty_coverages_sale_item_id`: UNIQUE (sale_item_id)
+
+## warranty_devices
+
+| Cột | Kiểu MySQL | Nullable | Quy tắc |
+| --- | --- | --- | --- |
+| coverage_id | BIGINT UNSIGNED | Không | FK warranty_coverages.id, DELETE RESTRICT |
+| unit_index | INTEGER UNSIGNED | Không |  |
+| serial | VARCHAR(100) | Có | UNIQUE |
+| id | BIGINT UNSIGNED | Không | PK, AUTO_INCREMENT |
+| created_at | DATETIME | Không | DEFAULT CURRENT_TIMESTAMP |
+
+Indexes:
+
+- `ix_warranty_devices_coverage_id`: coverage_id
+
+Constraints bổ sung:
+
+- `ck_warranty_devices_unit_positive`: CHECK (unit_index > 0)
+- `uq_warranty_devices_coverage_id`: UNIQUE (coverage_id, unit_index)
+- `uq_warranty_devices_serial`: UNIQUE (serial)
+
+## warranty_tickets
+
+| Cột | Kiểu MySQL | Nullable | Quy tắc |
+| --- | --- | --- | --- |
+| ticket_code | VARCHAR(40) | Không | UNIQUE |
+| device_id | BIGINT UNSIGNED | Không | FK warranty_devices.id, DELETE RESTRICT |
+| open_device_key | BIGINT UNSIGNED | Có | GENERATED ALWAYS (CASE WHEN status <> 'returned' THEN device_id ELSE NULL END) STORED |
+| customer_id | BIGINT UNSIGNED | Có | FK customers.id, DELETE RESTRICT |
+| customer_name | VARCHAR(150) | Không |  |
+| customer_phone | VARCHAR(30) | Có |  |
+| product_name | VARCHAR(180) | Không |  |
+| product_sku | VARCHAR(50) | Không |  |
+| created_by | BIGINT UNSIGNED | Không | FK users.id, DELETE RESTRICT |
+| assigned_to | BIGINT UNSIGNED | Có | FK users.id, DELETE RESTRICT |
+| status | VARCHAR(20) | Không | DEFAULT received |
+| assessment | VARCHAR(20) | Không | DEFAULT pending |
+| issue | VARCHAR(2000) | Không |  |
+| inspection_result | VARCHAR(2000) | Có |  |
+| rejection_reason | VARCHAR(1000) | Có |  |
+| received_on | DATE | Không |  |
+| promised_on | DATE | Có |  |
+| completed_at | DATETIME | Có |  |
+| returned_at | DATETIME | Có |  |
+| id | BIGINT UNSIGNED | Không | PK, AUTO_INCREMENT |
+| created_at | DATETIME | Không | DEFAULT CURRENT_TIMESTAMP |
+| updated_at | DATETIME | Không | DEFAULT CURRENT_TIMESTAMP, ORM cập nhật UTC |
+
+Indexes:
+
+- `ix_warranty_tickets_assigned_to`: assigned_to
+- `ix_warranty_tickets_created_by`: created_by
+- `ix_warranty_tickets_customer_id`: customer_id
+- `ix_warranty_tickets_device_id`: device_id
+- `ix_warranty_tickets_received_on`: received_on
+- `ix_warranty_tickets_scope`: created_by, assigned_to, status
+- `ix_warranty_tickets_status`: status
+
+Constraints bổ sung:
+
+- `ck_warranty_tickets_assessment_required`: CHECK (status NOT IN ('completed','returned') OR assessment <> 'pending')
+- `ck_warranty_tickets_promise_date`: CHECK (promised_on IS NULL OR promised_on >= received_on)
+- `ck_warranty_tickets_rejection_reason_required`: CHECK (assessment <> 'rejected' OR rejection_reason IS NOT NULL)
+- `ck_warranty_tickets_valid_assessment`: CHECK (assessment IN ('pending','accepted','rejected'))
+- `ck_warranty_tickets_valid_status`: CHECK (status IN ('received','processing','completed','rejected','returned'))
+- `uq_warranty_tickets_open_device_key`: UNIQUE (open_device_key)
+- `uq_warranty_tickets_ticket_code`: UNIQUE (ticket_code)
+
+## warranty_events
+
+| Cột | Kiểu MySQL | Nullable | Quy tắc |
+| --- | --- | --- | --- |
+| ticket_id | BIGINT UNSIGNED | Không | FK warranty_tickets.id, DELETE RESTRICT |
+| actor_id | BIGINT UNSIGNED | Không | FK users.id, DELETE RESTRICT |
+| action | VARCHAR(30) | Không |  |
+| from_status | VARCHAR(20) | Có |  |
+| to_status | VARCHAR(20) | Không |  |
+| note | VARCHAR(2000) | Có |  |
+| id | BIGINT UNSIGNED | Không | PK, AUTO_INCREMENT |
+| created_at | DATETIME | Không | DEFAULT CURRENT_TIMESTAMP |
+
+Indexes:
+
+- `ix_warranty_events_actor_id`: actor_id
+- `ix_warranty_events_ticket_id`: ticket_id
+
+Constraints bổ sung:

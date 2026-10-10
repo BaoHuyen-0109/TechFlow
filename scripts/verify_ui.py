@@ -5,6 +5,7 @@ import argparse
 import os
 import secrets
 import subprocess
+import time
 
 ROOT = Path(__file__).resolve().parents[1]
 os.environ.setdefault("PLAYWRIGHT_BROWSERS_PATH", str(ROOT / ".browser-cache"))
@@ -41,8 +42,8 @@ print('Isolated UI accounts ready; credentials not printed.')
 """.replace("PAYLOAD", repr(payload))
     subprocess.run(["docker", "compose", "-f", "docker-compose.db-test.yml", "exec", "-T", "ui", "python", "-"],
                    cwd=ROOT, input=source, text=True, encoding="utf-8", check=True)
-    screenshots = ROOT / "docs" / "screenshots"
-    screenshots.mkdir(exist_ok=True)
+    screenshots = Path(os.environ.get('TECHFLOW_SCREENSHOT_DIR',ROOT / 'docs' / 'screenshots'))
+    screenshots.mkdir(parents=True,exist_ok=True)
     errors, asset_errors = [], []
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
@@ -88,11 +89,14 @@ print('Isolated UI accounts ready; credentials not printed.')
                     page.get_by_role("button", name="Mở menu điều hướng").click()
                     page.wait_for_selector("#workspace-sidebar.show", state="visible")
                 # Every actual navigation link has a real page/section destination.
+                for group in page.locator('[data-nav-group]').all():
+                    if group.get_attribute('open') is None:
+                        group.locator('summary').click()
                 links = page.locator("a.ws-nav-link")
                 for link in links.all():
                     href = link.get_attribute("href")
                     path = href.split("#")[0]
-                    assert path in ({"/admin/dashboard", "/staff/dashboard"} if role == "admin" else {"/staff/dashboard", "/business/products", "/business/categories", "/business/suppliers", "/business/sales", "/business/inventory", "/business/customers"})
+                    assert path in ({"/admin/dashboard", "/staff/dashboard"} if role == "admin" else {"/staff/dashboard", "/business/products", "/business/categories", "/business/suppliers", "/business/sales", "/business/sales/new", "/business/inventory", "/business/customers", "/business/warranties", "/business/warranties/lookup"})
                     if "#" in href:
                         assert page.locator("#" + href.split("#")[1]).count() == 1
                     link.scroll_into_view_if_needed()
@@ -147,6 +151,7 @@ print('Isolated UI accounts ready; credentials not printed.')
                 assert "/login?" in page.goto(f"http://localhost:8001/{role}/dashboard").url
                 context.close()
                 print(f"Browser {role} {label} {width}x{height}: all checks passed.")
+                time.sleep(7)  # Respect the real proxy login rate; never disable/bypass it.
         browser.close()
     assert not errors, "Browser JavaScript pageerror detected"
     assert not asset_errors, "Local asset failed to load"

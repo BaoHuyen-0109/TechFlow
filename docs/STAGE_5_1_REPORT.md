@@ -119,15 +119,9 @@ qua **Bán hàng và đơn bán → Tạo mới → Tạo hồ sơ khách mới*
 mặc định hoặc thay tài khoản. Chọn hồ sơ → **Lập đơn cho khách** để thử snapshot.
 Demo không được nạp fixture: số liệu ở screenshot là test riêng và được đánh dấu.
 
-| Minh chứng | Desktop | Mobile |
-| --- | --- | --- |
-| Hồ sơ Admin | [Ảnh](screenshots/stage51-admin-desktop-profile.png) | [Ảnh](screenshots/stage51-admin-mobile-profile.png) |
-| Chọn khách khi lập đơn | [Ảnh](screenshots/stage51-admin-desktop-order-picker.png) | [Ảnh](screenshots/stage51-staff-mobile-order-picker.png) |
-| Staff lịch sử completed | [Ảnh](screenshots/stage51-staff-desktop-profile.png) | [Ảnh](screenshots/stage51-staff-mobile-profile.png) |
-| Hồ sơ sau đơn completed | [Ảnh](screenshots/stage51-admin-desktop-profile-after-sale.png) | [Ảnh](screenshots/stage51-staff-mobile-profile-after-sale.png) |
+Giữ 2 ảnh đại diện hồ sơ khách: [desktop](screenshots/stage51-admin-desktop-profile.png) và [mobile](screenshots/stage51-admin-mobile-profile.png). Các ảnh luồng khác đã được dọn; kết quả kiểm thử bên trên giữ nguyên.
 
-Ảnh generated giữ local, ignored. Đã xem trực tiếp ảnh desktop hồ sơ và mobile
-form chọn khách; giữ navy/sidebar, sáng/card, xanh dương, không tràn ngang.
+Ảnh dữ liệu test riêng; 2 ảnh đại diện được đưa vào commit 5.2 để xem được trên GitHub.
 
 ## Giới hạn
 
@@ -150,3 +144,6 @@ Docker: 260/260 đạt trong 62.05s. Khôi phục 71 ảnh Git được tài li�
 8 ảnh minh chứng 5.1 vẫn local/ignored. Rà soát Git-visible không phát hiện
 secrets, dump, database local hoặc file generated nhạy cảm; diff --check đạt.
 Không thay đổi dữ liệu demo hoặc migration trong lượt chốt baseline này.
+
+Baseline đã commit `d9e0295` với 71 file mới/sửa/xóa, chưa push hoặc merge main.
+Branch Giai đoạn 5.2 được tạo từ checkpoint sạch này.

@@ -21,6 +21,7 @@ class SalesOrder(Record, Timestamps, db.Model):
     customer = db.relationship('Customer', back_populates='orders')
     created_by = foreign_id("users.id")
     order_date = db.Column(db.DateTime, nullable=False, index=True)
+    completed_at = db.Column(db.DateTime)
     status = db.Column(db.String(20), nullable=False, default="draft", server_default="draft", index=True)
     total_amount = db.Column(db.Numeric(14, 2), nullable=False, default=0, server_default="0")
     notes = db.Column(db.Text)

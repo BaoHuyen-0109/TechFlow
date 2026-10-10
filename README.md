@@ -261,3 +261,17 @@ xóa thủ công sau khi kiểm tra; ứng dụng không tự tạo/xóa bảng 
 Giai đoạn tiếp theo chỉ bắt đầu sau khi người dùng xác nhận. AWS deployment,
 HTTPS public, backup/restore nghiệp vụ và kiểm thử tải nằm ở giai đoạn sau;
 Compose hiện tại dành cho localhost, không dùng trực tiếp để public website.
+
+## Bảo hành và Sidebar (5.2)
+
+Trong Không gian kinh doanh, các nhóm Đơn hàng/Kho hàng/Hậu mãi/Tài khoản mở bằng
+click hoặc Enter/Space. Hậu mãi → Tra cứu bảo hành tìm giao dịch completed; chọn
+thiết bị để tiếp nhận. Admin cấu hình chính sách trong form sản phẩm và xác minh
+đơn cũ; Staff xử lý phiếu mình tạo hoặc được phân công. Còn hạn không tự động
+đồng nghĩa được bảo hành miễn phí. Không đổi kho hoặc hoàn tiền từ phiếu bảo hành.
+
+- [Hướng dẫn, schema, ERD, quyền và transaction bảo hành](docs/WARRANTY.md)
+- [Khách hàng và lịch sử mua](docs/CUSTOMERS.md)
+
+Kiểm tra liên kết tài liệu bằng `python scripts/verify_document_links.py`.
+Backup/restore kiểm chứng trước migration demo được mô tả trong hướng dẫn bảo hành.
