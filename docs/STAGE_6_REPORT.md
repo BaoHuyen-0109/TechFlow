@@ -126,17 +126,17 @@ tra quyền, rate limiting hoặc xóa dữ liệu để làm test thành công.
 
 | Vai trò/viewport | Trước | Sau |
 | --- | --- | --- |
-| Admin desktop | [Trước](screenshots/stage6-before-admin-desktop.png) | [Sau](screenshots/stage6-after-admin-desktop.png) |
-| Admin tablet | [Trước](screenshots/stage6-before-admin-tablet.png) | [Sau](screenshots/stage6-after-admin-tablet.png) |
-| Admin mobile | [Trước](screenshots/stage6-before-admin-mobile.png) | [Sau](screenshots/stage6-after-admin-mobile.png) |
-| Staff desktop | [Trước](screenshots/stage6-before-staff-desktop.png) | [Sau](screenshots/stage6-after-staff-desktop.png) |
-| Staff tablet | [Trước](screenshots/stage6-before-staff-tablet.png) | [Sau](screenshots/stage6-after-staff-tablet.png) |
-| Staff mobile | [Trước](screenshots/stage6-before-staff-mobile.png) | [Sau](screenshots/stage6-after-staff-mobile.png) |
+| Admin desktop | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Admin tablet | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Admin mobile | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Staff desktop | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Staff tablet | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Staff mobile | Trước (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Sau (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
 
-Thêm minh chứng: [Chart lỗi vẫn đọc bảng](screenshots/stage6-chart-fallback-admin.png),
-[Staff không JS](screenshots/stage6-no-js-staff.png),
-[Admin quay về quản trị](screenshots/stage6-regression-admin-return-desktop.png),
-[Staff bị chặn quản trị](screenshots/stage6-regression-staff-403-mobile.png).
+Thêm minh chứng: Chart lỗi vẫn đọc bảng (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o),
+Staff không JS (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o),
+Admin quay về quản trị (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o),
+Staff bị chặn quản trị (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o).
 
 ## Xem local và bàn giao
 

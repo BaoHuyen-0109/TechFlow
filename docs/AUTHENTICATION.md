@@ -1,5 +1,13 @@
 # Authentication và Authorization — Giai đoạn 3
 
+## Bổ sung Giai đoạn 5.1
+
+Admin quản lý hồ sơ khách; Staff chỉ tra cứu/xem và tạo khách trong luồng lập
+đơn. Staff được xem projection lịch sử completed toàn cửa hàng để tư vấn,
+không xem notes/audit và không mở/thao tác đơn do người khác tạo. Đây là quyền
+đọc riêng của module khách hàng; không mở rộng scope của sales/inventory.
+Route và ma trận chi tiết: [CUSTOMERS.md](CUSTOMERS.md).
+
 ## Route và quyền
 
 | Route | Truy cập | Hành vi |

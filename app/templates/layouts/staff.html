@@ -9,6 +9,7 @@
   {{ nav.link(url_for('dashboard.staff'), 'bi-grid-1x2', 'Tổng quan', active_page == 'dashboard') }}
   {{ nav.section('KINH DOANH') }}
   {{ nav.link(url_for('sales.index'), 'bi-cart3', 'Bán hàng và đơn bán', active_page == 'sales') }}
+  {{ nav.link(url_for('customers.index'), 'bi-people', 'Khách hàng', active_page == 'customers') }}
   {{ nav.link(url_for('products.index'), 'bi-box-seam', 'Sản phẩm', active_page == 'products') }}
   {{ nav.section('KHO HÀNG') }}
   {% if current_user.role == 'admin' %}{{ nav.link(url_for('purchases.index'), 'bi-box-arrow-in-down', 'Nhập hàng', active_page == 'purchases') }}{% endif %}

@@ -120,3 +120,15 @@
 44. Đảo nhập completed dùng adjustment/reference purchase_receipt và lý do cố
     định, không đổi schema/CHECK. Không thay purchase_price catalog khi nhập,
     không tính giá vốn/lợi nhuận hoặc thêm báo cáo doanh thu trong đợt này.
+
+45. Giai đoạn 5.1 được người dùng duyệt: UNIQUE phone chuẩn hóa +84, gồm cả
+    inactive. Không gộp theo tên/phone hoặc tự liên kết đơn cũ; vãng lai luôn NULL.
+46. Staff có projection lịch sử completed của khách toàn cửa hàng để tư vấn,
+    không notes/audit, không link/quyền mở đơn khác owner. Admin quản lý hồ sơ;
+    Staff chỉ tạo khách mới trong transaction lập đơn, không sửa/vô hiệu hóa.
+47. Thêm customer_id nullable nhưng giữ bốn trường snapshot độc lập. Chọn khách
+    thì backend đọc lại hồ sơ active, không tin thông tin tự điền. Tạo khách
+    mới + draft/items/audit cùng transaction; UNIQUE xử lý trùng đồng thời.
+48. Migration additive c051_customers kiểm thử empty/legacy và backup restore
+    trước demo. Chặn downgrade tự động vì mất hồ sơ/liên kết; rollback app giữ
+    schema tương thích, recovery/forward fix phải được duyệt riêng. Không AWS.

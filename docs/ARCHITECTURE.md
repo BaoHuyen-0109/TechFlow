@@ -1,5 +1,11 @@
 # Kiến trúc TechFlow
 
+Giai đoạn 5.1 thêm `customers/routes.py`, `customers/forms.py`, model Customer,
+`customer_service.py` và templates/static riêng. Service dùng Session ghi riêng;
+insert_customer nhận session của đơn bán để tạo hồ sơ + draft nguyên tử.
+History dùng projection và query aggregate riêng, không mở scope đơn bán.
+Migration/ERD/quyền: [CUSTOMERS.md](CUSTOMERS.md).
+
 Giai đoạn 1 cung cấp Flask app factory, cấu hình, extensions, health check,
 CLI kiểm tra database và Docker local. Giai đoạn 2 bổ sung 10 bảng nghiệp vụ,
 migrations, seed và CLI Admin; xem [database](DATABASE.md). Giai đoạn 3 bổ sung

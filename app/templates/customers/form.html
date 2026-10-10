@@ -1,0 +1,8 @@
+{% extends 'customers/base.html' %}
+{% from 'catalog/fields.html' import input %}
+{% block title %}{{ 'Sửa' if customer else 'Thêm' }} khách hàng · TechFlow{% endblock %}
+{% block customer_content %}
+<header class="catalog-heading"><div><span class="catalog-eyebrow">HỒ SƠ KHÁCH HÀNG</span><h1>{{ 'Chỉnh sửa hồ sơ' if customer else 'Thêm khách hàng' }}</h1><p>Thông tin mới không thay đổi snapshot trong những đơn đã tạo.</p></div></header>
+{% if duplicate_id %}<div class="alert alert-info"><a href="{{ url_for('customers.detail',customer_id=duplicate_id) }}">Xem hồ sơ có sẵn</a>. Có thể chọn hồ sơ này khi lập đơn; khách dùng chung số có thể mua vãng lai.</div>{% endif %}
+<form method="post" class="catalog-panel customer-edit" data-loading-form novalidate>{{ form.hidden_tag() }}<section class="catalog-form-section"><h2><i class="bi bi-person-vcard" aria-hidden="true"></i>Thông tin liên hệ</h2><div class="catalog-form-grid">{{ input(form.name) }}{{ input(form.phone) }}{{ input(form.email) }}{{ input(form.address) }}</div><p class="catalog-note">Số điện thoại được chuẩn hóa về +84 và không trùng hồ sơ khác, kể cả hồ sơ ngừng hoạt động. Không tự gộp khách hàng.</p></section><div class="catalog-form-footer"><span>Chỉ lưu thông tin cần thiết để bán hàng.</span><div><a class="btn btn-light" href="{{ url_for('customers.detail',customer_id=customer.id) if customer else url_for('customers.index') }}">Hủy</a><button class="btn btn-primary">Lưu hồ sơ</button></div></div></form>
+{% endblock %}

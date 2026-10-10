@@ -52,6 +52,8 @@ def create_app() -> Flask:
     from app.inventory.routes import blueprint as inventory_blueprint
     for transaction_blueprint in (purchases_blueprint, sales_blueprint, inventory_blueprint):
         app.register_blueprint(transaction_blueprint)
+    from app.customers.routes import blueprint as customers_blueprint
+    app.register_blueprint(customers_blueprint)
 
     @app.template_filter("vnd")
     def format_vnd(value):

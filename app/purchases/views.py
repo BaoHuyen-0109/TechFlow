@@ -10,9 +10,10 @@ from sqlalchemy.orm import selectinload
 
 from app.auth.permissions import business_required
 from app.extensions import db
-from app.models import Business, Product
+from app.models import Business, Product, Customer
 from app.purchases.forms import TransactionForm, ActionForm
 from app.services.inventory_service import InventoryError
+from app.services.customer_service import DuplicateCustomer
 from app.services.transaction_service import MODELS, new_code, permitted, create_document, transition
 
 
@@ -103,6 +104,29 @@ def build_transaction_blueprint(kind):
     def create():
         scope()
         form = TransactionForm()
+        customers = []
+        if kind == 'sales':
+            customers = db.session.scalars(select(Customer).where(Customer.is_active.is_(True)).order_by(Customer.name).limit(20)).all()
+            if request.method == 'GET' and request.args.get('customer_id'):
+                try:
+                    chosen_id = int(request.args['customer_id'])
+                    if not 1 <= chosen_id <= 2147483647: raise ValueError
+                except ValueError:
+                    abort(400)
+                chosen = db.session.get(Customer,chosen_id)
+                if not chosen or not chosen.is_active: abort(404)
+                form.customer_mode.data = 'existing'
+                form.customer_id.data = chosen.id
+            if form.customer_id.data and 0 < form.customer_id.data <= 2147483647:
+                chosen = db.session.get(Customer,form.customer_id.data)
+                if chosen and chosen.is_active:
+                    customers = list({c.id:c for c in customers+[chosen]}.values())
+                    if request.method == 'GET':
+                        form.customer_name.data,form.customer_phone.data = chosen.name,chosen.phone
+                        form.customer_email.data,form.customer_address.data = chosen.email,chosen.address
+            form.customer_id.choices = [(0,'Chưa chọn hồ sơ')] + [(c.id,c.name+' · '+c.phone) for c in customers]
+        else:
+            form.customer_id.choices = [(0,'')]
         serializer = URLSafeTimedSerializer(current_app.secret_key, salt='inventory-create')
         if request.method == 'GET':
             form.ticket.data = serializer.dumps(dict(code=new_code(kind), actor=current_user.id, kind=kind))
@@ -117,7 +141,7 @@ def build_transaction_blueprint(kind):
             line.product_id.choices = [(0,'Chọn sản phẩm')] + [(p.id,p.sku+' · '+p.name) for p in products]
         suppliers = db.session.scalars(select(Business).where(Business.is_active.is_(True)).order_by(Business.name)).all() if kind == 'purchases' else []
         form.business_id.choices = [(0,'Chọn nhà cung cấp')] + [(b.id,b.name) for b in suppliers]
-        message, status_code = None, 200
+        message, status_code, duplicate_customer_id = None, 200, None
         if form.validate_on_submit():
             try:
                 payload = serializer.loads(form.ticket.data, max_age=7200)
@@ -135,10 +159,14 @@ def build_transaction_blueprint(kind):
                 message, status_code = 'Form đã hết hạn hoặc không hợp lệ. Mở form mới để tiếp tục.', 422
             except InventoryError as error:
                 message, status_code = error.message, error.status
+                if isinstance(error,DuplicateCustomer):
+                    duplicate_customer_id = error.customer_id
         elif request.method == 'POST':
             message, status_code = 'Thông tin chưa hợp lệ. Vui lòng kiểm tra các trường.', 422
         prices = {str(p.id):dict(price=str(p.purchase_price if kind == 'purchases' else p.selling_price),stock=p.stock_quantity) for p in products}
-        return render_template('transactions/form.html', **context(form=form, message=message, prices=prices)), status_code
+        customer_options = {str(c.id):dict(id=c.id,name=c.name,phone=c.phone,email=c.email or '',address=c.address or '',
+            history_url=url_for('customers.detail',customer_id=c.id)) for c in customers}
+        return render_template('transactions/form.html', **context(form=form, message=message, prices=prices,customer_options=customer_options,duplicate_customer_id=duplicate_customer_id)), status_code
 
     @blueprint.get('/<int:record_id>')
     @business_required

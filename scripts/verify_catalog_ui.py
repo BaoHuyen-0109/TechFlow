@@ -204,7 +204,8 @@ document.addEventListener('submit', (event) => {
                         assert page.locator(".table-responsive").evaluate("e => e.scrollWidth > e.clientWidth")
                 page.locator("#category_id").select_option(ids["categories"])
                 page.locator("#business_id").select_option(ids["suppliers"])
-                page.get_by_role("button", name="Áp dụng").click()
+                with page.expect_navigation(wait_until='domcontentloaded'):
+                    page.get_by_role("button", name="Áp dụng").click(no_wait_after=True)
                 assert page.locator("tbody tr").count() == 1
                 assert "18.500.000,50 ₫" in page.locator("tbody").inner_text()
                 for kind in ("categories", "suppliers"):

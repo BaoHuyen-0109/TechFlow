@@ -1,5 +1,10 @@
 # Mô hình database TechFlow
 
+Schema hiện tại Giai đoạn 5.1 có **11 bảng nghiệp vụ, 14 khóa ngoại**;
+migration `c051_customers` thêm customers và customer_id nullable vào đơn bán.
+ERD và quy tắc snapshot/identity: [CUSTOMERS.md](CUSTOMERS.md).
+Phần dưới ghi baseline Giai đoạn 2; schema đầy đủ hiện tại ở DATABASE_SCHEMA.md.
+
 Giai đoạn 2 dùng MySQL 8.0.44, Flask-SQLAlchemy và Alembic. Có **10 bảng nghiệp vụ,
 12 khóa ngoại**; `alembic_version` là bảng kỹ thuật, `stage1_probe` là bảng kiểm tra
 được giữ nguyên và nằm ngoài metadata nghiệp vụ.

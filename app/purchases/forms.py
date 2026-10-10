@@ -13,6 +13,8 @@ class LineForm(Form):
 
 class TransactionForm(FlaskForm):
     ticket = HiddenField(validators=[InputRequired()])
+    customer_mode = SelectField('Loại khách hàng', default='walkin', choices=[('walkin','Khách vãng lai'),('existing','Chọn khách đã có hồ sơ'),('new','Tạo hồ sơ khách mới')])
+    customer_id = SelectField('Hồ sơ khách hàng', coerce=int, validate_choice=False, default=0)
     business_id = SelectField('Nhà cung cấp', coerce=int, validate_choice=False, validators=[Optional()])
     customer_name = StringField('Tên khách hàng', validators=[Optional(), Length(max=150)])
     customer_phone = StringField('Số điện thoại', filters=[clean], validators=[Optional(), Length(max=30), phone])

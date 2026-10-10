@@ -1,0 +1,9 @@
+<section class="catalog-form-section"><h2><i class="bi bi-people" aria-hidden="true"></i>Chọn khách hàng</h2>
+<div class="customer-picker" data-customer-picker data-search-url="{{ url_for('customers.search') }}" data-customer-options='{{ customer_options|tojson }}'>
+{{ form.customer_mode.label(class='form-label') }}{{ form.customer_mode(class='form-select') }}{% for error in form.customer_mode.errors %}<div class="catalog-field-error">{{ error }}</div>{% endfor %}
+<div class="customer-search-js mt-3"><label class="form-label" for="customer-search">Tìm khách cũ theo tên hoặc số điện thoại</label><input id="customer-search" class="form-control" type="search" maxlength="120" placeholder="Nhập ít nhất 2 ký tự" data-customer-search><div class="customer-picker-results" data-customer-results></div></div>
+<label class="form-label mt-3" for="customer_id">Hồ sơ được chọn</label><div class="customer-picker-toolbar">{{ form.customer_id(class='form-select') }}<a class="btn btn-outline-primary" data-customer-history {% if form.customer_id.data and customer_options.get(form.customer_id.data|string) %}href="{{ customer_options[form.customer_id.data|string].history_url }}"{% else %}hidden{% endif %} target="_blank" rel="noopener">Xem lịch sử mua</a></div>
+{% for error in form.customer_id.errors %}<div class="catalog-field-error">{{ error }}</div>{% endfor %}
+<small data-customer-status aria-live="polite">Chỉ liên kết khi bạn chọn loại khách và đúng hồ sơ. Khách vãng lai không tự liên kết theo số điện thoại.</small>
+<noscript><p class="mt-2 mb-0">Có thể chọn trong 20 hồ sơ đầu hoặc mở hồ sơ từ danh sách Khách hàng rồi chọn Lập đơn cho khách. Backend đọc lại thông tin khi lưu.</p></noscript>
+</div></section>

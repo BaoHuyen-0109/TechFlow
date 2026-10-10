@@ -9,6 +9,7 @@ class SalesOrder(Record, Timestamps, db.Model):
     __table_args__ = (
         db.CheckConstraint("status IN ('draft', 'completed', 'cancelled')", name="valid_status"),
         db.CheckConstraint("total_amount >= 0", name="total_nonnegative"),
+        db.Index('ix_sales_orders_customer_status_date', 'customer_id', 'status', 'order_date'),
         TABLE_OPTIONS,
     )
     order_code = db.Column(db.String(40), nullable=False, unique=True)
@@ -16,6 +17,8 @@ class SalesOrder(Record, Timestamps, db.Model):
     customer_phone = db.Column(db.String(30))
     customer_email = db.Column(db.String(190))
     customer_address = db.Column(db.String(255))
+    customer_id = foreign_id('customers.id', nullable=True)
+    customer = db.relationship('Customer', back_populates='orders')
     created_by = foreign_id("users.id")
     order_date = db.Column(db.DateTime, nullable=False, index=True)
     status = db.Column(db.String(20), nullable=False, default="draft", server_default="draft", index=True)

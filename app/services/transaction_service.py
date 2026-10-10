@@ -10,6 +10,8 @@ from app.models import Business, PurchaseReceipt, PurchaseReceiptItem, SalesOrde
 from app.models.base import utc_now
 from app.services.inventory_service import (InventoryError, actor_for, audit, change_stock,
     lock_products, money, quantity)
+from app.models import Customer
+from app.services.customer_service import insert_customer, DuplicateCustomer
 
 MODELS = {'purchases': (PurchaseReceipt, PurchaseReceiptItem, 'receipt_code', 'receipt_id'),
           'sales': (SalesOrder, SalesOrderItem, 'order_code', 'order_id')}
@@ -59,6 +61,23 @@ def create_document(kind, actor_id, header, lines, code=None):
                     raise InventoryError('Nhà cung cấp phải đang hoạt động.', 422)
                 values.update(business_id=supplier_id, receipt_date=utc_now())
             else:
+                mode = header.get('customer_mode') or 'walkin'
+                customer = None
+                if mode == 'existing':
+                    customer_id = quantity(header.get('customer_id',''))
+                    customer = session.scalar(select(Customer).where(Customer.id == customer_id).with_for_update())
+                    if not customer or not customer.is_active:
+                        raise InventoryError('Hồ sơ khách không tồn tại hoặc đã ngừng hoạt động. Vui lòng chọn lại.',422)
+                elif mode == 'new':
+                    customer = insert_customer(session,actor,dict(name=header.get('customer_name'),
+                        phone=header.get('customer_phone'),email=header.get('customer_email'),address=header.get('customer_address')))
+                elif mode != 'walkin':
+                    raise InventoryError('Lựa chọn khách hàng không hợp lệ.',422)
+                # Explicit walk-in never attaches a matching phone automatically.
+                if customer:
+                    header = dict(header,customer_name=customer.name,customer_phone=customer.phone,
+                                  customer_email=customer.email,customer_address=customer.address)
+                    values['customer_id'] = customer.id
                 for field, limit in [('customer_name',150),('customer_phone',30),('customer_email',190),('customer_address',255)]:
                     value = (header.get(field) or '').strip()
                     if len(value) > limit or (field == 'customer_name' and not value):
@@ -88,7 +107,9 @@ def create_document(kind, actor_id, header, lines, code=None):
         return identifier
     except InventoryError:
         raise
-    except IntegrityError:
+    except IntegrityError as error:
+        if 'uq_customers_phone' in str(error.orig):
+            raise DuplicateCustomer() from None
         raise InventoryError('Phiếu đã được gửi hoặc dữ liệu đã thay đổi. Kiểm tra danh sách trước khi tạo lại.') from None
     except SQLAlchemyError:
         raise InventoryError('Chưa thể xác nhận kết quả lưu. Kiểm tra danh sách trước khi thử lại.', 503) from None

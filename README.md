@@ -21,6 +21,8 @@ Dashboard và công thức thống kê: [docs/DASHBOARD.md](docs/DASHBOARD.md).
 Kết quả kiểm thử/ảnh trước–sau: [docs/STAGE_6_REPORT.md](docs/STAGE_6_REPORT.md).
 Nghiệp vụ kho và quyền sử dụng: [docs/INVENTORY.md](docs/INVENTORY.md).
 Kết quả Giai đoạn 5: [docs/STAGE_5_REPORT.md](docs/STAGE_5_REPORT.md).
+Module khách hàng Giai đoạn 5.1 (đang nghiệm thu, chưa commit/push):
+[docs/CUSTOMERS.md](docs/CUSTOMERS.md).
 
 ## Yêu cầu
 

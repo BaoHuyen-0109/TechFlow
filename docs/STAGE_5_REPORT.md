@@ -140,12 +140,12 @@ chi tiết đơn bán. Không tràn ngang toàn trang; bảng cuộn trong regio
 
 | Minh chứng | Desktop | Mobile |
 | --- | --- | --- |
-| Tạo phiếu nhập | [Ảnh](screenshots/stage5-admin-desktop-purchase-form.png) | [Ảnh](screenshots/stage5-admin-mobile-purchase-form.png) |
-| Nhập hoàn thành | [Ảnh](screenshots/stage5-admin-desktop-purchase-completed.png) | [Ảnh](screenshots/stage5-admin-mobile-purchase-completed.png) |
-| Tạo đơn bán | [Ảnh](screenshots/stage5-admin-desktop-sales-form.png) | [Ảnh](screenshots/stage5-staff-mobile-sales-form.png) |
-| Đơn bán hoàn thành | [Ảnh](screenshots/stage5-admin-desktop-sales-completed.png) | [Ảnh](screenshots/stage5-staff-mobile-sales-completed.png) |
-| Lịch sử kho | [Ảnh](screenshots/stage5-admin-desktop-movements.png) | [Ảnh](screenshots/stage5-staff-mobile-movements.png) |
-| Staff403 | [Ảnh](screenshots/stage5-staff-desktop-admin-forbidden.png) | [Ảnh](screenshots/stage5-staff-mobile-admin-forbidden.png) |
+| Tạo phiếu nhập | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Nhập hoàn thành | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Tạo đơn bán | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Đơn bán hoàn thành | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Lịch sử kho | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
+| Staff403 | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) | Ảnh (?nh c? ?? d?n; xem m? t? ki?m th? trong b?o c?o) |
 
 Ảnh/dữ liệu là fixture trong DB test, không phải dữ liệu demo chính. Ảnh sinh tự
 động được ignore, giữ local để chọn minh chứng sau nghiệm thu.

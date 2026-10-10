@@ -15,7 +15,8 @@ from app import models  # noqa: F401 -- register all models
 def main() -> None:
     lines = ["# Chi tiết schema MySQL", "",
              "Xuất từ models bằng `python scripts/export_database_schema.py`.",
-             "Chỉ mô tả 10 bảng nghiệp vụ; không kết nối DB hoặc đọc secrets.", ""]
+             f"Mô tả {len(db.metadata.tables)} bảng nghiệp vụ; không kết nối DB hoặc đọc secrets.",
+             "Giai đoạn 5.1 bổ sung customers và liên kết tùy chọn vào đơn bán; xem [CUSTOMERS.md](CUSTOMERS.md).", ""]
     for table in db.metadata.sorted_tables:
         lines.extend([f"## {table.name}", "", "| Cột | Kiểu MySQL | Nullable | Quy tắc |",
                       "| --- | --- | --- | --- |"])
@@ -44,7 +45,7 @@ def main() -> None:
                 lines.append(f"- `{constraint.name}`: UNIQUE ({', '.join(column.name for column in constraint.columns)})")
         lines.append("")
     (ROOT / "docs" / "DATABASE_SCHEMA.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print("Exported docs/DATABASE_SCHEMA.md from 10 model tables.")
+    print(f"Exported docs/DATABASE_SCHEMA.md from {len(db.metadata.tables)} model tables.")
 
 
 if __name__ == "__main__":

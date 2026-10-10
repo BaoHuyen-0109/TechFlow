@@ -1,11 +1,14 @@
 {% extends 'transactions/base.html' %}
 {% from 'catalog/fields.html' import input %}
 {% block title %}Tạo {{ label|lower }} · TechFlow{% endblock %}
+{% block extra_css %}{{ super() }}{% if kind == 'sales' %}<link rel="stylesheet" href="{{ url_for('static',filename='css/customers.css') }}">{% endif %}{% endblock %}
 {% block breadcrumb %}<a href="{{ url_for(kind+'.index') }}">{{ label }}</a> / Tạo mới{% endblock %}
 {% block transaction_content %}
 <header class="catalog-heading"><div><span class="catalog-eyebrow">{{ label }}</span><h1>Tạo {{ 'phiếu nhập' if kind == 'purchases' else 'đơn bán' }}</h1><p>Lưu ở trạng thái bản nháp. Tồn kho chỉ thay đổi khi xác nhận hoàn thành.</p></div></header>
 <form method="post" class="catalog-panel tx-edit" data-loading-form data-transaction-form data-kind="{{ kind }}" data-options-url="{{ url_for(kind+'.options') }}" data-prices='{{ prices|tojson }}' novalidate>
 {{ form.hidden_tag() }}
+{% if kind == 'sales' %}{% include 'customers/order_picker.html' %}{% endif %}
+{% if duplicate_customer_id %}<div class="alert alert-info mx-3"><a href="{{ url_for('customers.detail',customer_id=duplicate_customer_id) }}" target="_blank" rel="noopener">Xem hồ sơ có số điện thoại này</a>. Hãy chọn đúng khách trong mục tìm kiếm hoặc chuyển sang khách vãng lai; hệ thống không tự gộp.</div>{% endif %}
 {% if form.errors %}<div class="alert alert-danger" role="alert">Vui lòng kiểm tra các trường được đánh dấu.</div>{% endif %}
 <section class="catalog-form-section"><h2><i class="bi bi-person-vcard" aria-hidden="true"></i>{{ 'Thông tin nhập hàng' if kind == 'purchases' else 'Thông tin khách hàng' }}</h2><div class="catalog-form-grid">{% if kind == 'purchases' %}{{ input(form.business_id) }}{% else %}{{ input(form.customer_name) }}{{ input(form.customer_phone) }}{{ input(form.customer_email) }}{{ input(form.customer_address) }}{% endif %}{{ input(form.notes) }}</div></section>
 <section class="catalog-form-section"><h2><i class="bi bi-box-seam" aria-hidden="true"></i>Sản phẩm trong giao dịch</h2><div class="tx-product-search"><label for="product-search" class="form-label">Tìm sản phẩm theo SKU hoặc tên</label><input id="product-search" class="form-control" type="search" placeholder="Nhập từ khóa để cập nhật danh sách lựa chọn" maxlength="120" data-product-search><small class="text-muted" data-search-status aria-live="polite">Hiển thị tối đa 50 lựa chọn. Sản phẩm đã chọn được giữ lại.</small></div>
