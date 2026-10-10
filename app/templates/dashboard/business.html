@@ -1,0 +1,50 @@
+{% extends 'layouts/staff.html' %}
+{% block title %}Tổng quan kinh doanh · TechFlow{% endblock %}
+{% block extra_css %}{{ super() }}<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">{% endblock %}
+{% block extra_js %}{% if stats and stats.categories %}<script src="{{ url_for('static', filename='vendor/chartjs/chart.umd.min.js') }}" defer></script><script src="{{ url_for('static', filename='js/dashboard.js') }}" defer></script>{% endif %}{% endblock %}
+{% block workspace_content %}
+<header class="ws-page-heading dashboard-heading">
+  <div><span class="ws-eyebrow">KHÔNG GIAN KINH DOANH</span><h1>Tổng quan kinh doanh</h1><p>Chào {{ current_user.full_name }}. Theo dõi catalog và tình hình tồn kho của bạn.</p></div>
+  <form method="get" action="{{ url_for('dashboard.staff') }}" data-loading-form data-loading-message="Đang cập nhật thống kê."><button type="submit" class="btn dashboard-refresh"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Làm mới</button><span class="visually-hidden" data-loading-announcement role="status"></span></form>
+</header>
+{% if not stats %}
+<section class="ws-panel dashboard-error" role="alert"><span class="ws-icon-tile"><i class="bi bi-cloud-slash" aria-hidden="true"></i></span><h2>Chưa thể tải thống kê</h2><p>Kết nối dữ liệu đang gặp sự cố. Vui lòng thử lại sau.</p><a class="btn btn-primary" href="{{ url_for('dashboard.staff') }}">Thử lại</a></section>
+{% else %}
+<div class="dashboard-context"><span><span class="status-dot" aria-hidden="true"></span> Dữ liệu từ hệ thống</span><span>Cập nhật {{ stats.as_of.strftime('%H:%M · %d/%m/%Y') }} · Giờ Việt Nam</span></div>
+<section class="dashboard-kpis" aria-label="Chỉ số catalog">
+  {% for key, icon, label, description, color in [('products','box-seam','Sản phẩm hoạt động','Đang được kinh doanh','blue'), ('categories','tags','Danh mục hoạt động','Danh mục đã kích hoạt','violet'), ('suppliers','buildings','Nhà cung cấp hoạt động','Đối tác đang hoạt động','teal'), ('low_stock','exclamation-triangle','Sản phẩm tồn kho thấp','Tồn kho ≤ ngưỡng cảnh báo','amber')] %}
+  <article class="dashboard-kpi"><div class="dashboard-kpi-top"><span>{{ label }}</span><span class="dashboard-icon {{ color }}"><i class="bi bi-{{ icon }}" aria-hidden="true"></i></span></div><strong data-kpi="{{ key }}">{{ stats.totals[key] }}</strong><small>{{ description }}</small></article>
+  {% endfor %}
+</section>
+<div class="dashboard-overview-grid">
+  <section class="ws-panel dashboard-chart-panel" aria-labelledby="category-chart-title">
+    <div class="dashboard-panel-heading"><div><h2 id="category-chart-title">Sản phẩm theo danh mục</h2><p>Chỉ tính sản phẩm đang hoạt động.</p></div><span class="dashboard-tag">{{ stats.totals.products }} sản phẩm</span></div>
+    {% if stats.categories %}
+    <div data-category-chart data-chart-data='{{ stats.categories|tojson }}'>
+      <p class="dashboard-chart-status" data-chart-status role="status">Số liệu chi tiết có trong bảng bên dưới.</p>
+      <div class="dashboard-chart" hidden data-chart-container><canvas id="category-chart" role="img" aria-label="Biểu đồ số sản phẩm đang hoạt động theo danh mục" aria-describedby="category-chart-table"></canvas></div>
+      <details class="dashboard-chart-details" open><summary>Xem số liệu theo danh mục</summary><div class="dashboard-table-scroll"><table class="table dashboard-table" id="category-chart-table"><caption class="visually-hidden">Sản phẩm đang hoạt động theo danh mục; tối đa 8 danh mục và nhóm còn lại</caption><thead><tr><th scope="col">Danh mục</th><th scope="col" class="text-end">Sản phẩm</th></tr></thead><tbody>{% for category in stats.categories %}<tr><td>{% if category.id %}<a href="{{ url_for('products.index', category_id=category.id, status='active') }}">{{ category.name }}</a>{% else %}{{ category.name }}{% endif %}{% if not category.is_active %}<small class="dashboard-muted">Danh mục ngừng hoạt động</small>{% endif %}</td><td class="text-end dashboard-number" data-category-count>{{ category.count }}</td></tr>{% endfor %}</tbody></table></div></details>
+    </div>
+    {% else %}<div class="dashboard-empty"><span><i class="bi bi-bar-chart" aria-hidden="true"></i></span><h3>Chưa có dữ liệu biểu đồ</h3><p>Biểu đồ xuất hiện khi có sản phẩm đang hoạt động.</p><a href="{{ url_for('products.index') }}">Đến danh sách sản phẩm <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>{% endif %}
+  </section>
+  <div class="dashboard-summary-stack">
+    {% if current_user.role == 'admin' %}
+    <section class="dashboard-inventory" aria-labelledby="inventory-title"><span class="dashboard-icon blue"><i class="bi bi-wallet2" aria-hidden="true"></i></span><h2 id="inventory-title">Giá trị tồn kho ước tính</h2>{% if stats.totals.inventory_value is not none %}<strong data-kpi="inventory_value">{{ stats.totals.inventory_value|vnd }}</strong>{% else %}<strong>Chưa thể ước tính</strong><p>Dữ liệu tồn kho hoặc giá nhập chưa hợp lệ.</p>{% endif %}<p>Tổng tồn kho × giá nhập, gồm cả sản phẩm ngừng hoạt động còn hàng.</p><small>Ước tính theo giá nhập hiện tại, chưa phải giá vốn kế toán.</small></section>
+    {% endif %}
+    <section class="ws-panel dashboard-scope"><div class="dashboard-panel-heading"><div><h2>Phạm vi thống kê</h2><p>Thông tin sẵn có trong không gian kinh doanh.</p></div><i class="bi bi-info-circle" aria-hidden="true"></i></div><ul><li><i class="bi bi-check2-circle" aria-hidden="true"></i>Sản phẩm, danh mục và nhà cung cấp</li><li><i class="bi bi-check2-circle" aria-hidden="true"></i>Cảnh báo từ số lượng tồn kho hiện tại</li></ul><div class="dashboard-unavailable"><i class="bi bi-lock" aria-hidden="true"></i><p>Doanh thu và đơn hàng chưa khả dụng.<br>Nghiệp vụ nhập kho, bán hàng chưa triển khai.</p></div><a href="{{ url_for('products.index') }}" class="dashboard-catalog-link">Quản lý sản phẩm <i class="bi bi-arrow-right" aria-hidden="true"></i></a></section>
+  </div>
+</div>
+<section class="ws-panel dashboard-stock" aria-labelledby="low-stock-title">
+  <div class="dashboard-panel-heading"><div><h2 id="low-stock-title"><i class="bi bi-exclamation-triangle" aria-hidden="true"></i> Cảnh báo tồn kho</h2><p>Sản phẩm hoạt động có tồn kho bằng hoặc thấp hơn ngưỡng.</p></div><span class="dashboard-tag amber">{{ stats.totals.low_stock }} sản phẩm</span></div>
+  {% if stats.low_stock %}
+  <p class="dashboard-scroll-hint d-md-none"><i class="bi bi-arrow-left-right" aria-hidden="true"></i> Vuốt ngang để xem tồn kho, ngưỡng và trạng thái.</p>
+  <div class="dashboard-table-scroll" role="region" tabindex="0" aria-label="Sản phẩm tồn kho thấp"><table class="table dashboard-table align-middle"><thead><tr><th scope="col">Sản phẩm</th><th scope="col">SKU</th><th scope="col">Danh mục</th><th scope="col" class="text-end">Tồn kho</th><th scope="col" class="text-end">Ngưỡng</th><th scope="col">Trạng thái</th></tr></thead><tbody>{% for product in stats.low_stock %}<tr data-low-stock-id="{{ product.id }}"><td><a href="{{ url_for('products.detail', record_id=product.id) }}">{{ product.name }}</a></td><td><span class="dashboard-sku">{{ product.sku }}</span></td><td>{{ product.category }}</td><td class="text-end dashboard-number">{{ product.stock_quantity }}</td><td class="text-end dashboard-number">{{ product.reorder_level }}</td><td><span class="dashboard-stock-status {{ 'out' if product.stock_quantity == 0 else 'low' }}">{{ 'Hết hàng' if product.stock_quantity == 0 else 'Tồn kho thấp' }}</span></td></tr>{% endfor %}</tbody></table></div>
+  <p class="dashboard-table-footer">Hiển thị {{ stats.low_stock|length }} / {{ stats.totals.low_stock }} sản phẩm · Tối đa {{ stats.low_stock_limit }} dòng, ưu tiên tồn kho thấp nhất.</p>
+  {% else %}<div class="dashboard-empty compact"><span><i class="bi bi-check2-circle" aria-hidden="true"></i></span><h3>Không có sản phẩm dưới ngưỡng cảnh báo</h3><p>Cảnh báo chỉ áp dụng cho sản phẩm đang hoạt động.</p></div>{% endif %}
+</section>
+<section class="ws-panel dashboard-recent" aria-labelledby="recent-title"><div class="dashboard-panel-heading"><div><h2 id="recent-title">Sản phẩm gần đây</h2><p>{{ stats.recent_limit }} sản phẩm vừa tạo hoặc cập nhật gần nhất, gồm cả sản phẩm ngừng hoạt động.</p></div><a href="{{ url_for('products.index') }}">Danh sách sản phẩm <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></div>
+  {% if stats.recent %}<div class="dashboard-recent-grid">{% for product in stats.recent %}<article class="dashboard-recent-item" data-recent-id="{{ product.id }}"><span class="dashboard-recent-icon"><i class="bi bi-box-seam" aria-hidden="true"></i></span><div><a href="{{ url_for('products.detail', record_id=product.id) }}">{{ product.name }}</a><span class="dashboard-sku">{{ product.sku }}</span><small>{{ 'Cập nhật' if product.updated_at > product.created_at else 'Tạo mới' }} · <time datetime="{{ product.activity_at.isoformat() }}Z">{{ product.activity_at|vietnam_time }}</time></small></div><span class="dashboard-activity-status {{ 'active' if product.is_active else '' }}">{{ 'Hoạt động' if product.is_active else 'Ngừng hoạt động' }}</span></article>{% endfor %}</div>{% else %}<div class="dashboard-empty compact"><span><i class="bi bi-inboxes" aria-hidden="true"></i></span><h3>Chưa có sản phẩm</h3><p>Sản phẩm mới sẽ xuất hiện tại đây sau khi được lưu.</p><a href="{{ url_for('products.index') }}">Đến danh sách sản phẩm</a></div>{% endif %}
+</section>
+{% endif %}
+<section class="staff-session" id="session"><span class="ws-avatar" aria-hidden="true">{{ current_user.full_name[:1]|upper }}</span><div><h2>Phiên làm việc của bạn</h2><p>{{ 'Không gian kinh doanh' if current_user.role == 'admin' else 'Tổng quan dành cho nhân viên' }} · {{ current_user.username }} · Đã xác thực</p></div><span class="ws-chip success"><span class="status-dot" aria-hidden="true"></span>{{ role_label }}</span></section>
+{% endblock %}

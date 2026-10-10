@@ -1,0 +1,80 @@
+/* Dashboard extends the existing TechFlow workspace; all dimensions are local. */
+.dashboard-heading { align-items:center; }
+.dashboard-refresh { border:1px solid #dfe5f1; background:#fff; color:#5263d5; border-radius:10px; padding:10px 16px; font-size:13px; white-space:nowrap; }
+.dashboard-refresh:hover { border-color:#bfc9ef; background:#f5f7ff; color:#3448bd; }
+.dashboard-context { display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; margin:-7px 0 22px; color:#8490a5; font-size:12px; }
+.dashboard-context > span:first-child { color:#547c70; }
+.dashboard-kpis { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; margin-bottom:24px; }
+.dashboard-kpi { background:#fff; border:1px solid #e6ebf4; border-radius:14px; padding:21px; min-width:0; box-shadow:0 4px 20px #22335603; }
+.dashboard-kpi-top { display:flex; align-items:center; justify-content:space-between; gap:10px; color:#6c7990; font-size:12px; font-weight:550; }
+.dashboard-icon { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; flex-shrink:0; border-radius:11px; font-size:17px; }
+.dashboard-icon.blue { color:#4b66d9; background:#eef2ff; }
+.dashboard-icon.violet { color:#8870cd; background:#f3effc; }
+.dashboard-icon.teal { color:#329482; background:#eaf7f3; }
+.dashboard-icon.amber { color:#b8892e; background:#fff6e4; }
+.dashboard-kpi > strong { display:block; margin:14px 0 5px; font-size:32px; font-weight:650; letter-spacing:-1px; color:#253451; font-variant-numeric:tabular-nums; }
+.dashboard-kpi > small { font-size:11px; color:#929cb0; }
+.dashboard-overview-grid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); gap:24px; margin-bottom:24px; align-items:start; }
+.dashboard-overview-grid > *, .dashboard-summary-stack > *, .dashboard-panel-heading > div { min-width:0; }
+.dashboard-panel-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:22px; }
+.dashboard-panel-heading h2 { margin:0 0 7px; color:#30405d; font-size:16px; font-weight:650; }
+.dashboard-panel-heading p { margin:0; color:#8b96a9; font-size:12px; line-height:1.7; }
+.dashboard-panel-heading > a, .dashboard-catalog-link { color:#5366d5; font-size:12px; text-decoration:none; }
+.dashboard-tag { white-space:nowrap; border-radius:7px; background:#f0f3fb; color:#6d7da3; padding:6px 9px; font-size:11px; }
+.dashboard-tag.amber { background:#fff6e6; color:#a67b2f; }
+.dashboard-chart { position:relative; height:310px; margin-top:18px; }
+.dashboard-chart-status { font-size:11px; color:#8b96a9; margin:0; }
+.dashboard-chart-details { margin-top:20px; border-top:1px solid #edf0f6; padding-top:15px; }
+.dashboard-chart-details summary { font-size:12px; color:#60719c; cursor:pointer; }
+.dashboard-chart-details .dashboard-table { margin-top:12px; }
+.dashboard-summary-stack { display:grid; gap:20px; }
+.dashboard-summary-stack > :only-child { grid-column:1/-1; }
+.dashboard-inventory { border:1px solid #dfe6fb; background:linear-gradient(135deg,#f5f7ff,#eef3fd); padding:24px; border-radius:14px; min-width:0; }
+.dashboard-inventory h2 { font-size:13px; font-weight:550; color:#63739b; margin:15px 0 10px; }
+.dashboard-inventory > strong { display:block; color:#2c427b; font-size:clamp(18px,1.65vw,26px); font-weight:650; letter-spacing:-.5px; overflow-wrap:anywhere; font-variant-numeric:tabular-nums; }
+.dashboard-inventory p { font-size:12px; color:#7583a2; line-height:1.7; margin:12px 0 8px; }
+.dashboard-inventory small { font-size:11px; color:#8d98ae; line-height:1.7; display:block; }
+.dashboard-scope ul { list-style:none; padding:0; margin:0 0 18px; display:grid; gap:12px; }
+.dashboard-scope li { display:flex; gap:9px; color:#708099; font-size:12px; line-height:1.7; }
+.dashboard-scope li i { color:#5b9c8b; }
+.dashboard-unavailable { display:flex; gap:10px; border-top:1px solid #edf0f6; padding-top:17px; margin-bottom:16px; color:#96a0b3; }
+.dashboard-unavailable p { margin:0; font-size:12px; line-height:1.8; }
+.dashboard-stock, .dashboard-recent { margin-bottom:24px; }
+.dashboard-table-scroll { overflow-x:auto; }
+.dashboard-scroll-hint { font-size:11px; color:#8b96a9; line-height:1.7; }
+.dashboard-table { margin-bottom:0; font-size:12px; color:#64728b; }
+.dashboard-table th { padding:12px 14px; font-weight:550; font-size:11px; color:#8590a5; background:#f8f9fc; border-color:#edf0f6; white-space:nowrap; }
+.dashboard-table td { padding:14px; border-color:#edf0f6; vertical-align:middle; max-width:260px; overflow-wrap:anywhere; }
+.dashboard-table a { color:#3b4e78; text-decoration:none; font-weight:550; }
+.dashboard-table tr:last-child td { border-bottom:0; }
+.dashboard-table tbody tr:hover td { background:#fafbff; }
+.dashboard-stock .dashboard-table { min-width:720px; }
+.dashboard-number { font-variant-numeric:tabular-nums; }
+.dashboard-sku { font-family:monospace; color:#8b96ac; font-size:11px; white-space:nowrap; }
+.dashboard-stock-status { display:inline-flex; padding:5px 8px; border-radius:6px; font-size:10px; white-space:nowrap; }
+.dashboard-stock-status.out { color:#bf6070; background:#fff0f2; }
+.dashboard-stock-status.low { color:#a17a2b; background:#fff6e3; }
+.dashboard-table-footer { color:#919bb0; font-size:11px; padding-top:16px; margin:0; border-top:1px solid #edf0f6; line-height:1.7; }
+.dashboard-muted { display:block; color:#929cb0; font-size:10px; margin-top:4px; }
+.dashboard-recent-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 25px; }
+.dashboard-recent-item { display:flex; align-items:center; gap:12px; padding:17px 0; border-top:1px solid #edf0f6; min-width:0; }
+.dashboard-recent-item > div { flex:1; min-width:0; }
+.dashboard-recent-item a { color:#3f5070; font-size:12px; font-weight:550; text-decoration:none; overflow-wrap:anywhere; }
+.dashboard-recent-item .dashboard-sku, .dashboard-recent-item small { display:block; margin-top:5px; }
+.dashboard-recent-item small { color:#929cb0; font-size:10px; line-height:1.7; }
+.dashboard-recent-icon { display:flex; align-items:center; justify-content:center; background:#f3f5fc; color:#8391ba; width:38px; height:42px; border-radius:10px; flex-shrink:0; }
+.dashboard-activity-status { font-size:10px; color:#8c95a6; max-width:76px; text-align:right; }
+.dashboard-activity-status.active { color:#4c9a7a; }
+.dashboard-empty { text-align:center; padding:50px 20px; }
+.dashboard-empty > span { display:inline-flex; padding:14px 18px; font-size:24px; border-radius:15px; color:#94a2c4; background:#f1f4fc; margin-bottom:15px; }
+.dashboard-empty h3 { color:#5a6c8b; font-size:15px; }
+.dashboard-empty p { color:#929db0; font-size:12px; line-height:1.8; }
+.dashboard-empty a { color:#6478cb; font-size:12px; text-decoration:none; }
+.dashboard-empty.compact { padding:28px 16px; }
+.dashboard-error { text-align:center; padding:50px 24px; margin-bottom:24px; }
+.dashboard-error h2 { margin-top:18px; font-size:20px; color:#465979; }
+.dashboard-error p { color:#8693aa; font-size:13px; }
+.dashboard-refresh:focus-visible, .dashboard-table-scroll:focus-visible, .dashboard-chart-details summary:focus-visible, .ws-panel a:focus-visible { outline:3px solid #9daaff; outline-offset:3px; }
+.dashboard-table a:hover, .dashboard-recent-item a:hover, .dashboard-panel-heading > a:hover, .dashboard-catalog-link:hover { color:#3752d0; text-decoration:underline; }
+@media(max-width:1199px) { .dashboard-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } .dashboard-overview-grid { grid-template-columns:minmax(0,1fr); } .dashboard-summary-stack { grid-template-columns:repeat(2,minmax(0,1fr)); } .dashboard-inventory > strong { font-size:24px; } }
+@media(max-width:767px) { .dashboard-heading { align-items:flex-start; gap:16px; } .dashboard-kpis { gap:12px; } .dashboard-kpi { padding:16px; } .dashboard-kpi-top { align-items:flex-start; flex-direction:column-reverse; font-size:11px; gap:12px; } .dashboard-kpi > strong { font-size:28px; } .dashboard-kpi > small { line-height:1.7; display:block; } .dashboard-overview-grid { gap:18px; } .dashboard-summary-stack { grid-template-columns:minmax(0,1fr); } .dashboard-panel-heading { flex-wrap:wrap; } .dashboard-chart { height:310px; } .dashboard-recent-grid { grid-template-columns:minmax(0,1fr); } .dashboard-inventory { padding:20px; } .dashboard-context { font-size:10px; margin-top:0; } }

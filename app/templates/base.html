@@ -19,5 +19,6 @@
   {% endblock %}
   <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

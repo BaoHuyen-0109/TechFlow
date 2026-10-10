@@ -1,9 +1,10 @@
 # TechFlow
 
 Hệ thống quản lý kinh doanh thiết bị công nghệ — đồ án Flask, Docker và Amazon EC2.
-**Trạng thái: đã nghiệm thu Giai đoạn 4 — CRUD danh mục, nhà cung cấp và sản phẩm.**
+**Trạng thái: đã nghiệm thu Giai đoạn 4; đang nghiệm thu Dashboard Giai đoạn 6 (phạm vi giữa kỳ).**
 Có đăng nhập username/email, phân quyền Admin/Staff và Dashboard responsive.
-CRUD lưu trực tiếp vào MySQL; các KPI kinh doanh chưa triển khai.
+CRUD lưu trực tiếp vào MySQL; Dashboard có thống kê catalog và tồn kho từ database.
+Doanh thu, đơn hàng và nghiệp vụ nhập/bán hàng chưa triển khai.
 Dashboard đã được refactor thành hai không gian: Admin quản trị và Staff kinh doanh.
 Không triển khai AWS trong giai đoạn này.
 
@@ -15,6 +16,8 @@ Refactor hai Dashboard: [docs/STAGE_3_REFACTOR_REPORT.md](docs/STAGE_3_REFACTOR_
 CRUD và bàn giao: [docs/STAGE_4_REPORT.md](docs/STAGE_4_REPORT.md),
 [hướng dẫn module](docs/CATALOG.md).
 Hoàn thiện giao diện trước nghiệm thu: [docs/STAGE_4_UI_REPORT.md](docs/STAGE_4_UI_REPORT.md).
+Dashboard và công thức thống kê: [docs/DASHBOARD.md](docs/DASHBOARD.md).
+Kết quả kiểm thử/ảnh trước–sau: [docs/STAGE_6_REPORT.md](docs/STAGE_6_REPORT.md).
 
 ## Yêu cầu
 

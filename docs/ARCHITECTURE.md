@@ -83,3 +83,21 @@ Luồng xác thực, decorator quyền và cấu trúc mở rộng: [AUTHENTICAT
   xác nhận bổ sung của người dùng; script/style/font và các trang khác giữ nguyên.
 
 Hợp đồng route, validation và bàn giao: [CATALOG.md](CATALOG.md).
+
+## Dashboard chỉ đọc — Giai đoạn 6 giữa kỳ
+
+`dashboard/routes.py` giữ route `/staff/dashboard`, dùng role tài khoản từ
+Flask-Login và gọi `services/dashboard_service.py`. Service dùng một connection/
+transaction đọc mới để các aggregate và danh sách cùng snapshot MySQL. Sáu SELECT
+trả aggregate, top danh mục, 8 cảnh báo và 6 sản phẩm gần đây; không ORM lazy-load
+hay đọc toàn bộ lịch sử vào memory, không truy vấn phiếu nhập/đơn bán/audit/user.
+Service kiểm tra role và chỉ truy vấn SUM theo giá nhập cho Admin.
+
+`templates/staff/dashboard.html` kế thừa `dashboard/business.html`, tiếp tục dùng
+layout Staff hiện tại. `static/css/dashboard.css` chỉ áp dụng component Dashboard;
+`static/js/dashboard.js` dựng Chart.js UMD nội bộ, không inline script/CDN/API mới.
+Bảng HTML là nguồn đọc thay thế cho canvas. Base thêm block extra_js để trang
+khác không phải tải thư viện biểu đồ. Thông tin phiên `#session` giữ nguyên.
+
+Models/migrations/seed/tồn kho và Dashboard hệ thống Admin không thay đổi.
+Chi tiết phạm vi, công thức và giới hạn index: [DASHBOARD.md](DASHBOARD.md).

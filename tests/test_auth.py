@@ -231,7 +231,7 @@ def test_separate_workspaces_and_legacy_redirects(auth_client, account, role, ho
     assert missing.status_code == 404 and f'{role}-workspace' in missing.text
     if role == "staff":
         assert "/admin/dashboard" not in page.text
-        assert "Chỉ số kinh doanh hiện chưa khả dụng" in page.text
+        assert "Doanh thu và đơn hàng chưa khả dụng" in page.text
         assert "Phiên bản giữa kỳ" not in page.text
         assert 'aria-disabled="true"' in page.text
     else:
@@ -256,7 +256,7 @@ def test_admin_switches_workspaces_without_session_or_role_change(auth_client, a
     assert "Quay về quản trị" in business.text
     assert "Quản trị viên" in business.text
     assert 'href="/staff/dashboard"' in business.text
-    assert "business-shortcuts" in business.text
+    assert 'data-kpi="products"' in business.text
     assert auth_client.get("/admin/dashboard").status_code == 200
     assert db.session.get(User, account["id"]).role == "admin"
     assert db.session.scalar(select(func.count()).select_from(AuditLog)) == audit_before

@@ -85,8 +85,11 @@ phải có CSRF token. Theo yêu cầu Giai đoạn 4 mới, cả Admin và Staf
 danh mục/nhà cung cấp/sản phẩm; chính sách này thay quyền Staff chỉ xem của đặc tả
 ban đầu trong phạm vi ba module. Các route đều dùng business_required ở backend.
 Staff vẫn không được quản trị user/role/cấu hình. Không dùng việc ẩn menu để kiểm tra quyền.
-Hiện Dashboard lấy thông tin current_user thật; Admin thêm SELECT 1 kiểm tra kết
-nối, Business thêm ngày Việt Nam từ hệ thống; chưa có số liệu kinh doanh. Admin
+Dashboard quản trị lấy current_user và SELECT 1 kiểm tra kết nối. Dashboard
+Business có thống kê catalog/tồn kho từ MySQL theo [DASHBOARD.md](DASHBOARD.md):
+cả hai vai trò xem số lượng và danh sách catalog, chỉ Admin xem tổng giá trị tồn
+kho. Backend không truy vấn giá nhập hoặc trả tổng giá trị trong payload Dashboard
+của Staff; không thể mở quyền bằng query string. Quyền CRUD catalog giữ nguyên. Admin
 được quyền cả hai không gian, Staff chỉ Business. Business giữ layout Staff ngay
 cả khi Admin truy cập; topbar/phiên vẫn hiển thị role thật, breadcrumb và brand
 trỏ trang chủ Business. Admin chuyển về quản trị qua liên kết riêng, Staff không

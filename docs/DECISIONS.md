@@ -97,3 +97,14 @@
     Dấu chấm nhóm nghìn, dấu phẩy thập phân; chuyển bằng chuỗi, không số thực,
     không làm tròn. Không JS dùng form number nguyên bản. Không thay schema,
     API form POST, URL, quyền truy cập, dashboard hoặc kích thước toàn bộ UI.
+
+38. Giai đoạn 6 giữa kỳ triển khai trên feature/stage-6-dashboard, không triển khai
+    Giai đoạn 5. Business Dashboard truy vấn catalog/tồn kho thật; Admin Dashboard
+    hệ thống và chuyển workspace giữ nguyên. Staff xem 4 KPI số lượng; tổng giá
+    trị tồn kho chỉ Admin, được kiểm tra ở service/backend, không chỉ ẩn menu.
+39. Giá trị tồn kho SUM(stock_quantity * purchase_price) gồm cả inactive còn hàng,
+    dùng Decimal; biểu đồ/cảnh báo chỉ products active. Recent gồm mọi trạng thái
+    vì quyền catalog hiện tại cho cả hai role xem inactive. Không doanh thu giả.
+40. Sáu SELECT trong snapshot đọc mới; top 8 danh mục và nhóm còn lại, 8 cảnh báo,
+    6 recent. Dùng Chart.js 4.5.1 UMD/MIT nội bộ và bảng HTML fallback; không CDN,
+    CSP mới, API mới hoặc migration/index khi chưa có số liệu tải chứng minh cần.
