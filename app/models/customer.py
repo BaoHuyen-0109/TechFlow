@@ -1,4 +1,5 @@
 from app.extensions import db
+from sqlalchemy.dialects.mysql import BIGINT
 from app.models.base import Record, Timestamps, TABLE_OPTIONS, foreign_id
 
 
@@ -11,4 +12,7 @@ class Customer(Record, Timestamps, db.Model):
     address = db.Column(db.String(255))
     is_active = db.Column(db.Boolean, nullable=False, default=True, server_default=db.true(), index=True)
     created_by = foreign_id('users.id')
+    user_id = db.Column(BIGINT(unsigned=True), db.ForeignKey('users.id', ondelete='RESTRICT'),
+                        nullable=True, unique=True)
+    user = db.relationship('User', back_populates='customer_profile', foreign_keys=[user_id])
     orders = db.relationship('SalesOrder', back_populates='customer', passive_deletes='all')

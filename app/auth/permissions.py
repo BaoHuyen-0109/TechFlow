@@ -18,3 +18,4 @@ def role_required(*roles):
 
 admin_required = role_required("admin")
 business_required = role_required("admin", "staff")
+client_required = role_required("client")

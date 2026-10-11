@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b34">
+  <title>{% block title %}TechFlow Store{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap-icons/bootstrap-icons.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/techflow.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/storefront.css') }}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="storefront-page {% block body_class %}{% endblock %}">
+{% block body %}
+  <a class="skip-link" href="#main-content">Đến nội dung chính</a>
+  <header class="store-header">
+    <a class="tf-brand" href="{{ url_for('shop.index') }}"><span class="brand-icon"><i class="bi bi-stack" aria-hidden="true"></i></span><span>TechFlow<small>CỬA HÀNG CÔNG NGHỆ</small></span></a>
+    <nav class="store-nav" aria-label="Điều hướng cửa hàng">
+      <a href="{{ url_for('shop.index') }}">Sản phẩm</a>
+      <a href="{{ url_for('shop.cart') }}"><i class="bi bi-bag" aria-hidden="true"></i> Giỏ hàng{% if cart_count|default(0) %} <span class="store-count">{{ cart_count }}</span>{% endif %}</a>
+      {% if current_user.is_authenticated and current_user.role == 'client' %}
+        <a href="{{ url_for('shop.orders') }}">Đơn hàng</a><a href="{{ url_for('shop.profile') }}">Tài khoản</a>
+        <form action="{{ url_for('auth.logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Đăng xuất</button></form>
+      {% elif current_user.is_authenticated %}
+        <form action="{{ url_for('auth.logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button type="submit">Đăng xuất</button></form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Đăng nhập</a><a class="store-signup" href="{{ url_for('shop.register') }}">Tạo tài khoản</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main id="main-content" class="store-main">
+    {% include 'components/flash.html' %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="store-footer">TechFlow · Mua sắm dễ dàng, theo dõi đơn hàng rõ ràng.</footer>
+  {% block extra_js %}{% endblock %}
+{% endblock %}
+  <script src="{{ url_for('static', filename='vendor/bootstrap/bootstrap.bundle.min.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

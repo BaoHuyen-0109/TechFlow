@@ -5,6 +5,7 @@ from app.auth.permissions import business_required
 from app.extensions import db
 from app.models import Business, Category, Product, PurchaseReceipt
 from app.services.catalog_service import CatalogError, persist
+from app.services.image_storage import ImageStorageError, delete_product_image, save_product_image
 
 
 def build_blueprint(resource, prefix):
@@ -90,11 +91,27 @@ def build_blueprint(resource, prefix):
         status = 200
         if form.validate_on_submit():
             target = record or resource.model()
+            old_image = record.image_url if isinstance(record, Product) else None
+            new_image = None
             try:
+                if isinstance(target, Product):
+                    if form.image_file.data and form.image_file.data.filename:
+                        new_image = save_product_image(form.image_file.data)
+                        form.image_url.data = new_image
+                    elif form.remove_image.data:
+                        form.image_url.data = ""
                 persist(resource, target, form)
+                if old_image and old_image != target.image_url:
+                    delete_product_image(old_image)
                 flash(f"{'Cập nhật' if record else 'Thêm'} {resource.singular} thành công.", "success")
                 return redirect(url_for(f"{resource.key}.detail", record_id=target.id), code=303)
+            except ImageStorageError as error:
+                if new_image:
+                    delete_product_image(new_image)
+                message, status = str(error), 422
             except CatalogError as error:
+                if new_image:
+                    delete_product_image(new_image)
                 message, status = error.message, error.status
         elif request.method == "POST":
             status = 422
@@ -114,10 +131,13 @@ def build_blueprint(resource, prefix):
     @business_required
     def delete(record_id):
         record = db.get_or_404(resource.model, record_id)
+        old_image = record.image_url if isinstance(record, Product) else None
         try:
             persist(resource, record, delete=True)
         except CatalogError as error:
             return render_template("catalog/detail.html", **context(record=record, form=form_for(record), linked=None, receipts=None, message=error.message)), error.status
+        if old_image:
+            delete_product_image(old_image)
         flash(f"Xóa {resource.singular} thành công.", "success")
         return redirect(url_for(f"{resource.key}.index"), code=303)
 

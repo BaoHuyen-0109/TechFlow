@@ -17,10 +17,13 @@ def rate_limit():
 
 def safe_destination(value: str | None, role: str | None = None) -> str:
     # Keep the strict allowlist. Login sends each role only to its own workspace.
-    allowed = {"/dashboard", "/admin", "/admin/dashboard", "/staff/dashboard"}
+    allowed = {"/dashboard", "/admin", "/admin/dashboard", "/staff/dashboard", "/shop", "/cart",
+               "/checkout", "/account/orders", "/account/profile"}
     if role is None:
         return value if value in allowed else url_for("dashboard.index")
-    default = url_for("admin.dashboard" if role == "admin" else "dashboard.staff")
+    if role == "client" and value in {"/shop", "/cart", "/checkout", "/account/orders", "/account/profile"}:
+        return value
+    default = url_for("admin.dashboard" if role == "admin" else "dashboard.staff" if role == "staff" else "shop.index")
     return default
 
 
@@ -47,7 +50,16 @@ def login():
                 flash("Thông tin đăng nhập không đúng hoặc tài khoản không khả dụng.", "danger")
                 status = 401
             else:
+                cart = session.get("cart")
                 session.clear()  # Discard pre-login state and rotate the CSRF/session payload.
+                if user.role == "client" and isinstance(cart, dict) and len(cart) <= 20:
+                    safe_cart = {}
+                    for key, quantity in cart.items():
+                        if str(key).isascii() and str(key).isdigit() and len(str(key)) <= 20 and str(quantity).isascii() and str(quantity).isdigit():
+                            if 1 <= int(key) <= 18446744073709551615 and 1 <= int(quantity) <= 20:
+                                safe_cart[str(int(key))] = int(quantity)
+                    if safe_cart:
+                        session["cart"] = safe_cart
                 login_user(user, remember=False, fresh=True)
                 session.permanent = True
                 flash("Đăng nhập thành công. Chào mừng bạn trở lại TechFlow!", "success")

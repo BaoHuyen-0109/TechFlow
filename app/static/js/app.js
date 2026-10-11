@@ -84,8 +84,10 @@ document.querySelectorAll("[data-image-preview]").forEach((preview) => {
     const source = value.trim();
     if (!source) return fallback("Chưa có ảnh. Đang dùng ảnh mặc định.");
     try {
-      const url = new URL(source);
-      if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || source.length > 500 || /[\s\u0000-\u001f\u007f]/.test(source)) throw new Error();
+      const url = new URL(source, window.location.origin);
+      if ((source.startsWith("/") && url.origin !== window.location.origin) ||
+          !["http:", "https:"].includes(url.protocol) || url.username || url.password ||
+          source.length > 500 || /[\s\u0000-\u001f\u007f]/.test(source)) throw new Error();
       showingPhoto = true;
       preview.setAttribute("aria-busy", "true");
       if (status) status.textContent = "Đang tải ảnh xem trước…";
@@ -108,7 +110,55 @@ document.querySelectorAll("[data-image-preview]").forEach((preview) => {
     clearTimeout(timer);
     timer = setTimeout(() => update(input.value), 350);
   });
-  update(input ? input.value : preview.dataset.imageSource || "");
+  update(preview.dataset.imageSource || (input ? input.value : ""));
+});
+
+document.querySelectorAll("[data-image-drop]").forEach((zone) => {
+  const input = zone.querySelector('input[type="file"]');
+  const choose = zone.querySelector("[data-image-choose]");
+  const preview = zone.parentElement.querySelector("[data-upload-preview]");
+  const image = preview?.querySelector("[data-upload-image]");
+  const name = preview?.querySelector("[data-upload-name]");
+  let objectUrl;
+  const chooseFile = () => input?.click();
+  choose?.addEventListener("click", chooseFile);
+  zone.addEventListener("click", (event) => {
+    if (event.target !== choose && event.target !== input) chooseFile();
+  });
+  zone.addEventListener("keydown", (event) => {
+    if (event.target === zone && ["Enter", " "].includes(event.key)) {
+      event.preventDefault();
+      chooseFile();
+    }
+  });
+  ["dragenter", "dragover"].forEach((type) => zone.addEventListener(type, (event) => {
+    event.preventDefault();
+    zone.classList.add("is-dragging");
+  }));
+  ["dragleave", "drop"].forEach((type) => zone.addEventListener(type, (event) => {
+    event.preventDefault();
+    zone.classList.remove("is-dragging");
+  }));
+  zone.addEventListener("drop", (event) => {
+    const file = event.dataTransfer?.files?.[0];
+    if (!file) return;
+    const transfer = new DataTransfer();
+    transfer.items.add(file);
+    input.files = transfer.files;
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  input?.addEventListener("change", () => {
+    const file = input.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    objectUrl = URL.createObjectURL(file);
+    image.src = objectUrl;
+    name.textContent = file.name;
+    preview.hidden = false;
+  });
+  input?.form?.addEventListener("submit", () => {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+  }, { once: true });
 });
 
 document.querySelector(".catalog-edit .is-invalid")?.focus();

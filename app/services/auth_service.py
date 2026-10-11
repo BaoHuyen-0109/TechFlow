@@ -45,7 +45,7 @@ def authenticate(identity: str, password: str, ip_address: str | None) -> tuple[
             if user is not None:
                 db.session.refresh(user)
             verified = check_password_hash(user.password_hash if user else DUMMY_HASH, password)
-            if user is None or not user.is_active or not verified or user.role not in {"admin", "staff"}:
+            if user is None or not user.is_active or not verified or user.role not in {"admin", "staff", "client"}:
                 db.session.add(AuditLog(action="login_failed", entity_type="auth_attempt",
                                         description=bucket, ip_address=ip_address))
                 db.session.commit()

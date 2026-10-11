@@ -37,6 +37,8 @@ services:
       db:
         condition: service_healthy
     networks: [backend, frontend]
+    volumes:
+      - uploads_data:/app/app/static/uploads/products
     restart: unless-stopped
   nginx:
     image: nginx:1.28.0-alpine
@@ -60,3 +62,4 @@ networks:
   frontend:
 volumes:
   mysql_data:
+  uploads_data:

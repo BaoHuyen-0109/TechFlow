@@ -5,7 +5,7 @@ from sqlalchemy.orm import joinedload
 
 from app.auth.permissions import business_required
 from app.extensions import db
-from app.models import StockMovement, Product, SalesOrder
+from app.models import StockMovement, Product, SalesOrder, User
 
 blueprint = Blueprint('inventory',__name__,url_prefix='/business/inventory')
 
@@ -15,8 +15,10 @@ blueprint = Blueprint('inventory',__name__,url_prefix='/business/inventory')
 def index():
     query = select(StockMovement).join(Product).options(joinedload(StockMovement.product))
     if current_user.role != 'admin':
+        client_ids = select(User.id).where(User.role == 'client')
         query = query.where(StockMovement.reference_type == 'sales_order',
-            StockMovement.reference_id.in_(select(SalesOrder.id).where(SalesOrder.created_by == current_user.id)))
+            StockMovement.reference_id.in_(select(SalesOrder.id).where(
+                (SalesOrder.created_by == current_user.id) | SalesOrder.created_by.in_(client_ids))))
     q = request.args.get('q','').strip()
     kind = request.args.get('type','')
     if len(q) > 120 or kind not in {'','purchase_in','sale_out','sale_return','adjustment'}:

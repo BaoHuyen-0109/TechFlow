@@ -10,7 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from app.auth.permissions import business_required
 from app.extensions import db
-from app.models import Business, Product, Customer, AuditLog
+from app.models import Business, Product, Customer, AuditLog, User
 from app.purchases.forms import TransactionForm, ActionForm
 from app.services.inventory_service import InventoryError
 from app.services.customer_service import DuplicateCustomer
@@ -27,7 +27,11 @@ def build_transaction_blueprint(kind):
             abort(403)
         query = select(model)
         if current_user.role != 'admin':
-            query = query.where(model.created_by == current_user.id)
+            if kind == 'sales' and current_user.role == 'staff':
+                client_ids = select(User.id).where(User.role == 'client')
+                query = query.where((model.created_by == current_user.id) | model.created_by.in_(client_ids))
+            else:
+                query = query.where(model.created_by == current_user.id)
         return query
 
     def context(**values):
