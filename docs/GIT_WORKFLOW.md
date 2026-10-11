@@ -6,8 +6,8 @@
 - Tạo nhánh ngắn từ main: `feat/auth`, `feat/products`, `feat/purchases`, `fix/db-config`, `docs/setup`.
 - Mỗi PR giải quyết một thay đổi rõ ràng, ghi hành vi, cách kiểm thử, migrations và giới hạn.
 - Có ít nhất một thành viên review trước khi merge. Dùng squash merge nếu nhóm thống nhất.
-- Remote GitHub chưa được tạo/cấu hình. Trưởng nhóm tạo repository rồi thêm remote;
-  không đưa token vào URL, source hoặc tài liệu.
+- Kiểm tra `git remote -v` trước khi push để xác nhận đúng repository đích; không
+  đưa token vào URL, source hoặc tài liệu. Remote `origin` có thể khác theo checkout.
 
 ```powershell
 git switch main
@@ -21,8 +21,8 @@ git commit -m "feat(products): thêm bộ lọc danh mục"
 git push -u origin feat/ten-module
 ```
 
-Lệnh pull/push cần remote do trưởng nhóm cấu hình. Chưa có commit đầu tiên thì
-thực hiện commit nền tảng sau khi review, trước khi chia nhánh.
+Lệnh pull/push cần remote hợp lệ và quyền truy cập repository. Không force-push
+main; nếu remote có commit mới, đồng bộ bằng fast-forward hoặc review conflict.
 
 ## Quy ước code
 
@@ -59,8 +59,8 @@ git -c safe.directory=E:/AWS diff
 
 Hoặc tự thêm đúng đường dẫn này vào cấu hình cá nhân nếu muốn áp dụng lâu dài:
 `git config --global --add safe.directory E:/AWS`. Không dùng wildcard `*`.
-Agent không sửa cấu hình Git global. Remote chưa được cấu hình; người dùng cần
-cung cấp URL repository trước khi push.
+Agent không sửa cấu hình Git global. Remote hiện tại cần được xác nhận với người
+dùng trước khi push hoặc tạo PR.
 
 ## Snapshot giai đoạn 1–2 trước thay đổi auth
 
@@ -78,7 +78,7 @@ git -c safe.directory=E:/AWS remote -v
 ```
 
 Commit auth: `feat(auth): add authentication, role checks and admin layout`.
-Khi có remote đã được người dùng chỉ định, thêm origin và push nhánh main bằng
-`git push -u origin main`; không force-push nếu remote có lịch sử khác.
+Khi remote đã được người dùng xác nhận, push nhánh feature bằng
+`git push -u origin <branch>`; không force-push nếu remote có lịch sử khác.
 Kiểm tra `.env`, `.venv`, `.browser-cache` được ignore bằng `git check-ignore`.
 Không dùng reset/clean để chia commit vì có thể mất thay đổi chưa commit.
