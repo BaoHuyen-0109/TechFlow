@@ -76,10 +76,9 @@ jobs:
           aws s3 cp "s3://$DEPLOY_BUCKET/releases/$RELEASE/nginx/prod.conf" /opt/techflow/nginx/prod.conf
           cd /opt/techflow
           export APP_IMAGE="$APP_IMAGE"
-          registry="$REGISTRY"
-          aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$registry"
+          aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$REGISTRY"
           docker compose --env-file /etc/techflow/app.env -f docker-compose.prod.yml pull web
-          docker logout "$registry"
+          docker logout "$REGISTRY"
           docker compose --env-file /etc/techflow/app.env -f docker-compose.prod.yml run --rm web flask --app wsgi db upgrade
           docker compose --env-file /etc/techflow/app.env -f docker-compose.prod.yml up -d --remove-orphans
           for attempt in $(seq 1 60); do
