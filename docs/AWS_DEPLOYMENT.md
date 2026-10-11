@@ -1,19 +1,18 @@
 # Chuẩn bị triển khai AWS: EC2 + RDS + GitHub Actions
 
-Tài liệu này chuẩn bị đường triển khai; nó không tạo tài nguyên AWS. Trạng thái
-hiện tại: ứng dụng local chạy bằng Compose; workflow AWS bị khóa cho tới khi
-`AWS_DEPLOY_ENABLED=true`; người dùng chưa có domain. **Không bật workflow deploy
-hoặc tạo admin production khi chưa có DNS và HTTPS.**
+Tài liệu này mô tả workflow deploy cho ứng dụng đang chạy trên EC2, RDS và S3 tại
+`ap-southeast-2`, với domain `techflow223.duckdns.org`. Workflow deploy vẫn bị khóa
+cho tới khi `AWS_DEPLOY_ENABLED=true` và các quyền bên dưới đã được cấu hình.
 
 ## Kiến trúc
 
 ```mermaid
 flowchart LR
     Dev[GitHub push main] --> CI[GitHub Actions: test]
-    CI --> OIDC[OIDC short-lived role]
-    OIDC --> ECR[ECR: immutable image]
-    OIDC --> S3[S3: deploy config bundle]
-    OIDC --> SSM[SSM Run Command]
+    CI --> IAMUser[Restricted IAM deploy user]
+    IAMUser --> ECR[ECR: immutable image]
+    IAMUser --> S3[S3: deploy config bundle]
+    IAMUser --> SSM[SSM Run Command]
     SSM --> EC2[EC2: Docker Compose + Nginx + Flask]
     EC2 --> RDS[(Private RDS MySQL)]
     EC2 --> ECR
@@ -22,16 +21,18 @@ flowchart LR
 ```
 
 RDS chỉ nhận MySQL từ security group của EC2. ECR lưu image; S3 chỉ lưu file
-Compose/Nginx theo mã release; EC2 lấy image và bundle qua IAM role. GitHub dùng
-OIDC, không dùng AWS access key dài hạn. `.env.production` ở máy EC2 không được
-đưa vào Git, image hoặc bundle.
+Compose/Nginx theo mã release; EC2 lấy image và bundle qua IAM role. Workflow dùng
+IAM user access key từ GitHub Environment Secrets vì tài khoản chưa cấu hình được
+OIDC. Đây là credential dài hạn: giới hạn quyền vào tài nguyên TechFlow, không dùng
+root, định kỳ xoay vòng và thu hồi key khi không còn dùng. `.env.production` ở máy
+EC2 không được đưa vào Git, image hoặc bundle.
 
-## Trước khi tạo tài nguyên
+## Trước khi bật deploy tự động
 
 1. Trong AWS Billing, xác nhận $100 credit còn hiệu lực, ngày hết hạn và dịch vụ
    đủ điều kiện. Credit không phải giới hạn chi tiêu.
 2. Dùng [AWS Pricing Calculator](https://calculator.aws/) để ước tính EC2, RDS,
-   EBS, địa chỉ IPv4, ECR, S3, backup và data transfer tại `ap-southeast-1`.
+   EBS, địa chỉ IPv4, ECR, S3, backup và data transfer tại `ap-southeast-2`.
    RDS và ổ đĩa có thể tiếp tục tính phí ngay cả khi EC2 dừng.
 3. Tạo AWS Budget với cảnh báo mức sử dụng/chi phí; cảnh báo không tự dừng tài
    nguyên.
@@ -41,7 +42,7 @@ OIDC, không dùng AWS access key dài hạn. `.env.production` ở máy EC2 kh�
 
 ## Tài nguyên cần tạo (thực hiện thủ công trong AWS Console)
 
-Chọn cùng một Region, mặc định dùng Singapore (`ap-southeast-1`) để gần Việt Nam.
+Giữ các tài nguyên ứng dụng trong cùng Region `ap-southeast-2` (Sydney).
 
 1. **VPC/network:** dùng VPC có EC2 ở subnet public và RDS ở subnet private.
    Không tạo NAT Gateway chỉ để nối EC2/RDS; NAT có thể phát sinh chi phí. EC2
@@ -49,7 +50,7 @@ Chọn cùng một Region, mặc định dùng Singapore (`ap-southeast-1`) đ�
 2. **Security group EC2:** inbound TCP 80/443 từ Internet. Quản trị qua SSM
    Session Manager; nếu cần SSH tạm thời, chỉ cho IP của bạn, không mở `22` cho
    toàn Internet. Không mở 8000.
-3. **EC2:** Ubuntu Server LTS, kiến trúc `x86_64`, disk EBS vừa đủ. Gắn instance
+3. **EC2:** Amazon Linux 2023, kiến trúc `x86_64`, disk EBS vừa đủ. Gắn instance
    profile cho SSM, pull ECR image và đọc object trong prefix deploy của bucket.
    Cài Docker Engine/Compose plugin từ tài liệu Docker chính thức.
 4. **RDS for MySQL:** chọn phiên bản MySQL 8.0 được RDS hỗ trợ, Single-AZ cho
@@ -60,10 +61,12 @@ Chọn cùng một Region, mặc định dùng Singapore (`ap-southeast-1`) đ�
    khóa image theo commit SHA.
 6. **S3:** tạo private bucket riêng cho deploy bundle; bật block public access,
    encryption, versioning tùy nhu cầu và lifecycle rule dọn release cũ.
-7. **IAM cho GitHub Actions:** OIDC provider `token.actions.githubusercontent.com`
-   và role giới hạn `sub` vào đúng repo/environment `production`. Chỉ cấp quyền
-   push image vào ECR repository, `PutObject` trong prefix `releases/*`, và gọi/
-   đọc trạng thái SSM cho đúng instance.
+7. **IAM cho GitHub Actions:** tạo IAM user riêng cho deploy, không bật AWS Console
+   access. Gắn policy tối thiểu để push image vào đúng ECR repository, `PutObject`
+   trong prefix `releases/*`, và gọi/đọc trạng thái SSM cho đúng instance. Tạo
+   access key riêng cho user này; lưu `AWS_ACCESS_KEY_ID` và
+   `AWS_SECRET_ACCESS_KEY` trong GitHub Environment `production`, không commit
+   vào repo hay gửi qua chat.
 8. **IAM cho EC2:** `AmazonSSMManagedInstanceCore` cùng quyền tối thiểu ECR pull và
    `GetObject` trong prefix deploy bucket. Không nhúng access key vào EC2.
 
@@ -133,11 +136,18 @@ Repository variables (không phải secrets) trong Settings → Secrets and vari
 | Variable | Giá trị |
 | --- | --- |
 | `AWS_DEPLOY_ENABLED` | để `false`/chưa đặt cho tới khi cấu hình xong HTTPS |
-| `AWS_REGION` | `ap-southeast-1` |
-| `AWS_DEPLOY_ROLE_ARN` | ARN role OIDC giới hạn cho repository/environment |
+| `AWS_REGION` | `ap-southeast-2` |
 | `ECR_REPOSITORY` | `techflow-web` |
 | `EC2_INSTANCE_ID` | ID instance production |
 | `DEPLOY_BUCKET` | tên bucket private |
+
+Tạo Environment `production` trong Settings → Environments. Thêm hai Environment
+secrets sau trong environment này; deploy job đã gắn với environment `production`:
+
+| Secret | Giá trị |
+| --- | --- |
+| `AWS_ACCESS_KEY_ID` | Access key ID của IAM user deploy |
+| `AWS_SECRET_ACCESS_KEY` | Secret access key của IAM user deploy |
 
 `.github/workflows/ci.yml` chạy test Docker biệt lập trên pull request.
 `.github/workflows/deploy.yml` chạy test trên main, rồi chỉ khi

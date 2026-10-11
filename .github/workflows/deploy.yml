@@ -31,19 +31,18 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
     env:
       AWS_REGION: ${{ vars.AWS_REGION }}
-      AWS_ROLE_ARN: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
       ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
       EC2_INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
       DEPLOY_BUCKET: ${{ vars.DEPLOY_BUCKET }}
     steps:
       - uses: actions/checkout@v4
-      - name: Configure short-lived AWS credentials
+      - name: Configure AWS credentials from protected GitHub secrets
         uses: aws-actions/configure-aws-credentials@v6
         with:
-          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
       - name: Log in to Amazon ECR
         id: ecr
