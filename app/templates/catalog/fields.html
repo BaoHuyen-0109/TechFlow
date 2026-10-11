@@ -2,7 +2,7 @@
 <div class="catalog-field {{ 'catalog-wide' if field.type in ['TextAreaField', 'BooleanField'] or field.name in ['address', 'image_url'] else '' }}">
   {% if field.type == 'BooleanField' %}
     <div class="form-check form-switch">{{ field(class='form-check-input') }}{{ field.label(class='form-check-label') }}</div>
-    <small class="catalog-help">{{ 'Chỉ bật khi cửa hàng có chính sách bảo hành cho sản phẩm này.' if field.name == 'warranty_enabled' else 'Ngừng hoạt động để giữ thông tin và các dữ liệu liên kết.' }}</small>
+    <small class="catalog-help">{{ 'Chỉ bật khi cửa hàng có chính sách bảo hành cho sản phẩm này.' if field.name == 'warranty_enabled' else 'Gỡ ảnh đang lưu của sản phẩm.' if field.name == 'remove_image' else 'Ngừng hoạt động để giữ thông tin và các dữ liệu liên kết.' }}</small>
   {% else %}
     {{ field.label(class='form-label') }}{% if field.flags.required %}<span class="catalog-required" aria-label="Bắt buộc"> *</span>{% endif %}
     {% set classes = ('form-select' if field.type in ['SelectField', 'ChoiceField'] else 'form-control') ~ (' is-invalid' if field.errors else '') %}

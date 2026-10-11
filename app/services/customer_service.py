@@ -18,6 +18,14 @@ class DuplicateCustomer(InventoryError):
         self.customer_id = customer_id
 
 
+def normalize_registered_profile(data):
+    """Validate a self-service profile and expose safe validation feedback."""
+    try:
+        return validated_profile(data)
+    except InventoryError as error:
+        raise ValueError(error.message) from None
+
+
 def customer_audit(session, actor_id, action, identifier):
     session.add(AuditLog(user_id=actor_id,action=action,entity_type='customers',entity_id=identifier,
                         description='Thay đổi hồ sơ khách hàng; không ghi thông tin liên hệ'))

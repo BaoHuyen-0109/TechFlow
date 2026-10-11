@@ -24,6 +24,14 @@ def new_code(kind):
 def permitted(actor, kind, document=None, action='view'):
     if actor.role == 'admin':
         return True
+    if actor.role == 'staff':
+        if kind != 'sales':
+            return False
+        if document is None:
+            return True
+        creator_role = document.creator.role if document.creator else None
+        return (document.created_by == actor.id or creator_role == 'client') and not (
+            action == 'cancel' and document is not None and document.status == 'completed')
     return (kind == 'sales' and (document is None or document.created_by == actor.id)
             and not (action == 'cancel' and document is not None and document.status == 'completed'))
 

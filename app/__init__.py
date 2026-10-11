@@ -4,6 +4,7 @@ from flask import Flask, request
 
 from app.config import load_config
 from app.extensions import csrf, db, login_manager, migrate
+from app.services.image_storage import display_product_image, s3_image_origin
 
 
 def create_app() -> Flask:
@@ -28,7 +29,7 @@ def create_app() -> Flask:
         if not user_id.isascii() or not user_id.isdigit() or len(user_id) > 20:
             return None
         user = db.session.get(models.User, int(user_id))
-        return user if user and user.is_active and user.role in {"admin", "staff"} else None
+        return user if user and user.is_active and user.role in {"admin", "staff", "client"} else None
     csrf.init_app(app)
 
     from app.main.routes import blueprint
@@ -40,6 +41,8 @@ def create_app() -> Flask:
     from app.dashboard.routes import blueprint as dashboard_blueprint
     from app.users.routes import blueprint as admin_blueprint
     app.register_blueprint(auth_blueprint)
+    from app.shop.routes import blueprint as shop_blueprint
+    app.register_blueprint(shop_blueprint)
     app.register_blueprint(dashboard_blueprint)
     app.register_blueprint(admin_blueprint)
     from app.categories.routes import blueprint as categories_blueprint
@@ -61,6 +64,8 @@ def create_app() -> Flask:
     def format_vnd(value):
         return format(value, ",.2f").replace(",", "_").replace(".", ",").replace("_", ".") + " ₫"
 
+    app.add_template_filter(display_product_image, "product_image")
+
     register_commands(app)
     register_error_handlers(app)
 
@@ -69,8 +74,15 @@ def create_app() -> Flask:
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
-        # External image previews are authorized only in the product workspace.
-        image_sources = "'self' data:" + (" https: http:" if request.blueprint == "products" else "")
+        # Permit product URLs and the configured private S3 image origin where needed.
+        image_sources = "'self' data:"
+        if request.blueprint == "products":
+            image_sources += " https: http:"
+        elif request.blueprint == "shop":
+            image_sources += " https:"
+        s3_origin = s3_image_origin(app)
+        if s3_origin:
+            image_sources += " " + s3_origin
         response.headers["Content-Security-Policy"] = f"default-src 'self'; style-src 'self'; script-src 'self'; font-src 'self'; img-src {image_sources}; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         if response.mimetype == "text/html":
             response.headers["Cache-Control"] = "no-store"

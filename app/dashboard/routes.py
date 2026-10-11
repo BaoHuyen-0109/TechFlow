@@ -20,7 +20,7 @@ def vietnam_time(value):
 @blueprint.get("/dashboard")
 @login_required
 def index():
-    endpoint = "admin.dashboard" if current_user.role == "admin" else "dashboard.staff"
+    endpoint = "admin.dashboard" if current_user.role == "admin" else "dashboard.staff" if current_user.role == "staff" else "shop.index"
     return redirect(url_for(endpoint))
 
 

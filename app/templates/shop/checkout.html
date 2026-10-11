@@ -1,0 +1,11 @@
+{% extends 'shop/base.html' %}
+{% block title %}Xác nhận đơn · TechFlow{% endblock %}
+{% block content %}
+<section class="panel"><span class="eyebrow">XÁC NHẬN ĐƠN HÀNG</span><h1>Kiểm tra đơn hàng</h1>
+{% if message %}<div class="alert alert-warning" role="alert">{{ message }}</div>{% endif %}
+<p>Giao đến: <strong>{{ current_user.customer_profile.name }}</strong> · {{ current_user.customer_profile.phone }} · {{ current_user.customer_profile.address }}</p>
+<div class="table-responsive"><table class="table"><thead><tr><th>Sản phẩm</th><th>Số lượng</th><th>Tạm tính</th></tr></thead><tbody>{% for product, quantity, subtotal in rows %}<tr><td>{{ product.name }}</td><td>{{ quantity }}</td><td>{{ subtotal|vnd }}</td></tr>{% endfor %}</tbody></table></div>
+<p class="fs-5 fw-bold">Tổng: {{ total|vnd }}</p><p>Đây là đơn đặt hàng, chưa phải thanh toán trực tuyến. Nhân viên sẽ xác nhận đơn; tồn kho chỉ thay đổi khi đơn được xử lý.</p>
+<form method="post">{{ form.hidden_tag() }}<button class="btn btn-primary" type="submit">Đặt hàng</button> <a class="btn btn-light" href="{{ url_for('shop.cart') }}">Quay lại giỏ</a></form>
+</section>
+{% endblock %}

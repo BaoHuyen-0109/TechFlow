@@ -13,6 +13,9 @@ services:
       SESSION_COOKIE_SECURE: "true"
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       TZ: ${TZ:-Asia/Ho_Chi_Minh}
+      UPLOAD_STORAGE: ${UPLOAD_STORAGE:-s3}
+      S3_BUCKET: ${S3_BUCKET:-}
+      AWS_REGION: ${AWS_REGION:-ap-southeast-2}
     expose:
       - "8000"
     networks: [application]

@@ -38,6 +38,8 @@ def persist(resource, record, form=None, delete=False):
             for name in resource.form.__dict__:
                 if name.startswith("_") or name not in form._fields:
                     continue
+                if name in {"image_file", "remove_image"}:
+                    continue
                 if name.startswith('warranty_') and current_user.role != 'admin':
                     continue
                 value = form[name].data

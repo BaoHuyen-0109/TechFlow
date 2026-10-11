@@ -1,0 +1,18 @@
+{% extends 'layouts/admin.html' %}
+{% block title %}Tài khoản Staff · TechFlow{% endblock %}
+{% block workspace_content %}
+<header class="ws-page-heading"><div><span class="ws-eyebrow">QUẢN LÝ TÀI KHOẢN</span><h1>Tài khoản Staff</h1><p>Admin tạo tài khoản nhân viên; Staff không được vào khu vực quản trị.</p></div><span class="ws-chip neutral">{{ staff_accounts|length }} tài khoản</span></header>
+{% if message %}<div class="alert alert-danger" role="alert">{{ message }}</div>{% endif %}
+<section class="ws-panel"><div class="ws-panel-heading"><span class="ws-icon-tile"><i class="bi bi-person-plus" aria-hidden="true"></i></span><div><h2>Tạo Staff</h2><p>Vai trò được cố định là Staff, không thể tự nâng quyền.</p></div></div>
+<form method="post" class="row g-3" data-loading-form>{{ form.hidden_tag() }}
+  <div class="col-md-6"><label class="form-label" for="{{ form.full_name.id }}">{{ form.full_name.label.text }}</label>{{ form.full_name(class='form-control') }}{% for e in form.full_name.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}</div>
+  <div class="col-md-6"><label class="form-label" for="{{ form.username.id }}">{{ form.username.label.text }}</label>{{ form.username(class='form-control', autocomplete='off') }}{% for e in form.username.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}</div>
+  <div class="col-md-6"><label class="form-label" for="{{ form.email.id }}">{{ form.email.label.text }}</label>{{ form.email(class='form-control', autocomplete='email') }}{% for e in form.email.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}</div>
+  <div class="col-md-6"><label class="form-label" for="{{ form.password.id }}">{{ form.password.label.text }}</label>{{ form.password(class='form-control', autocomplete='new-password') }}{% for e in form.password.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}</div>
+  <div class="col-md-6"><label class="form-label" for="{{ form.confirm_password.id }}">{{ form.confirm_password.label.text }}</label>{{ form.confirm_password(class='form-control', autocomplete='new-password') }}{% for e in form.confirm_password.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}</div>
+  <div class="col-12"><button class="btn btn-primary" type="submit">Tạo tài khoản Staff</button></div>
+</form></section>
+<section class="ws-panel mt-4"><div class="ws-panel-heading"><div><h2>Danh sách tài khoản</h2><p>Vô hiệu hóa sẽ ngăn đăng nhập ở lần tiếp theo.</p></div></div><div class="table-responsive"><table class="table ws-table"><thead><tr><th>Họ tên</th><th>Username</th><th>Email</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+{% for staff in staff_accounts %}<tr><td>{{ staff.full_name }}</td><td>{{ staff.username }}</td><td>{{ staff.email or '—' }}</td><td>{{ 'Đang hoạt động' if staff.is_active else 'Đã vô hiệu hóa' }}</td><td><form method="post" action="{{ url_for('admin.toggle_staff', user_id=staff.id) }}">{{ state_form.hidden_tag() }}<button class="btn btn-sm {{ 'btn-outline-danger' if staff.is_active else 'btn-outline-success' }}" type="submit">{{ 'Vô hiệu hóa' if staff.is_active else 'Kích hoạt' }}</button></form></td></tr>{% else %}<tr><td colspan="5">Chưa có tài khoản Staff.</td></tr>{% endfor %}
+</tbody></table></div></section>
+{% endblock %}

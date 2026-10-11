@@ -1,12 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'shop/base.html' %}
 {% block title %}TechFlow · Quản lý kinh doanh{% endblock %}
 {% block content %}
 <section class="panel">
   <span class="eyebrow">TECHFLOW · QUẢN LÝ KINH DOANH</span>
   <h1>Quản lý thông minh.<br>Vận hành hiệu quả.</h1>
-  <p>Quản lý sản phẩm, danh mục thiết bị và đối tác cung cấp trong không gian làm việc của bạn.</p>
-  <div class="next"><h2>Không gian làm việc TechFlow</h2><p>Đăng nhập bằng tài khoản được cấp để bắt đầu công việc.</p><p>Các chức năng nhập kho, bán hàng và báo cáo doanh thu hiện chưa khả dụng.</p></div>
-  <a class="btn btn-primary" href="{{ url_for('dashboard.index') if current_user.is_authenticated else url_for('auth.login') }}">{{ 'Vào không gian làm việc' if current_user.is_authenticated else 'Đăng nhập TechFlow' }}</a>
+  <p>Xem sản phẩm công nghệ, đặt mua trực tuyến hoặc đăng nhập vào không gian làm việc.</p>
+  <div class="next"><h2>Cửa hàng TechFlow</h2><p>Khách hàng có thể duyệt sản phẩm và theo dõi đơn hàng sau khi đăng nhập.</p></div>
+  <a class="btn btn-primary" href="{{ url_for('shop.index') }}">Xem cửa hàng</a>
+  {% if not current_user.is_authenticated %}<a class="btn btn-outline-primary ms-2" href="{{ url_for('shop.register') }}">Tạo tài khoản khách</a>{% endif %}
 </section>
 <footer class="text-center text-muted mt-4 small">© 2026 TechFlow</footer>
 {% endblock %}

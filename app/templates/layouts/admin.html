@@ -9,6 +9,7 @@
   {{ nav.section('QUẢN TRỊ') }}
   {{ nav.link(url_for('admin.dashboard') ~ '#permissions', 'bi-shield-check', 'Vai trò và phân quyền') }}
   {{ nav.link(url_for('admin.dashboard') ~ '#system', 'bi-hdd-network', 'Trạng thái hệ thống') }}
+  {{ nav.link(url_for('admin.staff_accounts'), 'bi-people', 'Tài khoản Staff', active_page == 'staff') }}
   {{ nav.section('TÀI KHOẢN') }}
   {{ nav.link(url_for('admin.dashboard') ~ '#account', 'bi-person-circle', 'Thông tin tài khoản') }}
 {% endblock %}

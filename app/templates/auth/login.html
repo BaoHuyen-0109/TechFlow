@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'shop/base.html' %}
 {% block title %}Đăng nhập · TechFlow{% endblock %}
 {% block body_class %}login-page{% endblock %}
 {% block body %}
@@ -40,7 +40,7 @@
         <button class="btn btn-primary btn-login w-100" type="submit"><span data-submit-label>Đăng nhập <i class="bi bi-arrow-right" aria-hidden="true"></i></span><span class="d-none" data-submit-loading><span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Đang đăng nhập…</span></button>
         <div class="visually-hidden" data-loading-announcement role="status" aria-live="polite"></div>
       </form>
-      <div class="login-help"><i class="bi bi-info-circle" aria-hidden="true"></i><p>Chưa có tài khoản hoặc cần hỗ trợ?<br><span>Vui lòng liên hệ quản trị viên hệ thống.</span></p></div>
+      <div class="login-help"><i class="bi bi-info-circle" aria-hidden="true"></i><p>Khách hàng mới? <a href="{{ url_for('shop.register') }}">Tạo tài khoản mua hàng</a><br><span>Nhân viên cần hỗ trợ vui lòng liên hệ quản trị viên.</span></p></div>
       <div class="login-footnote">TECHFLOW <span>Hệ thống quản lý kinh doanh thiết bị công nghệ</span></div>
     </div>
   </section>

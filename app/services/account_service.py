@@ -22,3 +22,21 @@ def create_admin(username: str, full_name: str, password: str, email: str | None
     db.session.add(AuditLog(user_id=user.id, action="create_admin", entity_type="user",
                             entity_id=user.id, description="Khởi tạo Admin bằng CLI có kiểm soát."))
     return user
+
+
+def create_staff(username: str, full_name: str, password: str, email: str | None = None,
+                 created_by_id: int | None = None) -> User:
+    username = username.strip().lower()
+    full_name = full_name.strip()
+    email = email.strip().lower() if email and email.strip() else None
+    if not re.fullmatch(r"[a-z0-9_.-]{3,80}", username):
+        raise ValueError("Username chưa hợp lệ.")
+    if not full_name or len(full_name) > 120:
+        raise ValueError("Họ tên cần từ 1 đến 120 ký tự.")
+    user = User(username=username, full_name=full_name, email=email, role="staff", is_active=True)
+    user.set_password(password)
+    db.session.add(user)
+    db.session.flush()
+    db.session.add(AuditLog(user_id=created_by_id, action="create_staff", entity_type="user", entity_id=user.id,
+                            description="Admin tạo tài khoản Staff."))
+    return user

@@ -7,7 +7,7 @@
   {% elif name in ['purchase_price','selling_price'] %}{{ record[name]|vnd }}
   {% elif name == 'is_active' %}{{ 'Đang hoạt động' if record.is_active else 'Ngừng hoạt động' }}
   {% elif name == 'warranty_enabled' %}{{ 'Có bảo hành' if record.warranty_enabled else 'Không bảo hành' }}
-  {% elif name == 'image_url' %}{% if record.image_url %}<a href="{{ record.image_url }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Mở hình ảnh <i aria-hidden="true" class="bi bi-box-arrow-up-right"></i></a>{% else %}Chưa có ảnh{% endif %}
+  {% elif name == 'image_url' %}{% if record.image_url|product_image %}<a href="{{ record.image_url|product_image }}" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">Mở hình ảnh <i aria-hidden="true" class="bi bi-box-arrow-up-right"></i></a>{% else %}Chưa có ảnh{% endif %}
   {% else %}{{ record[name] if record[name] is not none else 'Chưa có thông tin' }}{% endif %}
 {%- endmacro %}
 {% block catalog_content %}
@@ -18,7 +18,7 @@
   <section class="catalog-detail-section"><h3><i aria-hidden="true" class="bi bi-{{ icon }}"></i>{{ title }}</h3><dl class="catalog-detail-grid">
     {% for name in fields %}<div class="{{ 'catalog-wide' if name in ['address','description','notes'] else '' }}"><dt>{{ form[name].label.text }}</dt><dd>{{ value(name) }}</dd></div>{% endfor %}
     {% if 'reorder_level' in fields %}<div><dt>Tồn kho (chỉ xem)</dt><dd>{{ record.stock_quantity }}</dd></div>{% endif %}
-  </dl>{% if 'image_url' in fields %}{{ image_preview(record.image_url) }}{% endif %}</section>
+  </dl>{% if 'image_url' in fields %}{{ image_preview(record.image_url|product_image) }}{% endif %}</section>
   {% endfor %}
   <dl class="catalog-detail-grid catalog-record-meta">
     {% if linked is not none %}<div><dt>Sản phẩm liên kết</dt><dd><a href="{{ url_for('products.index', **({'category_id': record.id} if resource.key == 'categories' else {'business_id': record.id})) }}">{{ linked }} sản phẩm</a></dd></div>{% endif %}

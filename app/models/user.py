@@ -8,7 +8,7 @@ from app.models.base import Record, TABLE_OPTIONS, Timestamps
 class User(UserMixin, Record, Timestamps, db.Model):
     __tablename__ = "users"
     __table_args__ = (
-        db.CheckConstraint("role IN ('admin', 'staff')", name="valid_role"),
+        db.CheckConstraint("role IN ('admin', 'staff', 'client')", name="valid_role"),
         TABLE_OPTIONS,
     )
     full_name = db.Column(db.String(120), nullable=False)
@@ -22,6 +22,7 @@ class User(UserMixin, Record, Timestamps, db.Model):
     sales_orders = db.relationship("SalesOrder", back_populates="creator", passive_deletes="all")
     stock_movements = db.relationship("StockMovement", back_populates="creator", passive_deletes="all")
     audit_logs = db.relationship("AuditLog", back_populates="user", passive_deletes="all")
+    customer_profile = db.relationship("Customer", back_populates="user", uselist=False, foreign_keys="Customer.user_id")
 
     def set_password(self, password: str) -> None:
         if len(password) < 12 or len(password) > 128:

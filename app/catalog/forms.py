@@ -3,7 +3,7 @@ from decimal import Decimal
 from urllib.parse import urlsplit
 
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, DecimalField, IntegerField, SelectField, StringField, TextAreaField
+from wtforms import BooleanField, DecimalField, FileField, IntegerField, SelectField, StringField, TextAreaField
 from wtforms.validators import DataRequired, InputRequired, Length, Optional, ValidationError, NumberRange
 
 
@@ -101,6 +101,8 @@ class BusinessForm(FlaskForm):
 
 
 class ProductForm(FlaskForm):
+    image_file = FileField("Chọn hoặc thả ảnh sản phẩm", validators=[Optional()])
+    remove_image = BooleanField("Gỡ ảnh hiện tại")
     warranty_enabled = BooleanField('Có bảo hành', default=False)
     warranty_months = CountField('Thời hạn bảo hành (tháng)', validators=[Optional(), NumberRange(min=1,max=120,message='Từ 1 đến 120 tháng.')])
     warranty_notes = TextAreaField('Điều kiện và ghi chú bảo hành', filters=[clean], validators=[Optional(),Length(max=2000,message='Tối đa 2000 ký tự.')])

@@ -6,7 +6,7 @@
   <div><span class="catalog-eyebrow">{{ resource.label }}</span><h1>{{ 'Sửa' if record else 'Thêm' }} {{ resource.singular }}</h1><p>{{ 'Cập nhật thông tin ' ~ resource.singular ~ ' trong hệ thống.' if record else resource.create_description }}</p></div>
   <a class="btn btn-light" href="{{ url_for(resource.key ~ '.index') }}"><i aria-hidden="true" class="bi bi-arrow-left me-2"></i>Danh sách</a>
 </header>
-<form method="post" class="catalog-panel catalog-edit catalog-edit-{{ resource.key }}" data-loading-form data-loading-message="Đang lưu thông tin." novalidate>
+<form method="post" enctype="multipart/form-data" class="catalog-panel catalog-edit catalog-edit-{{ resource.key }}" data-loading-form data-loading-message="Đang lưu thông tin." novalidate>
   {{ form.hidden_tag() }}
   <span class="visually-hidden" role="status" data-loading-announcement></span>
   {% if form.errors %}<div class="alert alert-danger" role="alert">Thông tin chưa hợp lệ. Vui lòng kiểm tra các trường bên dưới.</div>{% endif %}
@@ -15,7 +15,20 @@
     <h2 id="section-{{ loop.index }}"><i aria-hidden="true" class="bi bi-{{ icon }}"></i>{{ title }}</h2>
     {% if 'warranty_enabled' in fields and current_user.role != 'admin' %}
     <p class="text-muted">{{ 'Có bảo hành · ' ~ record.warranty_months ~ ' tháng' if record and record.warranty_enabled else 'Không bảo hành' }}. Chỉ Admin được thay đổi chính sách.</p>
-    {% else %}<div class="catalog-form-grid">{% for name in fields %}{{ input(form[name]) }}{% if name == 'image_url' %}<div class="catalog-wide">{{ image_preview(form.image_url.data, true) }}</div>{% endif %}{% endfor %}</div>{% endif %}
+    {% else %}<div class="catalog-form-grid">{% for name in fields %}{% if name == 'image_url' %}
+      <div class="catalog-field catalog-wide"><label class="form-label" for="{{ form.image_file.id }}">Ảnh sản phẩm</label>
+        <div class="product-image-drop" data-image-drop tabindex="0" role="group" aria-describedby="{{ form.image_file.id }}-help">
+          <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i><strong>Kéo thả ảnh vào đây</strong><span>hoặc chọn tệp JPEG, PNG, WebP (tối đa 6 MB)</span>
+          {{ form.image_file(accept='image/jpeg,image/png,image/webp', class='visually-hidden', aria_label='Chọn tệp ảnh sản phẩm') }}
+          <button type="button" class="btn btn-light btn-sm" data-image-choose>Chọn ảnh</button>
+        </div>
+        <small class="catalog-help" id="{{ form.image_file.id }}-help">Ảnh được kiểm tra, xoay đúng chiều và chuyển sang WebP trước khi lưu.</small>
+        <div class="catalog-image-upload-preview" data-upload-preview hidden><img alt="Xem trước ảnh được chọn" data-upload-image><span data-upload-name></span></div>
+        {% for error in form.image_file.errors %}<div class="catalog-field-error">{{ error }}</div>{% endfor %}
+      </div>
+      {{ input(form.image_url) }}<div class="catalog-wide">{{ image_preview(form.image_url.data|product_image, true) }}</div>
+      {% if record and record.image_url %}{{ input(form.remove_image) }}{% endif %}
+    {% else %}{{ input(form[name]) }}{% endif %}{% endfor %}</div>{% endif %}
     {% if 'warranty_enabled' in fields %}<p class="catalog-help">Chính sách được chụp tại lúc tạo đơn mới; không thay đổi bảo hành đơn cũ. Còn hạn vẫn cần kiểm tra điều kiện thực tế.</p>{% endif %}
     {% if resource.key == 'products' and 'reorder_level' in fields %}<div class="catalog-note"><i aria-hidden="true" class="bi bi-lock"></i><div>Tồn kho hiện tại: <strong>{{ record.stock_quantity if record else 0 }}</strong> · Chỉ xem.<br>Số lượng tồn kho được cập nhật qua nghiệp vụ kho.</div></div>{% endif %}
   </section>

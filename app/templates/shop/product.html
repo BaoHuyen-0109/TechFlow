@@ -1,0 +1,14 @@
+{% extends 'shop/base.html' %}
+{% block title %}{{ product.name }} · TechFlow{% endblock %}
+{% block content %}
+<section class="panel">
+  <p><a href="{{ url_for('shop.index') }}">Cửa hàng</a> / {{ product.category.name }}</p>
+  <article class="store-product">
+    <div class="store-product-media">{% if product.image_url|product_image %}<img src="{{ product.image_url|product_image }}" alt="{{ product.name }}">{% else %}<i class="bi bi-laptop" aria-hidden="true"></i>{% endif %}</div>
+    <div><span class="store-eyebrow">{{ product.category.name }} · {{ product.sku }}</span><h1>{{ product.name }}</h1><p class="store-muted">{{ product.brand or '' }} {{ product.model or '' }}</p><p class="store-price fs-3">{{ product.selling_price|vnd }}</p><p>{{ product.description or 'Sản phẩm công nghệ chính hãng tại TechFlow.' }}</p>
+      <dl><dt>Tình trạng kho</dt><dd>{% if product.stock_quantity %}Còn {{ product.stock_quantity }} sản phẩm{% else %}Tạm hết hàng{% endif %}</dd>{% if product.warranty_enabled %}<dt>Bảo hành</dt><dd>{{ product.warranty_months }} tháng</dd>{% endif %}</dl>
+      <form method="post" action="{{ url_for('shop.add_to_cart', product_id=product.id) }}" class="d-flex gap-2 align-items-center"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><label for="product-quantity">Số lượng</label><input class="form-control store-quantity" id="product-quantity" type="number" name="quantity" value="1" min="1" max="20" {% if not product.stock_quantity %}disabled{% endif %}><button class="btn btn-primary" {% if not product.stock_quantity %}disabled{% endif %}>Thêm vào giỏ</button></form>
+    </div>
+  </article>
+</section>
+{% endblock %}

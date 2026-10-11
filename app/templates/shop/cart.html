@@ -1,0 +1,11 @@
+{% extends 'shop/base.html' %}
+{% block title %}Giỏ hàng · TechFlow{% endblock %}
+{% block content %}
+<section class="panel"><span class="eyebrow">CỬA HÀNG TECHFLOW</span><h1>Giỏ hàng</h1>
+{% if rows %}<form method="post" action="{{ url_for('shop.update_cart') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="table-responsive"><table class="table align-middle store-table"><thead><tr><th>Sản phẩm</th><th>Số lượng</th><th>Thành tiền</th><th></th></tr></thead><tbody>
+{% for product, quantity, subtotal in rows %}<tr><td><a href="{{ url_for('shop.product_detail', product_id=product.id) }}">{{ product.name }}</a></td><td><label class="visually-hidden" for="cart-{{ product.id }}">Số lượng {{ product.name }}</label><input class="form-control store-quantity" id="cart-{{ product.id }}" type="number" name="quantity_{{ product.id }}" min="0" max="20" value="{{ quantity }}"></td><td>{{ subtotal|vnd }}</td><td><button class="btn btn-link text-danger" type="submit" formaction="{{ url_for('shop.remove_from_cart', product_id=product.id) }}" formmethod="post" formnovalidate>Xóa</button></td></tr>{% endfor %}
+</tbody></table></div><button class="btn btn-outline-primary" type="submit">Cập nhật giỏ</button></form><p class="fs-5 fw-bold mt-3">Tạm tính: {{ total|vnd }}</p>
+{% if current_user.is_authenticated and current_user.role == 'client' %}<a class="btn btn-primary" href="{{ url_for('shop.checkout') }}">Tiếp tục đặt hàng</a>{% else %}<p>Đăng nhập tài khoản khách để tiếp tục đặt hàng.</p><a class="btn btn-primary" href="{{ url_for('auth.login', next=url_for('shop.checkout')) }}">Đăng nhập</a> <a href="{{ url_for('shop.register') }}">Tạo tài khoản</a>{% endif %}
+{% else %}<div class="store-empty"><i class="bi bi-bag fs-2" aria-hidden="true"></i><h2>Giỏ hàng đang trống</h2><a class="btn btn-primary" href="{{ url_for('shop.index') }}">Tiếp tục xem sản phẩm</a></div>{% endif %}
+</section>
+{% endblock %}
