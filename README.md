@@ -8,7 +8,8 @@ trên branch `feature/ui-ux-before-stage-7`.**
 Có đăng nhập username/email, phân quyền Admin/Staff, hai workspace riêng và
 sidebar xổ xuống. Catalog lưu vào MySQL; nhập/bán cập nhật tồn bằng transaction,
 có hồ sơ khách/lịch sử mua, bảo hành và Dashboard thống kê dữ liệu thật.
-Báo cáo doanh thu nâng cao chưa triển khai; không triển khai AWS ở phạm vi hiện tại.
+Báo cáo doanh thu nâng cao chưa triển khai. Phần chuẩn bị production/AWS đang được
+thực hiện riêng; chưa có tài nguyên AWS hoặc domain production nào được tạo.
 
 Đặc tả chính thức: [tech_business_manager_aws_spec.md](tech_business_manager_aws_spec.md).
 
@@ -260,9 +261,13 @@ xóa thủ công sau khi kiểm tra; ứng dụng không tự tạo/xóa bảng 
 - [Authentication và quyền truy cập](docs/AUTHENTICATION.md)
 - [Catalog CRUD và quy ước nhập giá VND](docs/CATALOG.md)
 
-Giai đoạn tiếp theo chỉ bắt đầu sau khi người dùng xác nhận. AWS deployment,
-HTTPS public, backup/restore nghiệp vụ và kiểm thử tải nằm ở giai đoạn sau;
 Compose hiện tại dành cho localhost, không dùng trực tiếp để public website.
+Tài nguyên AWS thật, HTTPS public, backup/restore production và nghiệm thu tải
+chưa được hoàn tất; không đưa dữ liệu thật lên máy chủ trước khi hoàn tất các bước đó.
+
+Tài liệu chuẩn bị EC2, RDS và GitHub Actions: [AWS deployment](docs/AWS_DEPLOYMENT.md).
+`docker-compose.prod.yml` chỉ dành cho máy chủ production sau khi đã có RDS riêng,
+DNS và chứng chỉ HTTPS. Không dùng `.env` local hoặc seed dữ liệu demo trên production.
 
 ## Bảo hành và Sidebar (5.2)
 

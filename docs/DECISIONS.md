@@ -147,3 +147,21 @@
     từ module bảo hành. Hủy đơn completed bị chặn khi còn phiếu chưa trả khách.
 54. Giữ native details/summary cho menu Business để bàn phím/no-JS hoạt động;
     route con tự mở nhóm, không gộp Admin/Business hoặc thay URL cũ.
+
+## Chuẩn bị production/AWS (được người dùng xác nhận ngày 2026-10-11)
+
+55. Giữ Docker Compose local nguyên trạng. Production dùng EC2 + Amazon RDS for
+    MySQL; database không public và chỉ security group EC2 được vào cổng 3306.
+    Đây là lựa chọn bổ sung theo yêu cầu mới, thay hướng dẫn MVP cũ dùng MySQL
+    container trên cùng EC2.
+56. GitHub Actions chạy bộ test Docker biệt lập trên pull request. Sau khi AWS,
+    DNS/HTTPS và GitHub variables sẵn sàng, push main có thể build image bất biến
+    vào ECR, tải Compose/Nginx deployment bundle vào S3 và gọi EC2 qua SSM.
+    GitHub xác thực bằng OIDC; không lưu AWS access key dài hạn.
+57. Production migration là bước deploy có kiểm soát; không seed demo. Secrets
+    ứng dụng và RDS chỉ nằm trên EC2 trong file quyền hạn chế, không trong Git,
+    image hoặc workflow logs.
+58. Domain chưa có; không bật AWS_DEPLOY_ENABLED hoặc tạo tài nguyên thật trong
+    bước chuẩn bị. Public login chỉ được mở sau khi DNS và HTTPS hoạt động.
+    Người dùng hiện có $100 credit nhưng cần xác nhận thời hạn/điều kiện và xem
+    ước tính chi phí trước khi tạo EC2/RDS/ECR/S3.
