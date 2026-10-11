@@ -64,6 +64,7 @@ jobs:
       - name: Deploy on EC2 through Systems Manager
         env:
           RELEASE: ${{ github.sha }}
+          REGISTRY: ${{ steps.ecr.outputs.registry }}
         shell: bash
         run: |
           set -euo pipefail
@@ -75,7 +76,7 @@ jobs:
           aws s3 cp "s3://$DEPLOY_BUCKET/releases/$RELEASE/nginx/prod.conf" /opt/techflow/nginx/prod.conf
           cd /opt/techflow
           export APP_IMAGE="$APP_IMAGE"
-          registry="\${APP_IMAGE%%/*}"
+          registry="$REGISTRY"
           aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$registry"
           docker compose --env-file /etc/techflow/app.env -f docker-compose.prod.yml pull web
           docker logout "$registry"
