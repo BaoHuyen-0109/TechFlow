@@ -1,8 +1,12 @@
-# Chuẩn bị triển khai AWS: EC2 + RDS + GitHub Actions
+# Triển khai và vận hành AWS: EC2 + RDS + GitHub Actions
 
-Tài liệu này mô tả workflow deploy cho ứng dụng đang chạy trên EC2, RDS và S3 tại
-`ap-southeast-2`, với domain `techflow223.duckdns.org`. Workflow deploy vẫn bị khóa
-cho tới khi `AWS_DEPLOY_ENABLED=true` và các quyền bên dưới đã được cấu hình.
+Tài liệu này mô tả cấu hình và quy trình deploy TechFlow trên EC2, RDS và S3 tại
+`ap-southeast-2`, với domain `techflow223.duckdns.org`. Hạ tầng demo đã được tạo;
+GitHub Actions dùng biến `AWS_DEPLOY_ENABLED=true` để cho phép job deploy. Theo log
+mới nhất được ghi nhận, build/push image và cập nhật container đã chạy tới bước
+health check nhưng lần chạy thất bại do lỗi cú pháp trong script. Bản sửa nằm ở
+commit `94b34af`; cần push và xác nhận một run mới trước khi kết luận deploy xanh.
+Các bước tạo tài nguyên bên dưới được giữ lại làm hướng dẫn kiến trúc/khôi phục.
 
 ## Kiến trúc
 
@@ -135,7 +139,7 @@ Repository variables (không phải secrets) trong Settings → Secrets and vari
 
 | Variable | Giá trị |
 | --- | --- |
-| `AWS_DEPLOY_ENABLED` | để `false`/chưa đặt cho tới khi cấu hình xong HTTPS |
+| `AWS_DEPLOY_ENABLED` | `true` để chạy deploy; đặt `false` hoặc xóa biến để tạm khóa |
 | `AWS_REGION` | `ap-southeast-2` |
 | `ECR_REPOSITORY` | `techflow-web` |
 | `EC2_INSTANCE_ID` | ID instance production |
@@ -157,17 +161,20 @@ Không chạy `seed-demo` trên RDS production. Workflow kiểm tra `/health` sa
 Trước khi bật deploy, cấu hình SSM và chứng chỉ TLS; workflow gửi Compose/Nginx
 config mới tới EC2 theo từng release.
 
-Sau khi kiểm tra DNS/HTTPS, quyền IAM, RDS connectivity, backup và budget, đặt
-`AWS_DEPLOY_ENABLED=true` để bật deploy. Việc này là bước công khai/production,
-không tự thực hiện trong quá trình chuẩn bị local.
+DNS/HTTPS, quyền IAM và kết nối RDS đã được cấu hình cho môi trường demo. Biến
+deploy hiện được bật theo thiết lập người dùng. Tắt biến này nếu muốn giữ CI chạy
+tests nhưng ngăn workflow phát hành lên EC2. Trước mỗi lần chạy production, xem lại
+thay đổi/migration và backup phù hợp.
 
 ## Giới hạn và vận hành
 
-- Hiện chưa tạo EC2/RDS/ECR/S3/IAM, chưa có domain, chưa push branch hoặc bật
-  workflow deploy.
+- EC2, RDS, ECR, S3, IAM, domain và workflow deploy đã được cấu hình cho demo.
+- Lần chạy cuối có log đã pull image, chạy migration command và recreate web,
+  nhưng thất bại ở health check. Bản sửa cú pháp gần nhất ở `94b34af`; cần một run
+  mới để xác nhận `/health` và deployment thành công.
 - Trước migration quan trọng, tạo và xác minh backup RDS. Không chạy
   `docker compose down -v` trên production.
 - Tạo Admin production qua SSM sau khi HTTPS hoạt động; nhập password qua prompt
   ẩn, không đặt `TECHFLOW_ADMIN_PASSWORD` trong command, workflow hoặc log.
-- Kiểm tra chi phí sau khi tạo; dừng EC2 không xóa EBS/RDS/S3 và không đồng nghĩa
+- Kiểm tra chi phí thường xuyên; dừng EC2 không xóa EBS/RDS/S3 và không đồng nghĩa
   ngừng toàn bộ chi phí. Xóa tài nguyên chỉ sau khi xác nhận backup và dữ liệu.

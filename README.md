@@ -9,7 +9,9 @@ Có đăng nhập username/email, phân quyền Admin/Staff, hai workspace riên
 sidebar xổ xuống. Catalog lưu vào MySQL; nhập/bán cập nhật tồn bằng transaction,
 có hồ sơ khách/lịch sử mua, bảo hành và Dashboard thống kê dữ liệu thật.
 Báo cáo doanh thu nâng cao chưa triển khai. Phần chuẩn bị production/AWS đang được
-thực hiện riêng; chưa có tài nguyên AWS hoặc domain production nào được tạo.
+thực hiện riêng; môi trường demo hiện dùng EC2, RDS, ECR, S3 và domain DuckDNS
+tại `ap-southeast-2`. GitHub Actions đã được cấu hình cho CI/CD; trạng thái xác nhận
+deploy mới nhất và các việc vận hành còn lại xem [hành trình dự án](docs/PROJECT_JOURNEY_AND_PRESENTATION.md).
 
 Đặc tả chính thức: [tech_business_manager_aws_spec.md](tech_business_manager_aws_spec.md).
 
@@ -261,9 +263,9 @@ xóa thủ công sau khi kiểm tra; ứng dụng không tự tạo/xóa bảng 
 - [Authentication và quyền truy cập](docs/AUTHENTICATION.md)
 - [Catalog CRUD và quy ước nhập giá VND](docs/CATALOG.md)
 
-Compose hiện tại dành cho localhost, không dùng trực tiếp để public website.
-Tài nguyên AWS thật, HTTPS public, backup/restore production và nghiệm thu tải
-chưa được hoàn tất; không đưa dữ liệu thật lên máy chủ trước khi hoàn tất các bước đó.
+Compose mặc định dành cho localhost; `docker-compose.prod.yml` dành cho EC2/RDS.
+HTTPS public đã được thiết lập. Backup/restore production, gia hạn certificate tự
+động và kiểm tra tải vẫn cần được hoàn thiện trước khi coi đây là hệ thống production.
 
 Tài liệu chuẩn bị EC2, RDS và GitHub Actions: [AWS deployment](docs/AWS_DEPLOYMENT.md).
 `docker-compose.prod.yml` chỉ dành cho máy chủ production sau khi đã có RDS riêng,
