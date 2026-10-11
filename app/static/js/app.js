@@ -87,7 +87,7 @@ document.querySelectorAll("[data-image-preview]").forEach((preview) => {
       const url = new URL(source, window.location.origin);
       if ((source.startsWith("/") && url.origin !== window.location.origin) ||
           !["http:", "https:"].includes(url.protocol) || url.username || url.password ||
-          source.length > 500 || /[\s\u0000-\u001f\u007f]/.test(source)) throw new Error();
+          /[\s\u0000-\u001f\u007f]/.test(source)) throw new Error();
       showingPhoto = true;
       preview.setAttribute("aria-busy", "true");
       if (status) status.textContent = "Đang tải ảnh xem trước…";
