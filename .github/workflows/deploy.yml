@@ -107,7 +107,8 @@ jobs:
               Failed|Cancelled|TimedOut|Cancelling)
                 aws ssm get-command-invocation \
                   --command-id "$command_id" --instance-id "$EC2_INSTANCE_ID" \
-                  --query StatusDetails --output text
+                  --query '{Status:StatusDetails,ResponseCode:ResponseCode,Stdout:StandardOutputContent,Stderr:StandardErrorContent}' \
+                  --output json
                 exit 1
                 ;;
             esac
